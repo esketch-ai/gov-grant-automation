@@ -1,0 +1,8 @@
+smtp:
+  host: "smtp.gmail.com"
+  port: 587
+  # 계정 정보는 .env 를 통해 주입 (하드코딩 금지). .env.example 참조.
+  username: "${SMTP_USERNAME}"
+  password: "${SMTP_PASSWORD}"
+  sender_name: "정부과제 AI 매칭 에이전트"
+  max_attachment_size_mb: 20

@@ -1,0 +1,792 @@
+{% extends "base.html" %}
+
+{% block title %}공고 관리 &middot; SSHAI-CWA 2026{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+    <div>
+      <h1 class="text-xl font-bold text-slate-800">2026년 공고 아카이브 및 관리</h1>
+      <p class="text-slate-500 text-xs mt-1">SQLite 데이터베이스(`announcements`)에 영속화된 전체 공고 및 마감 캘린더 관리</p>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/api/calendar/2026.ics" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5" title="Google/Outlook/Apple 캘린더 연동 파일">
+        <i class="fa-regular fa-calendar-plus"></i> 2026 캘린더(.ics) 전체 다운로드
+      </a>
+      <span class="text-xs bg-emerald-100 text-emerald-800 font-medium px-2.5 py-1.5 rounded-lg border border-emerald-200">
+        <i class="fa-solid fa-filter mr-1"></i>2026년 전용 필터
+      </span>
+    </div>
+  </div>
+
+  <!-- 사업주 프로필 배너 + 다차원 트랙 탭 (REQ-020) -->
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="flex items-start gap-3 flex-1">
+        <span class="text-2xl">{% if profile_configured %}🏢{% else %}⚠️{% endif %}</span>
+        <div>
+          <div class="text-[11px] text-slate-500 font-medium mb-1">
+            {% if profile_configured %}현재 적용 사업주 프로필{% else %}사업주 프로필 미등록{% endif %}
+          </div>
+          {% if profile_configured %}
+          <div class="flex flex-wrap items-center gap-1.5">
+            <span class="text-sm font-bold text-slate-900">{{ profile_banner.company_name }}</span>
+            {% for tag in profile_banner.tags %}
+            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+              {{ tag }}
+            </span>
+            {% endfor %}
+          </div>
+          {% else %}
+          <div class="text-xs text-slate-500">
+            사업자등록번호·개업일·대표자 정보를 등록하면 <strong class="text-slate-700">1초만에 자격 태그</strong>가 자동 생성되고,
+            공고별 <strong class="text-slate-700">신호등 비행점검</strong>이 가능해집니다.
+          </div>
+          {% endif %}
+        </div>
+      </div>
+      <button onclick="openProfileModal()"
+              class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+        <i class="fa-solid fa-pen-to-square"></i> 프로필 {% if profile_configured %}수정{% else %}등록{% endif %}
+      </button>
+    </div>
+
+    <!-- 다차원 트랙 탭 네비게이션 -->
+    <div class="mt-4 border-t border-slate-100 pt-3">
+      <div class="flex flex-wrap items-center gap-1.5">
+        <span class="text-[11px] text-slate-400 font-medium mr-1">🎯 다차원 맞춤 필터:</span>
+        {% for tab in track_tabs %}
+        <button type="button" onclick="switchTrackTab('{{ tab.key }}')"
+                data-key="{{ tab.key }}"
+                class="track-tab text-xs font-medium px-3 py-1.5 rounded-lg border transition
+                       {% if current_tab == tab.key %}bg-indigo-600 text-white border-indigo-600 shadow-sm
+                       {% else %}bg-white text-slate-600 border-slate-200 hover:border-indigo-300{% endif %}">
+          <i class="fa-solid {{ tab.icon }} mr-1"></i>{{ tab.label }}
+        </button>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- 검색 및 필터 바 -->
+  <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm space-y-3">
+    <div class="flex flex-wrap gap-4 items-center justify-between">
+      <form method="get" action="/announcements" class="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+        <input type="text" name="q" value="{{ query }}" placeholder="공고명, 부처, 기관 검색..." 
+               class="border border-slate-300 rounded-lg px-3.5 py-1.5 text-xs w-64 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        <select name="portal" class="border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          <option value="">전체 포털</option>
+          <option value="k_startup" {% if portal == 'k_startup' %}selected{% endif %}>K-Startup</option>
+          <option value="g2b" {% if portal == 'g2b' %}selected{% endif %}>나라장터(G2B)</option>
+          <option value="ntis" {% if portal == 'ntis' %}selected{% endif %}>NTIS</option>
+          <option value="iris" {% if portal == 'iris' %}selected{% endif %}>IRIS</option>
+          <option value="nipa" {% if portal == 'nipa' %}selected{% endif %}>NIPA</option>
+        </select>
+        <select name="year" class="border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none font-medium">
+          <option value="2026" {% if year == '2026' %}selected{% endif %}>🎯 2026년도 대상 (기본)</option>
+          <option value="all" {% if year == 'all' %}selected{% endif %}>전체 연도 보기</option>
+          <option value="past" {% if year == 'past' %}selected{% endif %}>과거 공고 (&lt;2026)</option>
+          <option value="future" {% if year == 'future' %}selected{% endif %}>미래 공고 (&gt;2026)</option>
+        </select>
+        <select name="status" class="border border-slate-300 rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium">
+          <option value="active" {% if status == 'active' or not status %}selected{% endif %}>🟢 접수중 (마감 전)</option>
+          <option value="all" {% if status == 'all' %}selected{% endif %}>전체 (마감 포함)</option>
+          <option value="imminent" {% if status == 'imminent' %}selected{% endif %}>🚨 마감 임박 (D-7)</option>
+          <option value="expired" {% if status == 'expired' %}selected{% endif %}>마감 완료</option>
+        </select>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white text-xs px-4 py-1.5 rounded-lg transition">
+          검색/필터
+        </button>
+        {% if query or portal or (year and year != '2026') or (status and status != 'active') %}
+        <a href="/announcements" class="text-xs text-slate-500 hover:text-slate-800 underline">초기화</a>
+        {% endif %}
+      </form>
+      <div class="flex items-center gap-3 text-xs text-slate-500">
+        <span class="bg-emerald-50 text-emerald-800 px-2.5 py-1 rounded-md border border-emerald-200">
+          2026년 과제: <strong>{{ year_stats.year_2026_count }}</strong>건
+        </span>
+        <span>
+          총 <strong class="text-slate-800">{{ announcements|length }}</strong>건 조회됨
+        </span>
+      </div>
+    </div>
+
+    <!-- D-Day 마감 긴급도 현황 배너 -->
+    {% if dday_stats %}
+    <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2 text-[11px]">
+      <span class="text-slate-500 font-semibold flex items-center gap-1">
+        <i class="fa-solid fa-hourglass-half text-indigo-500"></i> 마감 현황:
+      </span>
+      {% if dday_stats.today_count > 0 %}
+      <span class="bg-rose-600 text-white font-extrabold px-2 py-0.5 rounded animate-pulse">
+        오늘 마감 {{ dday_stats.today_count }}건
+      </span>
+      {% endif %}
+      {% if dday_stats.critical_count > 0 %}
+      <span class="bg-rose-100 text-rose-800 border border-rose-300 font-bold px-2 py-0.5 rounded">
+        긴급(D-3) {{ dday_stats.critical_count }}건
+      </span>
+      {% endif %}
+      {% if dday_stats.warning_count > 0 %}
+      <span class="bg-amber-100 text-amber-800 border border-amber-300 font-bold px-2 py-0.5 rounded">
+        임박(D-7) {{ dday_stats.warning_count }}건
+      </span>
+      {% endif %}
+      <span class="bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded">
+        진행 중 {{ dday_stats.approaching_count + dday_stats.normal_count }}건
+      </span>
+      {% if dday_stats.expired_count > 0 %}
+      <span class="bg-slate-100 text-slate-500 px-2 py-0.5 rounded">
+        마감 완료 {{ dday_stats.expired_count }}건
+      </span>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- 공고 목록 테이블 -->
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200 font-semibold">
+          <tr>
+            <th class="py-3 px-4">포털 / 공고번호</th>
+            <th class="py-3 px-4">공고 제목 (클릭 시 상세/시뮬레이션)</th>
+            <th class="py-3 px-4">트랙 / 담당 부처</th>
+            <th class="py-3 px-4">신청 마감일 / D-Day</th>
+            <th class="py-3 px-4 text-center">사전 비행점검</th>
+            <th class="py-3 px-4 text-center">원문 / 캘린더</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for a in announcements %}
+          <tr class="hover:bg-slate-50/80 transition" data-track="{{ a.track }}">
+            <td class="py-3 px-4 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <span class="bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded text-[11px] uppercase">
+                  {{ a.source_portal }}
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {% if a.target_year == 2026 %}bg-emerald-100 text-emerald-800 border border-emerald-200{% elif a.target_year and a.target_year < 2026 %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-slate-100 text-slate-700{% endif %}">
+                  {{ a.target_year or 2026 }}년
+                </span>
+              </div>
+              {% if a.official_notice_no %}
+              <div class="text-[10px] text-slate-400 font-mono mt-0.5 truncate max-w-[140px]" title="{{ a.official_notice_no }}">{{ a.official_notice_no }}</div>
+              {% endif %}
+            </td>
+            <td class="py-3 px-4 font-semibold text-slate-900 max-w-md">
+              <button onclick="openNoticeModal('{{ a.canonical_id }}')" class="text-left hover:text-blue-600 focus:outline-none transition block">
+                <div class="truncate text-blue-900 hover:underline" title="{{ a.title }}">{{ a.title }}</div>
+                <div class="text-[10px] text-slate-400 font-normal font-mono">{{ a.canonical_id }}</div>
+              </button>
+            </td>
+            <td class="py-3 px-4 text-slate-600">
+              <div class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200 mb-0.5">
+                {{ a.track }}
+              </div>
+              <div class="font-medium text-slate-800">{{ a.ministry or '-' }}</div>
+              <div class="text-slate-400 text-[10px]">{{ a.organization or '-' }}</div>
+            </td>
+            <td class="py-3 px-4 whitespace-nowrap">
+              <div class="flex items-center gap-1.5">
+                <span class="px-2 py-0.5 rounded text-[10px] {{ a.dday.badge_class }}">
+                  {{ a.dday.badge_text }}
+                </span>
+                <span class="text-slate-600 font-mono text-[11px]">{{ a.deadline or '상시' }}</span>
+              </div>
+            </td>
+            <td class="py-3 px-4 text-center whitespace-nowrap">
+              <button onclick="openPreflightModal('{{ a.canonical_id }}')"
+                      class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg border border-indigo-200 transition text-[11px] inline-flex items-center gap-1"
+                      title="25대 숨은 조건 사전 비행점검">
+                <span>🚥</span><span>비행점검</span>
+              </button>
+            </td>
+            <td class="py-3 px-4 text-center whitespace-nowrap">
+              <div class="flex items-center justify-center gap-2.5">
+                {% if a.detail_url %}
+                <a href="{{ a.detail_url }}" target="_blank" class="text-blue-600 hover:text-blue-800 text-sm" title="공고 원문 바로가기">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+                {% else %}
+                <span class="text-slate-300 text-xs">-</span>
+                {% endif %}
+                <a href="/api/announcements/{{ a.canonical_id }}/calendar.ics" class="text-indigo-600 hover:text-indigo-800 text-sm" title="내 캘린더(.ics)에 추가">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </a>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="py-12 text-center text-slate-400 text-xs">
+              공고 내역이 없습니다.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- 공고 상세 및 자격 매칭 시뮬레이터 모달 -->
+<div id="noticeModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col text-xs text-slate-700">
+    <!-- 모달 헤더 -->
+    <div class="flex justify-between items-start p-5 border-b border-slate-100">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span id="modalPortal" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-mono font-semibold"></span>
+          <span id="modalId" class="text-[10px] text-slate-400 font-mono"></span>
+        </div>
+        <h3 id="modalTitle" class="text-base font-bold text-slate-900"></h3>
+      </div>
+      <button onclick="closeNoticeModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+    </div>
+
+    <!-- 모달 본문 (스크롤) -->
+    <div class="p-5 space-y-5 overflow-y-auto flex-1">
+      <!-- 메타정보 -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
+        <div>
+          <span class="text-[10px] text-slate-400 block">담당 부처 / 기관</span>
+          <span id="modalOrg" class="font-semibold text-slate-800"></span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block">신청 마감일</span>
+          <span id="modalDeadline" class="font-mono font-semibold text-slate-800"></span>
+        </div>
+        <div>
+          <span class="text-[10px] text-slate-400 block">공고 원문 / 캘린더</span>
+          <div class="flex items-center gap-3 mt-0.5">
+            <a id="modalUrl" href="" target="_blank" data-dynamic-link="true" class="hidden text-blue-600 hover:underline font-medium flex items-center gap-1">
+              원문 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+            </a>
+            <a id="modalIcal" href="" data-dynamic-link="true" class="hidden text-indigo-600 hover:underline font-medium flex items-center gap-1" title="iCalendar (.ics) 파일 다운로드">
+              <i class="fa-regular fa-calendar-plus"></i> .ics 캘린더 등록
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- RFP 청크 섹션 -->
+      <div>
+        <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-1.5">
+          <i class="fa-solid fa-layer-group text-blue-600"></i> 추출된 세부 과제 (RFP 청크)
+        </h4>
+        <div id="modalRfps" class="space-y-2">
+          <!-- 동적 로드 -->
+        </div>
+      </div>
+
+      <!-- 실시간 자격 판정 시뮬레이터 카드 -->
+      <div class="bg-indigo-50/60 rounded-xl p-4 border border-indigo-100 space-y-3">
+        <div class="flex justify-between items-center">
+          <h4 class="font-bold text-indigo-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-bolt text-indigo-600"></i> 실시간 R&D 자격 매칭 시뮬레이터
+          </h4>
+          <span class="text-[10px] text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded font-medium">하이브리드 엔진</span>
+        </div>
+        <p class="text-[11px] text-slate-600">등록된 사업 아이템과 본 공고 간의 1차 규칙 사전필터 및 2차 자격 판정을 즉시 시뮬레이션합니다.</p>
+        
+        <div class="flex flex-wrap gap-2 items-center">
+          <select id="simItemSelect" class="border border-indigo-200 bg-white rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-1">
+            {% for it in items %}
+            <option value="{{ it.id }}">{{ it.name }} ({{ it.id }})</option>
+            {% endfor %}
+          </select>
+          <button id="runSimBtn" onclick="runSimulation()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-4 py-1.5 rounded-lg shadow transition flex items-center gap-1.5">
+            <i class="fa-solid fa-play"></i> 시뮬레이션 실행
+          </button>
+        </div>
+
+        <!-- 시뮬레이션 결과 뷰어 -->
+        <div id="simResult" class="hidden bg-white rounded-lg p-3.5 border border-indigo-100 space-y-2 mt-2">
+          <div class="flex justify-between items-center pb-2 border-b border-slate-100">
+            <div class="flex items-center gap-2">
+              <span id="simBadge" class="text-xs font-bold px-2.5 py-0.5 rounded"></span>
+              <span id="simScore" class="font-bold text-slate-800"></span>
+            </div>
+</div>
+
+<!-- 사업주 프로필 관리 모달 (REQ-020) -->
+<div id="profileModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[92vh] flex flex-col text-xs text-slate-700">
+    <div class="flex justify-between items-center p-5 border-b border-slate-100">
+      <div class="flex items-center gap-2">
+        <span class="text-xl">🏢</span>
+        <h3 class="text-base font-bold text-slate-900">사업주 프로필 설정 (1초 자동 판정)</h3>
+      </div>
+      <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+    </div>
+
+    <form id="profileForm" onsubmit="saveProfile(event)" class="p-5 space-y-4 overflow-y-auto flex-1">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">기업명</label>
+          <input type="text" id="prof_company_name" name="company_name" required placeholder="예: (주)마음숲테크"
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">사업자등록번호 (10자리)</label>
+          <input type="text" id="prof_biz_reg_no" name="biz_reg_no" required placeholder="607-81-12345"
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">개업연월일 (업력 산출용)</label>
+          <input type="date" id="prof_opened_date" name="opened_date" required
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">대표자 생년월일 (청년 기준)</label>
+          <input type="date" id="prof_founder_birth" name="founder_birth" required
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">대표자 성별 (여성기업 판정)</label>
+          <select id="prof_founder_gender" name="founder_gender"
+                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <option value="F">여성 (Female)</option>
+            <option value="M">남성 (Male)</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-[11px] font-semibold text-slate-700 mb-1">사업장 본점 주소 (17개 시도)</label>
+          <input type="text" id="prof_address" name="address" required placeholder="예: 부산광역시 해운대구 센텀중앙로 48"
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 pt-3">
+        <h4 class="font-bold text-slate-800 text-xs mb-2">재무 건전성 및 25대 비행점검 스펙</h4>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div>
+            <label class="block text-[11px] text-slate-600 mb-1">부채비율 (%)</label>
+            <input type="number" step="0.1" id="prof_debt_ratio" name="debt_ratio_pct" placeholder="예: 180 (3년미만 면제)"
+                   class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-600 mb-1">총괄책임자(PI) 수행 과제 수</label>
+            <input type="number" id="prof_pi_projects" name="current_pi_projects" value="0" min="0" max="10"
+                   class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-[11px] text-slate-600 mb-1">등록 특허 건수</label>
+            <input type="number" id="prof_patents" name="registered_patents_count" value="1" min="0"
+                   class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-3 p-3 bg-slate-50 rounded-lg border border-slate-100">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="prof_rnd_lab" name="has_rnd_lab" class="rounded text-blue-600">
+            <span class="text-xs font-medium">기업부설연구소/전담부서</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="prof_capital_impaired" name="is_capital_impaired" class="rounded text-rose-600">
+            <span class="text-xs font-medium text-rose-700">자본전액잠식 여부</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" id="prof_tax_arrears" name="has_tax_arrears" class="rounded text-rose-600">
+            <span class="text-xs font-medium text-rose-700">국세/지방세 체납 여부</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="border-t border-slate-100 pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label class="block text-[11px] text-slate-600 mb-1">기수혜 정부과제 이력 (쉼표 구분)</label>
+          <input type="text" id="prof_prior_grants" name="prior_grant_history" placeholder="예: 예비창업패키지, 데이터바우처"
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-[11px] text-slate-600 mb-1">보유 인증 및 특화 (쉼표 구분)</label>
+          <input type="text" id="prof_certifications" name="certifications" placeholder="예: 여성기업, 벤처기업, 소셜벤처"
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeProfileModal()"
+                class="px-4 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium">취소</button>
+        <button type="submit" id="profSaveBtn"
+                class="px-5 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-check"></i> 저장 및 즉시 반영
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- 🚥 사전 비행점검 (Pre-Flight) 결과 모달 (REQ-020) -->
+<div id="preflightModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-xl w-full max-h-[90vh] flex flex-col text-xs text-slate-700">
+    <div class="flex justify-between items-start p-5 border-b border-slate-100">
+      <div>
+        <div class="flex items-center gap-2 mb-1">
+          <span class="text-sm">🚥</span>
+          <span id="pfPortal" class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase"></span>
+          <span id="pfId" class="text-[10px] text-slate-400 font-mono"></span>
+        </div>
+        <h3 id="pfTitle" class="text-base font-bold text-slate-900"></h3>
+      </div>
+      <button onclick="closePreflightModal()" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+    </div>
+
+    <div class="p-5 space-y-4 overflow-y-auto flex-1">
+      <div id="pfLoading" class="py-12 text-center text-slate-500">
+        <i class="fa-solid fa-spinner fa-spin text-2xl text-indigo-600 mb-2 block"></i>
+        <span>25대 숨은 조건 및 다차원 트랙 1초 비행점검 중...</span>
+      </div>
+
+      <div id="pfContent" class="hidden space-y-4">
+        <!-- 종합 신호등 헤더 카드 -->
+        <div id="pfSignalBox" class="p-4 rounded-xl border flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span id="pfSignalIcon" class="text-3xl"></span>
+            <div>
+              <div id="pfSignalStatus" class="text-sm font-extrabold uppercase"></div>
+              <div id="pfTrackDesc" class="text-[11px] text-slate-600 mt-0.5"></div>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-[10px] text-slate-400 block">종합 적합도 점수</span>
+            <span id="pfScore" class="text-xl font-bold"></span>
+          </div>
+        </div>
+
+        <!-- 사업주 프로필 자격 태그 -->
+        <div>
+          <span class="text-[11px] font-bold text-slate-700 block mb-1">적용 사업주 프로필</span>
+          <div id="pfTags" class="flex flex-wrap gap-1.5"></div>
+        </div>
+
+        <!-- 자격 부합 및 가점 항목 -->
+        <div class="bg-emerald-50/70 border border-emerald-100 rounded-lg p-3 space-y-1.5">
+          <h4 class="font-bold text-emerald-800 text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-circle-check text-emerald-600"></i> 자격 부합 및 획득 가점
+          </h4>
+          <ul id="pfPassList" class="space-y-1 text-slate-700 pl-2"></ul>
+        </div>
+
+        <!-- 결격 사유 및 경고 항목 -->
+        <div id="pfWarnBox" class="bg-rose-50/70 border border-rose-100 rounded-lg p-3 space-y-1.5">
+          <h4 id="pfWarnTitle" class="font-bold text-rose-800 text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 결격 사유 및 필수 확인
+          </h4>
+          <ul id="pfWarnList" class="space-y-1 text-rose-700 pl-2"></ul>
+        </div>
+
+        <div class="text-right text-[10px] text-slate-400 font-mono">
+          점검 소요 시간: <span id="pfElapsed"></span> ms
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let currentCanonicalId = null;
+
+  function switchTrackTab(tabKey) {
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tabKey);
+    window.location.href = url.toString();
+  }
+
+  async function openProfileModal() {
+    document.getElementById('profileModal').classList.remove('hidden');
+    try {
+      const res = await fetch('/api/profile');
+      const data = await res.json();
+      if (data.configured && data.profile) {
+        const p = data.profile;
+        document.getElementById('prof_company_name').value = p.company_name || '';
+        document.getElementById('prof_biz_reg_no').value = p.biz_reg_no || '';
+        document.getElementById('prof_opened_date').value = p.opened_date || '';
+        document.getElementById('prof_founder_birth').value = p.founder_birth || '';
+        document.getElementById('prof_founder_gender').value = p.founder_gender || 'F';
+        document.getElementById('prof_address').value = p.address || '';
+        document.getElementById('prof_debt_ratio').value = p.debt_ratio_pct !== null ? p.debt_ratio_pct : '';
+        document.getElementById('prof_pi_projects').value = p.current_pi_projects || 0;
+        document.getElementById('prof_patents').value = p.registered_patents_count || 0;
+        document.getElementById('prof_rnd_lab').checked = Boolean(p.has_rnd_lab);
+        document.getElementById('prof_capital_impaired').checked = Boolean(p.is_capital_impaired);
+        document.getElementById('prof_tax_arrears').checked = Boolean(p.has_tax_arrears);
+        document.getElementById('prof_prior_grants').value = (p.prior_grant_history || []).join(', ');
+        document.getElementById('prof_certifications').value = (p.certifications || []).join(', ');
+      }
+    } catch (err) {
+      console.warn('프로필 로드 실패:', err);
+    }
+  }
+
+  function closeProfileModal() {
+    document.getElementById('profileModal').classList.add('hidden');
+  }
+
+  async function saveProfile(e) {
+    e.preventDefault();
+    const btn = document.getElementById('profSaveBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 저장 중...';
+
+    const payload = {
+      company_name: document.getElementById('prof_company_name').value.trim(),
+      biz_reg_no: document.getElementById('prof_biz_reg_no').value.trim(),
+      opened_date: document.getElementById('prof_opened_date').value,
+      founder_birth: document.getElementById('prof_founder_birth').value,
+      founder_gender: document.getElementById('prof_founder_gender').value,
+      address: document.getElementById('prof_address').value.trim(),
+      debt_ratio_pct: document.getElementById('prof_debt_ratio').value ? parseFloat(document.getElementById('prof_debt_ratio').value) : null,
+      current_pi_projects: parseInt(document.getElementById('prof_pi_projects').value, 10) || 0,
+      registered_patents_count: parseInt(document.getElementById('prof_patents').value, 10) || 0,
+      has_rnd_lab: document.getElementById('prof_rnd_lab').checked,
+      is_capital_impaired: document.getElementById('prof_capital_impaired').checked,
+      has_tax_arrears: document.getElementById('prof_tax_arrears').checked,
+      prior_grant_history: document.getElementById('prof_prior_grants').value.split(',').map(s => s.trim()).filter(Boolean),
+      certifications: document.getElementById('prof_certifications').value.split(',').map(s => s.trim()).filter(Boolean),
+    };
+
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert('프로필 저장 실패: ' + (data.message || '오류'));
+        return;
+      }
+      closeProfileModal();
+      window.location.reload();
+    } catch (err) {
+      alert('프로필 저장 통신 오류: ' + err);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> 저장 및 즉시 반영';
+    }
+  }
+
+  async function openPreflightModal(canonicalId) {
+    document.getElementById('preflightModal').classList.remove('hidden');
+    document.getElementById('pfLoading').classList.remove('hidden');
+    document.getElementById('pfContent').classList.add('hidden');
+
+    try {
+      const res = await fetch('/api/matcher/preflight', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ canonical_id: canonicalId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert('비행점검 실패: ' + (data.message || '오류'));
+        closePreflightModal();
+        return;
+      }
+
+      document.getElementById('pfTitle').innerText = data.announcement.title;
+      document.getElementById('pfPortal').innerText = data.announcement.source_portal;
+      document.getElementById('pfId').innerText = data.canonical_id;
+
+      const pf = data.preflight;
+      const sBox = document.getElementById('pfSignalBox');
+      const sIcon = document.getElementById('pfSignalIcon');
+      const sStatus = document.getElementById('pfSignalStatus');
+      const sScore = document.getElementById('pfScore');
+
+      if (pf.signal_light === 'green') {
+        sBox.className = 'p-4 rounded-xl border flex items-center justify-between bg-emerald-50 border-emerald-200 text-emerald-900';
+        sIcon.innerText = '🟢';
+        sStatus.innerText = 'GREEN · 적격 및 최우선 추천';
+        sScore.className = 'text-xl font-bold text-emerald-700';
+      } else if (pf.signal_light === 'yellow') {
+        sBox.className = 'p-4 rounded-xl border flex items-center justify-between bg-amber-50 border-amber-200 text-amber-900';
+        sIcon.innerText = '🟡';
+        sStatus.innerText = 'YELLOW · 조건부 지원 / 서류 보완';
+        sScore.className = 'text-xl font-bold text-amber-700';
+      } else {
+        sBox.className = 'p-4 rounded-xl border flex items-center justify-between bg-rose-50 border-rose-200 text-rose-900';
+        sIcon.innerText = '🔴';
+        sStatus.innerText = 'RED · 치명적 결격 사유 감지';
+        sScore.className = 'text-xl font-bold text-rose-700';
+      }
+      sScore.innerText = pf.final_score + '점';
+      document.getElementById('pfTrackDesc').innerText = '[' + pf.matched_track + '] ' + pf.matched_track_desc;
+
+      // Tags
+      const tagsBox = document.getElementById('pfTags');
+      tagsBox.innerHTML = '';
+      (pf.tags || []).forEach(t => {
+        const sp = document.createElement('span');
+        sp.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+        sp.innerText = t;
+        tagsBox.appendChild(sp);
+      });
+
+      // Pass reasons
+      const passUl = document.getElementById('pfPassList');
+      passUl.innerHTML = '';
+      const passItems = pf.pass_reasons || [];
+      if (passItems.length === 0) {
+        passUl.innerHTML = '<li class="text-slate-400 italic">해당 사항 없음</li>';
+      } else {
+        passItems.forEach(p => {
+          const li = document.createElement('li');
+          li.className = 'flex items-start gap-1';
+          li.innerHTML = '<span class="text-emerald-600 font-bold">✔</span> <span>' + p + '</span>';
+          passUl.appendChild(li);
+        });
+      }
+
+      // Warnings and Disqualifications
+      const warnBox = document.getElementById('pfWarnBox');
+      const warnUl = document.getElementById('pfWarnList');
+      warnUl.innerHTML = '';
+      const disquals = pf.disqualification_reasons || [];
+      const warns = pf.warnings || [];
+      const allDefects = [...disquals, ...warns];
+
+      if (allDefects.length === 0) {
+        warnBox.classList.add('hidden');
+      } else {
+        warnBox.classList.remove('hidden');
+        allDefects.forEach(d => {
+          const li = document.createElement('li');
+          li.className = 'flex items-start gap-1';
+          li.innerHTML = '<span class="text-rose-600 font-bold">✖</span> <span>' + d + '</span>';
+          warnUl.appendChild(li);
+        });
+      }
+
+      document.getElementById('pfElapsed').innerText = pf.elapsed_ms || '10';
+      document.getElementById('pfLoading').classList.add('hidden');
+      document.getElementById('pfContent').classList.remove('hidden');
+    } catch (err) {
+      alert('비행점검 요청 오류: ' + err);
+      closePreflightModal();
+    }
+  }
+
+  function closePreflightModal() {
+    document.getElementById('preflightModal').classList.add('hidden');
+  }
+
+  async function openNoticeModal(canonicalId) {
+    currentCanonicalId = canonicalId;
+    document.getElementById('simResult').classList.add('hidden');
+    document.getElementById('noticeModal').classList.remove('hidden');
+
+    try {
+      const res = await fetch('/api/announcements/' + encodeURIComponent(canonicalId));
+      const data = await res.json();
+      if (!res.ok) {
+        alert('공고 정보 로드 실패: ' + data.message);
+        return;
+      }
+
+      const a = data.announcement;
+      document.getElementById('modalTitle').innerText = a.title;
+      document.getElementById('modalPortal').innerText = a.source_portal;
+      document.getElementById('modalId').innerText = a.canonical_id;
+      document.getElementById('modalOrg').innerText = (a.ministry || '') + ' ' + (a.organization || '');
+      document.getElementById('modalDeadline').innerText = a.deadline || '마감일 미상';
+      
+      const link = document.getElementById('modalUrl');
+      if (a.detail_url) {
+        link.href = a.detail_url;
+        link.classList.remove('hidden');
+      } else {
+        link.classList.add('hidden');
+      }
+
+      const icalLink = document.getElementById('modalIcal');
+      if (icalLink) {
+        icalLink.href = '/api/announcements/' + encodeURIComponent(canonicalId) + '/calendar.ics';
+        icalLink.classList.remove('hidden');
+      }
+
+      // Render RFP chunks
+      const rfpContainer = document.getElementById('modalRfps');
+      rfpContainer.innerHTML = '';
+      if (data.rfp_chunks && data.rfp_chunks.length > 0) {
+        data.rfp_chunks.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'p-3 bg-slate-50 rounded-lg border border-slate-200/80 text-xs';
+          div.innerHTML = '<div class="font-semibold text-slate-900 mb-1">[' + (c.rfp_number || 'RFP') + '] ' + (c.rfp_title || '') + '</div>' +
+                          '<div class="text-[11px] text-slate-500 line-clamp-2 font-mono">' + (c.markdown_content || '') + '</div>';
+          rfpContainer.appendChild(div);
+        });
+      } else {
+        rfpContainer.innerHTML = '<p class="text-slate-400 italic">단일 공고로 등록되어 별도 RFP 청크가 없습니다.</p>';
+      }
+    } catch (err) {
+      alert('공고 데이터 조회 오류: ' + err);
+    }
+  }
+
+  function closeNoticeModal() {
+    document.getElementById('noticeModal').classList.add('hidden');
+  }
+
+  async function runSimulation() {
+    if (!currentCanonicalId) return;
+    const itemId = document.getElementById('simItemSelect').value;
+    const btn = document.getElementById('runSimBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 판정 중...';
+
+    try {
+      const res = await fetch('/api/matcher/simulate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item_id: itemId, canonical_id: currentCanonicalId })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        alert('시뮬레이션 실패: ' + data.message);
+        return;
+      }
+
+      const ev = data.evaluation;
+      const resBox = document.getElementById('simResult');
+      resBox.classList.remove('hidden');
+
+      const badge = document.getElementById('simBadge');
+      if (ev.is_eligible) {
+        badge.className = 'text-xs font-bold px-2.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200';
+        badge.innerText = 'PASS (적격)';
+      } else {
+        badge.className = 'text-xs font-bold px-2.5 py-0.5 rounded bg-rose-100 text-rose-800 border border-rose-200';
+        badge.innerText = 'FAIL (부적격)';
+      }
+
+      const semText = ev.semantic_score !== undefined ? ' (시맨틱 유사도: ' + ev.semantic_score + '점)' : '';
+      document.getElementById('simScore').innerText = '종합 매칭 점수: ' + ev.match_score + '점' + semText;
+      document.getElementById('simNote').innerText = ev.note || '';
+
+      const checksContainer = document.getElementById('simChecks');
+      checksContainer.innerHTML = '';
+      if (ev.condition_checks && ev.condition_checks.length > 0) {
+        ev.condition_checks.forEach(c => {
+          const p = document.createElement('div');
+          const isPass = c.status === 'PASS';
+          p.className = 'flex items-start gap-1.5 ' + (isPass ? 'text-slate-700' : 'text-rose-600 font-semibold');
+          p.innerHTML = '<span>' + (isPass ? '✔' : '✖') + '</span><span>[' + c.criterion + '] ' + c.requirement_summary + ' (' + c.company_status + ')</span>';
+          checksContainer.appendChild(p);
+        });
+      }
+    } catch (err) {
+      alert('시뮬레이션 요청 오류: ' + err);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-play"></i> 시뮬레이션 실행';
+    }
+  }
+</script>
+{% endblock %}

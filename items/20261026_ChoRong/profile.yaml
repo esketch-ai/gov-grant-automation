@@ -1,0 +1,29 @@
+item_meta:
+  item_id: 20261026_ChoRong
+  item_name: 체계적인 전국구 온라인 심리상담 플랫폼
+  recipients: []
+collection_scope:
+  selected_bookmarks:
+  - k_startup
+  - ntis
+  - iris
+  - nipa
+  - smtech
+  - g2b
+  enable_open_web_discovery: true
+eligibility_specs:
+  entity_type: 법인사업자
+  business_age_years: 3
+  headquarters_location: 서울특별시
+rnd_and_bid_specs:
+  current_trl: 6
+  current_trl_range: '3'
+domain_routing:
+  core_keywords:
+  - 심리 상담
+  - 온라인 상담
+  - 청년 창업
+  - 심리 검사
+  min_match_score: 75
+owner_confirmed_policies:
+  max_acceptable_cash_match_krw: 50000000

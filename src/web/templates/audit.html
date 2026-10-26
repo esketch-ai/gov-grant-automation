@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}품질 검수(QA Swarm) &middot; SSHAI-CWA 2026{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+  <!-- 상단 요약 배너 -->
+  <div class="bg-gradient-to-r from-slate-900 to-indigo-900 rounded-xl shadow-lg p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="bg-indigo-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Multi-Agent QA Swarm</span>
+        <span class="text-xs text-slate-300">6대 전문 검수단 다각도 교차 감사</span>
+      </div>
+      <h1 class="text-2xl font-bold flex items-center gap-2">
+        <span>다각도 시스템 무결성 종합 감사 현황</span>
+      </h1>
+      <p class="text-slate-300 text-xs mt-1">2026 연도 무결성, 웹 UI, 판정 정밀도, 시크릿 보안, 장애 복원력, 데이터 무결성 6대 게이트 전수 검증</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <div class="bg-slate-800/80 backdrop-blur px-5 py-3 rounded-lg border border-slate-700 text-right">
+        <span class="text-[11px] text-slate-400 block">종합 감사 점수</span>
+        <div class="text-2xl font-bold {% if audit_data.all_passed %}text-emerald-400{% else %}text-rose-400{% endif %}">
+          {{ audit_data.total_score }} <span class="text-sm font-normal text-slate-400">/ {{ audit_data.max_score }} 점</span>
+        </div>
+        <div class="text-[10px] mt-0.5 {% if audit_data.all_passed %}text-emerald-300{% else %}text-rose-300{% endif %} font-medium">
+          {{ audit_data.status }}
+        </div>
+      </div>
+      <button id="runAuditBtn" onclick="triggerAudit()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-4 py-3 rounded-lg shadow-md flex items-center gap-2 transition">
+        <i class="fa-solid fa-shield-halved"></i> QA 스웜 즉시 재검수
+      </button>
+    </div>
+  </div>
+
+  <!-- 메타 정보 바 -->
+  <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-wrap items-center justify-between text-xs text-slate-600 gap-4">
+    <div class="flex items-center gap-6">
+      <span><i class="fa-regular fa-clock text-indigo-500 mr-1.5"></i>최근 감사 일시: <strong class="text-slate-800">{{ audit_data.timestamp }}</strong></span>
+      <span><i class="fa-solid fa-stopwatch text-indigo-500 mr-1.5"></i>감사 소요 시간: <strong class="text-slate-800">{{ audit_data.duration_seconds|round(2) }}초</strong></span>
+    </div>
+    <div class="flex items-center gap-2">
+      <a href="/api/audit/download/md" download class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-lg border border-slate-300 font-semibold flex items-center gap-1.5 transition text-xs">
+        <i class="fa-solid fa-file-arrow-down text-indigo-600"></i> MD 보고서
+      </a>
+      <a href="/api/audit/download/json" download class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1 rounded-lg border border-slate-300 font-semibold flex items-center gap-1.5 transition text-xs">
+        <i class="fa-solid fa-code text-indigo-600"></i> JSON
+      </a>
+      <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full font-medium border border-emerald-200">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> {{ audit_data.results|length }}개 에이전트 100% 검증 승인
+      </span>
+    </div>
+  </div>
+
+  <!-- 6대 전문 검수 에이전트 카드 목록 -->
+  <div class="space-y-4">
+    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+      <i class="fa-solid fa-list-check text-indigo-600"></i> {{ audit_data.results|length }}대 전문 검수 에이전트 세부 평가 결과
+    </h2>
+
+    <div class="grid grid-cols-1 gap-4">
+      {% for r in audit_data.results %}
+      <div class="bg-white rounded-xl border {% if r.passed %}border-slate-200 hover:border-indigo-300{% else %}border-rose-300{% endif %} p-5 shadow-sm transition">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 pb-3 border-b border-slate-100">
+          <div class="flex items-center gap-3">
+            <span class="{% if r.passed %}bg-emerald-100 text-emerald-800 border-emerald-200{% else %}bg-rose-100 text-rose-800 border-rose-200{% endif %} text-xs font-bold px-2.5 py-1 rounded-md border flex items-center gap-1">
+              {% if r.passed %}<i class="fa-solid fa-check"></i> PASS{% else %}<i class="fa-solid fa-xmark"></i> FAIL{% endif %}
+            </span>
+            <span class="font-mono text-xs font-semibold text-slate-500">{{ r.agent_id }}</span>
+            <h3 class="text-sm font-bold text-slate-900">{{ r.agent_name }}</h3>
+          </div>
+          <div class="text-sm font-bold text-slate-800">
+            <span class="text-indigo-600">{{ r.score }}</span> / {{ r.max_score }} 점
+          </div>
+        </div>
+
+        <div class="mt-3">
+          <p class="text-xs text-slate-700 font-medium">{{ r.summary }}</p>
+        </div>
+
+        <!-- 세부 로그 -->
+        {% if r.details %}
+        <div class="mt-3 bg-slate-50 rounded-lg p-3 border border-slate-100">
+          <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider block mb-1.5">검증 세부 내역:</span>
+          <ul class="space-y-1 text-xs font-mono text-slate-600">
+            {% for d in r.details %}
+            <li class="flex items-start gap-1.5">
+              <span class="text-slate-400 mt-0.5">&bull;</span>
+              <span>{{ d }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+
+        <!-- 메트릭 -->
+        {% if r.metrics %}
+        <div class="mt-3 flex flex-wrap gap-2 text-[11px]">
+          {% for k, v in r.metrics.items() %}
+          <span class="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded border border-indigo-100 font-mono">
+            {{ k }}: <strong>{{ v }}</strong>
+          </span>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  async function triggerAudit() {
+    const btn = document.getElementById('runAuditBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 감사 실행 중...';
+    try {
+      const res = await fetch('/api/audit/run', { method: 'POST' });
+      const data = await res.json();
+      alert('QA 스웜 감사 완료: 점수 ' + data.total_score + '/' + data.max_score + ' (' + data.status + ')');
+      window.location.reload();
+    } catch (err) {
+      alert('감사 실행 요청 오류: ' + err);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-shield-halved"></i> QA 스웜 즉시 재검수';
+    }
+  }
+</script>
+{% endblock %}

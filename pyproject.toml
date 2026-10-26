@@ -1,0 +1,18 @@
+[project]
+name = "gov-grant-automation"
+version = "0.1.0"
+description = "SSHAI-CWA (Carbon Work Agent): 로컬 정부/R&D 과제 매칭 자동화 파이프라인"
+requires-python = ">=3.10"
+dependencies = ["pyyaml", "httpx", "pydantic>=2.7"]
+
+[project.optional-dependencies]
+parse = ["PyMuPDF>=1.24", "playwright>=1.44"]
+dev = ["pytest>=8.0", "pytest-asyncio>=0.23"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120

@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}발송 이력 및 매칭 결과 &middot; SSHAI-CWA 2026{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <h1 class="text-xl font-bold text-slate-800">알림 발송 이력 (`dispatch_history`)</h1>
+    <p class="text-slate-500 text-xs mt-1">사업주 이메일로 발송 완료되어 중복 발송 방지(`UNIQUE` 제약)가 적용된 매칭 내역</p>
+  </div>
+
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-slate-50 text-slate-600 uppercase border-b border-slate-200 font-semibold">
+          <tr>
+            <th class="py-3 px-4">발송 ID</th>
+            <th class="py-3 px-4">대상 아이템</th>
+            <th class="py-3 px-4">공고 식별자 (Canonical ID)</th>
+            <th class="py-3 px-4">RFP ID</th>
+            <th class="py-3 px-4 text-center">매칭 점수</th>
+            <th class="py-3 px-4">발송 시각</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          {% for d in dispatches %}
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3 px-4 font-mono font-medium text-slate-600">#{{ d.id }}</td>
+            <td class="py-3 px-4 font-semibold text-slate-900">{{ d.item_id }}</td>
+            <td class="py-3 px-4 font-mono text-slate-700">{{ d.canonical_id }}</td>
+            <td class="py-3 px-4 font-mono text-slate-500 text-[11px]">{{ d.rfp_id }}</td>
+            <td class="py-3 px-4 text-center">
+              <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[11px]">
+                {{ d.match_score }}점
+              </span>
+            </td>
+            <td class="py-3 px-4 text-slate-500 font-mono">{{ d.sent_at }}</td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="py-12 text-center text-slate-400 text-xs">
+              <i class="fa-solid fa-paper-plane text-3xl mb-2 text-slate-300"></i>
+              <p>아직 발송된 내역이 없습니다.</p>
+              <p class="text-slate-500 mt-1">매칭 점수가 기준 이상이고 적격인 과제가 발견되면 자동으로 여기에 기록됩니다.</p>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

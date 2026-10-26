@@ -1,0 +1,37 @@
+item_meta:
+  item_id: "item_02_voice_ai"
+  item_name: "AI 음성 분리 및 다자간 화자 인식 솔루션"
+  recipients: ["pm@company.com"]
+
+collection_scope:
+  selected_bookmarks: ["k_startup", "nipa", "smtech", "modoo", "g2b", "ntis"]
+  enable_open_web_discovery: true
+
+eligibility_specs:
+  entity_type: "법인사업자"
+  founded_date: "2021-09-01"
+  business_age_years: 5
+  headquarters_location: "서울특별시 마포구"
+  branch_locations: []
+  employee_count: 12
+  recent_annual_revenue_krw: 1200000000
+  certifications: ["벤처기업", "기업부설연구소", "ISO/IEC 27001"]
+  ip_patents_count: 5
+
+rnd_and_bid_specs:
+  has_rnd_institute: true
+  current_trl: 7
+  consortium_possible: true
+  g2b_license_codes: ["1468", "1724"]
+  direct_production_certs: ["정보시스템개발서비스", "소프트웨어개발업"]
+
+domain_routing:
+  target_ministries: ["과학기술정보통신부", "중소벤처기업부"]
+  core_keywords: ["음성분리", "화자인식", "음성인식", "언어모델", "AI 반도체", "AX", "딥파스킹 방제"]
+  exclude_keywords: ["단순 제조", "전통시장", "농수산업"]
+  min_match_score: 75
+
+owner_confirmed_policies:
+  max_acceptable_cash_match_krw: 70000000
+  accept_mandatory_hiring: true
+  available_demand_partners: ["공공기관", "금융권", "통신사"]

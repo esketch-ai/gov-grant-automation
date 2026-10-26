@@ -1,0 +1,37 @@
+item_meta:
+  item_id: "item_01_carbon_dmrv"
+  item_name: "AI 기반 디지털 MRV 및 탄소배출권 자산 라우팅 플랫폼"
+  recipients: ["pm@company.com"]
+
+collection_scope:
+  selected_bookmarks: ["k_startup", "ntis", "iris", "nipa", "keit", "smtech", "g2b", "songpa_se"]
+  enable_open_web_discovery: true
+
+eligibility_specs:
+  entity_type: "법인사업자"
+  founded_date: "2023-05-10"
+  business_age_years: 3
+  headquarters_location: "경기도 성남시"
+  branch_locations: ["서울특별시"]
+  employee_count: 8
+  recent_annual_revenue_krw: 500000000
+  certifications: ["벤처기업", "기업부설연구소"]
+  ip_patents_count: 3
+
+rnd_and_bid_specs:
+  has_rnd_institute: true
+  current_trl: 6
+  consortium_possible: true
+  g2b_license_codes: ["1468"]
+  direct_production_certs: ["정보시스템개발서비스"]
+
+domain_routing:
+  target_ministries: ["과학기술정보통신부", "산업통상자원부", "중소벤처기업부", "환경부"]
+  core_keywords: ["탄소배출권", "디지털 MRV", "기후테크", "스마트빌딩", "에너지", "블록체인", "AX"]
+  exclude_keywords: ["단순 제조", "전통시장", "소상공인 점포개선", "바이오 임상"]
+  min_match_score: 75
+
+owner_confirmed_policies:
+  max_acceptable_cash_match_krw: 50000000
+  accept_mandatory_hiring: true
+  available_demand_partners: ["운수사 컨소시엄", "지자체 및 금융기관"]

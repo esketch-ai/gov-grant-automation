@@ -1,0 +1,20 @@
+# core
+pyyaml>=6.0
+httpx>=0.27
+pydantic>=2.7
+python-dotenv>=1.0
+
+# pdf/hwp parsing (optional, degrade가 되어 있어 설치 안 해도 동작은 함)
+PyMuPDF>=1.24
+
+# crawler (playwright binary separate install: `python -m playwright install chromium`)
+playwright>=1.44
+
+# web admin (REQ-010)
+fastapi>=0.110
+uvicorn>=0.28
+jinja2>=3.1
+
+# test
+pytest>=8.0
+pytest-asyncio>=0.23

@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.env
+.pytest_cache/
+
+# Runtime artifacts
+storage/downloads/**
+storage/downloads/*
+!storage/downloads/.gitkeep
+storage/chroma_db/**
+storage/grant_master.db
+storage/logs/
+logs/
+logs/**
+
+# Runtime logs & QA/QQAQC reports (regenerable, contain run output; not source)
+storage/app.log
+storage/app.log.*
+storage/*.log
+storage/audit_report.*
+storage/qqaqc_*_report.*
+
+# OS
+.DS_Store

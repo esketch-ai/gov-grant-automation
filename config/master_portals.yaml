@@ -1,0 +1,63 @@
+portals:
+  k_startup:
+    name: "K-Startup 창업지원포털"
+    adapter_type: "TypeA_OpenAPI_Scrape"
+    base_url: "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do"
+    api_endpoint: "https://apis.data.go.kr/B552735/kisedKstartupService/getAnnouncementInformation"
+
+  g2b:
+    name: "나라장터 국가종합전자조달"
+    adapter_type: "TypeB_G2B_API"
+    base_url: "https://www.g2b.go.kr/"
+    api_endpoint: "http://apis.data.go.kr/1230000/BidPublicInfoService04/getBidPblancListInfoServcPPSSrch01"
+
+  ntis:
+    name: "NTIS 국가과학기술지식정보서비스"
+    adapter_type: "TypeC_RndAggregator"
+    base_url: "https://www.ntis.go.kr/rndgate/eg/un/ra/mng.do"
+
+  iris:
+    name: "IRIS 범부처통합연구지원시스템"
+    adapter_type: "TypeC_RndAggregator"
+    base_url: "https://www.iris.go.kr/"
+
+  nipa:
+    name: "정보통신산업진흥원(NIPA)"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.nipa.kr/home/2-2"
+    ministry: "과학기술정보통신부"
+
+  keit:
+    name: "KEIT 산업기술R&D 정보포털(이로움)"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://srome.keit.re.kr/"
+    ministry: "산업통상자원부"
+
+  smtech:
+    name: "SMTECH 중소기업기술개발사업"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.smtech.go.kr/"
+    ministry: "중소벤처기업부"
+
+  khidi:
+    name: "KHIDI 한국보건산업진흥원"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.khidi.or.kr/"
+    ministry: "보건복지부"
+
+  rndia:
+    name: "RNDIA 한국산업기술진흥협회"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.rndia.or.kr/board/rndBiz/list.do"
+
+  modoo:
+    name: "모두(Modoo) 지원포털"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.modoo.or.kr/"
+
+  songpa_se:
+    name: "송파구 사회적경제지원센터"
+    adapter_type: "TypeE_LegacyASP"
+    base_url: "https://www.songpase.org/bbs.asp"
+    static_params:
+      pc: "n01"

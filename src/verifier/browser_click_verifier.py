@@ -49,7 +49,7 @@ class BrowserClickVerifier:
         "iris.go.kr": [r"ancmId=\d+"],
         "k-startup.go.kr": [r"pbancSn=\d+"],
         "ntis.go.kr": [r"roRndUid=\d+"],
-        "g2b.go.kr": [r"bidno=\d+"],
+        "g2b.go.kr": [r"bidno=\d+", r"bidPbancNo=", r"#PNPE"],
     }
 
     def __init__(self, timeout_sec: float = 6.0) -> None:

@@ -1,0 +1,999 @@
+{% extends "base.html" %}
+
+{% block title %}포털 및 지자체 센터 운영 관제 - SSHAI-CWA{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- 페이지 상단 헤더 -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2">
+        <span class="bg-indigo-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Portals & Local Hubs</span>
+        <h1 class="text-2xl font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-server text-indigo-600"></i> 각 사이트별 수집·접속 및 통합공고 관리
+        </h1>
+      </div>
+      <p class="text-sm text-slate-500 mt-1">
+        G2B, K-Startup 등 12개 실시간 포털 관제, 31선 중앙/지자체 연간 로드맵, 송파·강남·판교 등 전국 지자체 사무실·과제 지원센터를 종합 관리합니다.
+      </p>
+    </div>
+
+    <!-- 우측 헤더 액션 버튼 -->
+    <div class="flex items-center gap-2">
+      <button onclick="openAuthGuideModal()" class="bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-300 shadow-sm flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-key text-amber-500"></i> 포털별 인증 가이드
+      </button>
+      <button id="manualPipelineBtn" onclick="runManualPipeline()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-play"></i> 파이프라인 수동 실행
+      </button>
+      <button id="pingAllBtn" onclick="pingAllPortals()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow flex items-center gap-1.5 transition">
+        <i class="fa-solid fa-bolt"></i> 전체 실시간 핑(Ping) 진단
+      </button>
+    </div>
+  </div>
+
+  <!-- 메인 모드 선택 탭 (1. 실시간 포털 관제 vs 2. 통합공고 종합 정리함 vs 3. 지자체별 사무실·과제 지원센터) -->
+  <div class="flex border-b border-slate-200 bg-slate-100/80 p-1.5 rounded-xl gap-1">
+    <button onclick="switchMainTab('PORTALS')" id="tabBtn_portals"
+            class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-indigo-700 shadow-sm border border-slate-200">
+      <i class="fa-solid fa-network-wired text-sm"></i> 1. 실시간 수집 포털 관제 (12개 포털)
+    </button>
+    <button onclick="switchMainTab('MASTER')" id="tabBtn_master"
+            class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+      <i class="fa-solid fa-book-bookmark text-sm text-amber-600"></i> 2. 🏛️ 중앙부처 및 지자체 통합공고 총람 (31선)
+    </button>
+    <button onclick="switchMainTab('LOCAL')" id="tabBtn_local"
+            class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
+      <i class="fa-solid fa-building-user text-sm text-blue-600"></i> 3. 🏢 지자체별 사무실·과제 지원센터
+      <span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-0.5 rounded-full font-semibold">송파·강남·판교 등 {{ local_centers|length }}선</span>
+    </button>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 1: 실시간 수집 포털 관제 영역 -->
+  <!-- ========================================================================= -->
+  <div id="section_portals" class="space-y-6">
+
+    <!-- 상단 4대 관제 KPI 요약 카드 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">모니터링 대상 포털</p>
+          <p class="text-2xl font-bold text-slate-900 mt-1" id="kpi_total">{{ portals|length }}<span class="text-sm font-normal text-slate-500 ml-1">개 기관</span></p>
+          <p class="text-[11px] text-slate-500 mt-0.5">중앙부처·지자체·오픈웹</p>
+        </div>
+        <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-network-wired"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">정상 가동 가능 (Active)</p>
+          <p class="text-2xl font-bold text-emerald-600 mt-1" id="kpi_active">
+            {{ portals | selectattr('operational_status', 'equalto', 'ACTIVE') | list | length }}
+            <span class="text-sm font-normal text-slate-500 ml-1">개</span>
+          </p>
+          <p class="text-[11px] text-slate-500 mt-0.5">스크래핑 및 OpenAPI 정상</p>
+        </div>
+        <div class="w-12 h-12 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-amber-600 uppercase tracking-wider">인증/키 필요 (Fallback)</p>
+          <p class="text-2xl font-bold text-amber-600 mt-1" id="kpi_blocked">
+            {{ portals | rejectattr('operational_status', 'equalto', 'ACTIVE') | list | length }}
+            <span class="text-sm font-normal text-slate-500 ml-1">개</span>
+          </p>
+          <p class="text-[11px] text-slate-500 mt-0.5">설계상 안전 폴백 가동</p>
+        </div>
+        <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+      </div>
+
+      <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm flex items-center justify-between">
+        <div>
+          <p class="text-xs font-semibold text-rose-600 uppercase tracking-wider">서킷 브레이커 차단</p>
+          <p class="text-2xl font-bold text-rose-600 mt-1" id="kpi_circuits">
+            {{ portals | selectattr('circuit_state', 'equalto', 'OPEN') | list | length }}
+            <span class="text-sm font-normal text-slate-500 ml-1">개</span>
+          </p>
+          <p class="text-[11px] text-slate-500 mt-0.5">연속 실패에 따른 장애 격리</p>
+        </div>
+        <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-xl flex items-center justify-center text-xl">
+          <i class="fa-solid fa-triangle-exclamation"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 필터 및 검색 바 -->
+    <div class="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div class="flex items-center gap-1.5 flex-wrap">
+        <button onclick="setFilter('ALL')" data-filter="ALL" class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-900 text-white transition">전체 ({{ portals|length }})</button>
+        <button onclick="setFilter('ACTIVE')" data-filter="ACTIVE" class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">정상 가동 가능</button>
+        <button onclick="setFilter('NEEDS_ATTENTION')" data-filter="NEEDS_ATTENTION" class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">주의 / 키 미설정</button>
+        <button onclick="setFilter('API_KEY')" data-filter="API_KEY" class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">OpenAPI 대상</button>
+        <button onclick="setFilter('PUBLIC')" data-filter="PUBLIC" class="filter-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">공개 게시판 (스크래핑)</button>
+      </div>
+
+      <div class="relative w-full sm:w-64">
+        <input type="text" id="portalSearchInput" onkeyup="filterPortalsTable()" placeholder="포털명, 어댑터, URL 검색..."
+               class="w-full text-xs pl-8 pr-3 py-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white">
+        <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+      </div>
+    </div>
+
+    <!-- 포털 상태 테이블 -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 uppercase tracking-wider text-[11px]">
+              <th class="py-3 px-4 font-semibold">포털명 / ID</th>
+              <th class="py-3 px-4 font-semibold">수집 방식 (Adapter)</th>
+              <th class="py-3 px-4 font-semibold">인증 방식 및 수집 요건</th>
+              <th class="py-3 px-4 font-semibold">운영 상태 (Status)</th>
+              <th class="py-3 px-4 font-semibold">DB 공고 수</th>
+              <th class="py-3 px-4 font-semibold">실시간 핑 (Latency)</th>
+              <th class="py-3 px-4 font-semibold text-right">작업</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100" id="portalsTableBody">
+            {% for p in portals %}
+            <tr class="portal-row hover:bg-slate-50/60 transition"
+                data-id="{{ p.portal_id }}"
+                data-status="{{ p.operational_status }}"
+                data-auth="{{ p.auth_type }}"
+                data-search="{{ p.name }} {{ p.portal_id }} {{ p.crawling_method }} {{ p.base_url }}">
+              
+              <td class="py-3.5 px-4">
+                <div class="flex items-center gap-2">
+                  <div class="w-2.5 h-2.5 rounded-full {% if p.operational_status == 'ACTIVE' %}bg-emerald-500{% elif p.circuit_state == 'OPEN' %}bg-rose-500{% else %}bg-amber-400{% endif %}"></div>
+                  <div>
+                    <div class="font-bold text-slate-900 text-sm flex items-center gap-1.5">
+                      {{ p.name }}
+                      {% if p.login_required_for_web %}
+                      <span class="text-[10px] text-blue-600 bg-blue-50 border border-blue-200 px-1.5 py-0.2 rounded font-medium">웹 로그인 대상</span>
+                      {% endif %}
+                    </div>
+                    <div class="text-[11px] text-slate-400 font-mono">{{ p.portal_id }} · {{ p.ministry }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="py-3 px-4">
+                <div class="font-medium text-slate-800">{{ p.crawling_method }}</div>
+                <div class="text-[10px] text-slate-400 font-mono mt-0.5">{{ p.adapter_type }}</div>
+              </td>
+
+              <td class="py-3 px-4">
+                {% if p.portal_id == 'g2b' %}
+                  {% if p.is_auth_configured %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-1">
+                      <i class="fa-solid fa-check text-[10px]"></i> OpenAPI 키 연동 완료 (공동인증서 불필요)
+                    </span>
+                  {% else %}
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 mb-1">
+                      <i class="fa-solid fa-id-badge text-[10px]"></i> 웹 직접조회 시 공동인증서 필요
+                    </span>
+                  {% endif %}
+                {% elif p.login_required_for_web %}
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 mb-1">
+                    <i class="fa-solid fa-id-badge text-[10px]"></i> 웹 로그인 필요
+                  </span>
+                  <br>
+                {% endif %}
+
+                {% if p.auth_type == 'API_KEY_REQUIRED' or p.required_env_key %}
+                  {% if p.portal_id != 'g2b' %}
+                    {% if p.is_auth_configured %}
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <i class="fa-solid fa-key text-[10px]"></i> 키 설정 완료 ({{ p.required_env_key }})
+                      </span>
+                    {% else %}
+                      <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                        <i class="fa-solid fa-triangle-exclamation text-[10px]"></i> 키 미등록 ({{ p.required_env_key }})
+                      </span>
+                    {% endif %}
+                  {% endif %}
+                {% elif p.auth_type == 'PUBLIC_BOARD' %}
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                    <i class="fa-solid fa-lock-open text-[10px]"></i> 공개 웹 (인증 불필요)
+                  </span>
+                {% endif %}
+              </td>
+
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-semibold
+                  {% if p.operational_status == 'ACTIVE' %}bg-emerald-100 text-emerald-800
+                  {% elif p.operational_status == 'BLOCKED_AUTH' %}bg-amber-100 text-amber-800
+                  {% elif p.operational_status == 'CIRCUIT_OPEN' %}bg-rose-100 text-rose-800
+                  {% else %}bg-blue-100 text-blue-800{% endif %}">
+                  <span class="w-1.5 h-1.5 rounded-full {% if p.operational_status == 'ACTIVE' %}bg-emerald-600{% elif p.circuit_state == 'OPEN' %}bg-rose-600{% else %}bg-amber-500{% endif %}"></span>
+                  {{ p.operational_status_label }}
+                </span>
+                {% if p.circuit_state == 'OPEN' %}
+                <div class="text-[10px] text-rose-600 font-bold mt-0.5">서킷 OPEN (Fast-Fail)</div>
+                {% endif %}
+              </td>
+
+              <td class="py-3 px-4">
+                <span class="font-bold text-slate-800 text-sm">{{ p.announcements_count }}</span>
+                <span class="text-slate-400 text-[11px]">건</span>
+              </td>
+
+              <td class="py-3 px-4">
+                <div id="ping_badge_{{ p.portal_id }}" class="text-slate-400 text-xs flex items-center gap-1 font-mono">
+                  <i class="fa-regular fa-clock text-[10px]"></i> 미진단
+                </div>
+              </td>
+
+              <td class="py-3 px-4 text-right">
+                <div class="flex items-center justify-end gap-1.5">
+                  <button onclick="pingSinglePortal('{{ p.portal_id }}')" id="ping_btn_{{ p.portal_id }}"
+                          class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-slate-300 transition inline-flex items-center gap-1"
+                          title="실시간 HTTP 응답속도 테스트">
+                    <i class="fa-solid fa-arrows-rotate text-[10px]"></i> Ping
+                  </button>
+                  <a href="{{ p.base_url }}" target="_blank" rel="noopener noreferrer"
+                     class="bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-900 text-xs px-2 py-1 rounded-lg border border-slate-300 transition inline-flex items-center"
+                     title="공식 포털 바로가기">
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                  </a>
+                </div>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 2: 🏛️ 중앙부처 및 지자체 통합공고 총람 영역 (종합 정리함) -->
+  <!-- ========================================================================= -->
+  <div id="section_master" class="hidden space-y-6">
+
+    <!-- 종합 안내 배너 -->
+    <div class="bg-gradient-to-r from-amber-500/10 via-indigo-500/10 to-blue-500/10 p-5 rounded-2xl border border-amber-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="bg-amber-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Master Roadmap</span>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-file-lines text-amber-600"></i> 대한민국 중앙부처 및 17개 지자체 창업지원사업 통합공고 종합 정리함
+          </h2>
+        </div>
+        <p class="text-xs text-slate-600 max-w-3xl leading-relaxed">
+          K-Startup 통합공고문 종합 안내책자를 바탕으로 구조화된 <strong>31대 마스터 과제 카탈로그</strong>입니다.
+          공고가 게시되기 전에도 <strong>개략적 사업공고 시기(월별), 소관 부처, 전담기관, 지원대상, 지원규모</strong>를 미리 파악하여 사업 아이템별 선제적 준비가 가능합니다.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <a href="https://kpdf.k-startup.go.kr:8443/SynapDocViewServer/viewer/doc.html?key=3e231d185cc94bf5bfb62083da780115&convType=img&convLocale=ko_KR&contextPath=/SynapDocViewServer"
+           target="_blank" rel="noopener noreferrer"
+           class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3.5 py-2 rounded-lg shadow transition flex items-center gap-1.5 whitespace-nowrap">
+          <i class="fa-solid fa-book-open"></i> K-Startup 원문 뷰어 열기
+        </a>
+      </div>
+    </div>
+
+    <!-- 월별 공고 로드맵 타임라인 요약 바 -->
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-3">
+      <div class="flex items-center justify-between">
+        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-1.5">
+          <i class="fa-regular fa-calendar-check text-indigo-600"></i> 2026 연간 사업공고 타임라인 (과제별 개략적 시기)
+        </h3>
+        <span class="text-[11px] text-slate-400">클릭 시 해당 월 과제 필터링</span>
+      </div>
+
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2">
+        {% for period_name, progs in monthly_timeline.items() %}
+        <div onclick="filterByPeriod('{{ period_name }}')"
+             class="p-3 bg-slate-50 hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 rounded-xl cursor-pointer transition text-center group">
+          <div class="text-xs font-bold text-slate-700 group-hover:text-indigo-700">{{ period_name }}</div>
+          <div class="text-lg font-black text-slate-900 mt-1">{{ progs|length }}<span class="text-[11px] font-normal text-slate-500 ml-0.5">건</span></div>
+          <div class="text-[10px] text-slate-400 truncate mt-0.5">
+            {% if progs|length > 0 %}{{ progs[0].program_name }}{% else %}-{% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 필터 및 검색 컨트롤러 바 -->
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-4">
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs font-bold text-slate-700 flex items-center gap-1">
+            <i class="fa-solid fa-filter text-slate-400"></i> 유형 필터:
+          </span>
+          <select id="masterCategorySelect" onchange="filterMasterTable()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs bg-white text-slate-700">
+            <option value="전체">전체 분야</option>
+            <option value="사업화">사업화</option>
+            <option value="기술개발(R&D)">기술개발(R&D)</option>
+            <option value="시설·공간·보육">시설·공간·보육</option>
+            <option value="글로벌">글로벌 진출</option>
+          </select>
+        </div>
+
+        <div class="relative w-full sm:w-72">
+          <input type="text" id="masterSearchInput" onkeyup="filterMasterTable()" placeholder="과제명, 부처, 지원내용 검색..."
+                 class="w-full text-xs pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white">
+          <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+        </div>
+      </div>
+
+      <!-- 17개 지역별 필터 버튼 그룹 -->
+      <div class="pt-3 border-t border-slate-100 space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-map-pin text-indigo-600"></i> 지역별 과제 필터
+          </span>
+          <span class="text-[11px] text-slate-400">17개 광역시·도 및 전국 공고</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5" id="masterRegionButtons">
+          <button onclick="setMasterRegionFilter('전국')" data-mregion="전국" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-900 text-white transition">전국</button>
+          <button onclick="setMasterRegionFilter('서울')" data-mregion="서울" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">서울</button>
+          <button onclick="setMasterRegionFilter('경기')" data-mregion="경기" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">경기</button>
+          <button onclick="setMasterRegionFilter('부산')" data-mregion="부산" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">부산</button>
+          <button onclick="setMasterRegionFilter('인천')" data-mregion="인천" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">인천</button>
+          <button onclick="setMasterRegionFilter('대구')" data-mregion="대구" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">대구</button>
+          <button onclick="setMasterRegionFilter('대전')" data-mregion="대전" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">대전</button>
+          <button onclick="setMasterRegionFilter('광주')" data-mregion="광주" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">광주</button>
+          <button onclick="setMasterRegionFilter('울산')" data-mregion="울산" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">울산</button>
+          <button onclick="setMasterRegionFilter('세종')" data-mregion="세종" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">세종</button>
+          <button onclick="setMasterRegionFilter('강원')" data-mregion="강원" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">강원</button>
+          <button onclick="setMasterRegionFilter('충북')" data-mregion="충북" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">충북</button>
+          <button onclick="setMasterRegionFilter('충남')" data-mregion="충남" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">충남</button>
+          <button onclick="setMasterRegionFilter('전북')" data-mregion="전북" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">전북</button>
+          <button onclick="setMasterRegionFilter('전남')" data-mregion="전남" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">전남</button>
+          <button onclick="setMasterRegionFilter('경북')" data-mregion="경북" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">경북</button>
+          <button onclick="setMasterRegionFilter('경남')" data-mregion="경남" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">경남</button>
+          <button onclick="setMasterRegionFilter('제주')" data-mregion="제주" class="mregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">제주</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 마스터 과제 테이블 -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr class="bg-amber-50/50 border-b border-amber-200/80 text-slate-700 uppercase tracking-wider text-[11px]">
+              <th class="py-3 px-4 font-bold">사업명 / 프로그램 ID</th>
+              <th class="py-3 px-4 font-bold">소관 부처 & 전담기관</th>
+              <th class="py-3 px-4 font-bold">지역 & 지원분야</th>
+              <th class="py-3 px-4 font-bold">공고 예정 시기</th>
+              <th class="py-3 px-4 font-bold">지원 대상 & 규모</th>
+              <th class="py-3 px-4 font-bold text-right">상세 보기</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100" id="masterTableBody">
+            {% for prog in master_programs %}
+            <tr class="master-row hover:bg-slate-50/70 transition"
+                data-id="{{ prog.program_id }}"
+                data-name="{{ prog.program_name }}"
+                data-ministry="{{ prog.supervising_ministry }}"
+                data-agency="{{ prog.operating_agency }}"
+                data-region="{{ prog.region_scope }}"
+                data-category="{{ prog.category }}"
+                data-month="{{ prog.expected_month }}"
+                data-desc="{{ prog.support_details }} {{ prog.target_qualifications }}">
+              
+              <td class="py-3.5 px-4">
+                <div class="font-bold text-slate-900 text-sm">{{ prog.program_name }}</div>
+                <div class="text-[11px] text-slate-400 font-mono mt-0.5">{{ prog.program_id }}</div>
+              </td>
+
+              <td class="py-3 px-4">
+                <div class="font-medium text-slate-800">{{ prog.supervising_ministry }}</div>
+                <div class="text-[11px] text-slate-500 mt-0.5">{{ prog.operating_agency }}</div>
+              </td>
+
+              <td class="py-3 px-4">
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold {% if prog.region_scope == '전국' %}bg-slate-100 text-slate-700{% else %}bg-indigo-50 text-indigo-700 border border-indigo-200{% endif %}">
+                  {{ prog.region_scope }}
+                </span>
+                <span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-amber-50 text-amber-800 border border-amber-200 ml-1">
+                  {{ prog.category }}
+                </span>
+              </td>
+
+              <td class="py-3 px-4">
+                <div class="font-bold text-indigo-700 flex items-center gap-1">
+                  <i class="fa-regular fa-calendar text-[10px]"></i> {{ prog.expected_period }}
+                </div>
+              </td>
+
+              <td class="py-3 px-4">
+                <div class="font-semibold text-emerald-700">{{ prog.support_scale }}</div>
+                <div class="text-[11px] text-slate-500 truncate max-w-xs" title="{{ prog.target_stage }} ({{ prog.target_qualifications }})">
+                  {{ prog.target_stage }}
+                </div>
+              </td>
+
+              <td class="py-3 px-4 text-right">
+                <button onclick="openProgramDetailModal('{{ prog.program_id }}')"
+                        class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-medium px-2.5 py-1 rounded-lg border border-slate-300 transition inline-flex items-center gap-1">
+                  <i class="fa-solid fa-circle-info text-[10px]"></i> 상세 보기
+                </button>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- TAB 3: 전국 지자체별 사무실·과제 지원센터 총람 영역 -->
+  <!-- ========================================================================= -->
+  <div id="section_local" class="hidden space-y-6">
+
+    <!-- 종합 안내 배너 -->
+    <div class="bg-gradient-to-r from-blue-500/10 via-indigo-500/10 to-teal-500/10 p-5 rounded-2xl border border-blue-200/80 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="bg-blue-600 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase">Local Support Hub</span>
+          <h2 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-building-user text-blue-600"></i> 전국 17개 지자체 및 기초자치구별 사무실·과제 지원센터 총람
+          </h2>
+        </div>
+        <p class="text-xs text-slate-600 max-w-3xl leading-relaxed">
+          송파구 사회적경제지원센터, 강남스타트업센터, 판교 스타트업캠퍼스, 대전 D-유니콘, 부산 센텀 CENTAP 등 
+          <strong>임대료 무상/저렴 입주 오피스(사무실) 지원</strong> 및 <strong>시제품 제작비·사업화 바우처 과제 지원</strong>을 제공하는 전국 지자체 핵심 거점 사이트 모음입니다.
+        </p>
+      </div>
+      <div class="text-xs text-slate-500 font-medium whitespace-nowrap bg-white/80 px-3 py-2 rounded-xl border border-blue-200">
+        등록 거점: <strong class="text-blue-700 font-bold" id="local_total_badge">{{ local_centers|length }}</strong>개소
+      </div>
+    </div>
+
+    <!-- 필터 및 검색 컨트롤러 바 -->
+    <div class="bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-4">
+      <!-- 17개 지역 버튼 -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-map-location-dot text-indigo-600"></i> 지역별 거점 필터
+          </span>
+          <span class="text-[11px] text-slate-400">전국 17개 광역시·도 및 기초구/시 선택</span>
+        </div>
+        <div class="flex flex-wrap gap-1.5" id="localRegionButtons">
+          <button onclick="setLocalRegionFilter('전국')" data-lregion="전국" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-900 text-white transition">전국</button>
+          <button onclick="setLocalRegionFilter('서울')" data-lregion="서울" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">서울</button>
+          <button onclick="setLocalRegionFilter('경기')" data-lregion="경기" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">경기</button>
+          <button onclick="setLocalRegionFilter('인천')" data-lregion="인천" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">인천</button>
+          <button onclick="setLocalRegionFilter('대전')" data-lregion="대전" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">대전</button>
+          <button onclick="setLocalRegionFilter('세종')" data-lregion="세종" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">세종</button>
+          <button onclick="setLocalRegionFilter('충남')" data-lregion="충남" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">충남</button>
+          <button onclick="setLocalRegionFilter('충북')" data-lregion="충북" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">충북</button>
+          <button onclick="setLocalRegionFilter('부산')" data-lregion="부산" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">부산</button>
+          <button onclick="setLocalRegionFilter('대구')" data-lregion="대구" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">대구</button>
+          <button onclick="setLocalRegionFilter('경북')" data-lregion="경북" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">경북</button>
+          <button onclick="setLocalRegionFilter('경남')" data-lregion="경남" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">경남</button>
+          <button onclick="setLocalRegionFilter('광주')" data-lregion="광주" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">광주</button>
+          <button onclick="setLocalRegionFilter('전북')" data-lregion="전북" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">전북</button>
+          <button onclick="setLocalRegionFilter('전남')" data-lregion="전남" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">전남</button>
+          <button onclick="setLocalRegionFilter('강원')" data-lregion="강원" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">강원</button>
+          <button onclick="setLocalRegionFilter('제주')" data-lregion="제주" class="lregion-btn px-2.5 py-1 text-xs font-semibold rounded-lg bg-slate-100 text-slate-700 hover:bg-slate-200 transition">제주</button>
+        </div>
+      </div>
+
+      <!-- 카테고리 + 지원유형 체크박스 + 검색창 -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+        <div class="flex items-center gap-3 flex-wrap">
+          <select id="localCategorySelect" onchange="filterLocalCards()" class="px-2.5 py-1.5 rounded-lg border border-slate-300 text-xs bg-white text-slate-700">
+            <option value="전체">전체 센터 유형</option>
+            <option value="사회적경제">사회적경제</option>
+            <option value="청년창업지원">청년창업지원</option>
+            <option value="산업진흥원">산업진흥원</option>
+            <option value="테크노파크">테크노파크</option>
+            <option value="창업허브">창업허브</option>
+            <option value="MICE·판로지원">MICE·판로지원</option>
+          </select>
+
+          <label class="inline-flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+            <input type="checkbox" id="localOfficeCheckbox" onchange="filterLocalCards()" class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+            <span>🏢 사무실 지원</span>
+          </label>
+          <label class="inline-flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer">
+            <input type="checkbox" id="localGrantsCheckbox" onchange="filterLocalCards()" class="rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+            <span>💰 과제 지원</span>
+          </label>
+        </div>
+
+        <div class="relative w-full sm:w-72">
+          <input type="text" id="localSearchInput" onkeyup="filterLocalCards()" placeholder="센터명, 구/시, 지원내용 검색..."
+                 class="w-full text-xs pl-8 pr-3 py-1.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:outline-none bg-white">
+          <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2 text-slate-400 text-xs"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- 카드 그리드 영역 -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4" id="localCentersGrid">
+      {% for center in local_centers %}
+      <div class="local-card bg-white rounded-xl p-5 border border-slate-200 shadow-sm space-y-3 hover:border-blue-300 transition"
+           data-region="{{ center.region }}"
+           data-subregion="{{ center.sub_region }}"
+           data-category="{{ center.category }}"
+           data-office="{{ 'true' if center.supports_office else 'false' }}"
+           data-grants="{{ 'true' if center.supports_grants else 'false' }}"
+           data-text="{{ center.name }} {{ center.region }} {{ center.sub_region }} {{ center.office_details }} {{ center.grant_details }} {{ center.target_qualifications }}">
+        
+        <div class="flex items-start justify-between gap-3">
+          <div class="space-y-1">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-slate-900 text-white">{{ center.region }} · {{ center.sub_region }}</span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200">{{ center.category }}</span>
+              {% if center.supports_office %}
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200">사무실 지원</span>
+              {% endif %}
+              {% if center.supports_grants %}
+              <span class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">과제 지원</span>
+              {% endif %}
+            </div>
+            <h3 class="text-sm font-bold text-slate-900">{{ center.name }}</h3>
+          </div>
+          
+          <a href="{{ center.website_url }}" target="_blank" rel="noopener noreferrer"
+             class="px-2.5 py-1.5 rounded-lg bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200 transition inline-flex items-center gap-1 whitespace-nowrap shadow-sm">
+            <span>공식 사이트</span>
+            <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+          </a>
+        </div>
+
+        <div class="space-y-2 text-xs">
+          <!-- 사무실 지원 박스 -->
+          <div class="p-2.5 bg-blue-50/60 rounded-lg border border-blue-100 text-blue-950 space-y-0.5">
+            <div class="font-bold flex items-center gap-1.5 text-blue-800">
+              <i class="fa-solid fa-building text-[11px]"></i> 사무실·입주 공간 지원
+            </div>
+            <p class="leading-relaxed text-slate-700">{{ center.office_details }}</p>
+          </div>
+
+          <!-- 과제/사업화 지원 박스 -->
+          <div class="p-2.5 bg-emerald-50/60 rounded-lg border border-emerald-100 text-emerald-950 space-y-0.5">
+            <div class="font-bold flex items-center gap-1.5 text-emerald-800">
+              <i class="fa-solid fa-sack-dollar text-[11px]"></i> 과제·사업화 지원금
+            </div>
+            <p class="leading-relaxed text-slate-700">{{ center.grant_details }}</p>
+          </div>
+        </div>
+
+        <!-- 하단 메타: 자격 및 연락처 -->
+        <div class="pt-2 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between text-[11px] text-slate-500 gap-1.5">
+          <div class="truncate max-w-sm" title="{{ center.target_qualifications }}">
+            <span class="font-semibold text-slate-600">대상:</span> {{ center.target_qualifications }}
+          </div>
+          <div class="font-mono text-slate-400 whitespace-nowrap">
+            <i class="fa-solid fa-phone text-[9px]"></i> {{ center.contact_info }}
+          </div>
+        </div>
+
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+</div>
+
+<!-- 마스터 과제 상세 모달 -->
+<div id="programDetailModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+    <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+      <h3 class="font-bold text-base flex items-center gap-2" id="modal_prog_title">
+        <i class="fa-solid fa-file-invoice text-amber-400"></i> 통합공고 과제 상세 정보
+      </h3>
+      <button onclick="closeProgramDetailModal()" class="text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700">
+      <div class="grid grid-cols-2 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-200">
+        <div>
+          <span class="text-slate-400 font-semibold">소관 부처:</span>
+          <div class="font-bold text-slate-900 text-sm mt-0.5" id="modal_prog_ministry">-</div>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold">전담/주관 기관:</span>
+          <div class="font-bold text-slate-900 text-sm mt-0.5" id="modal_prog_agency">-</div>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold">공고 예정 시기:</span>
+          <div class="font-bold text-indigo-700 text-sm mt-0.5" id="modal_prog_period">-</div>
+        </div>
+        <div>
+          <span class="text-slate-400 font-semibold">대상 지역:</span>
+          <div class="font-bold text-slate-900 text-sm mt-0.5" id="modal_prog_region">-</div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-slate-900 mb-1">지원 대상 및 자격 요건</h4>
+        <div class="p-3 bg-amber-50/60 border border-amber-200 rounded-lg text-amber-950 font-medium leading-relaxed" id="modal_prog_qualifications">-</div>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-slate-900 mb-1">지원 내용 및 지원 규모</h4>
+        <div class="p-3 bg-emerald-50/60 border border-emerald-200 rounded-lg text-emerald-950 space-y-1">
+          <div class="font-bold text-emerald-800 text-sm" id="modal_prog_scale">-</div>
+          <div class="text-slate-700 leading-relaxed" id="modal_prog_details">-</div>
+        </div>
+      </div>
+
+      <div>
+        <h4 class="font-bold text-slate-900 mb-1">문의처 및 공식 안내처</h4>
+        <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg font-mono text-slate-800" id="modal_prog_inquiry">-</div>
+      </div>
+    </div>
+
+    <div class="px-6 py-3 bg-slate-100 text-right border-t border-slate-200">
+      <button onclick="closeProgramDetailModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+        닫기
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- 인증 가이드 안내 모달 -->
+<div id="authGuideModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+    <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+      <h3 class="font-bold text-base flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-amber-400"></i> 각 사이트별 인증 및 접속 요건 상세 가이드
+      </h3>
+      <button onclick="closeAuthGuideModal()" class="text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <div class="p-6 overflow-y-auto space-y-5 text-xs text-slate-700">
+      <div class="p-4 bg-blue-50/70 rounded-xl border border-blue-200 space-y-2">
+        <div class="flex items-center justify-between">
+          <h4 class="font-bold text-sm text-blue-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-building-columns text-blue-600"></i> 조달청 나라장터 (g2b.go.kr)
+          </h4>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-blue-200 text-blue-900">OpenAPI 지원</span>
+        </div>
+        <p class="leading-relaxed text-blue-950">
+          <strong>왜 웹에서는 로그인이 필요한가?</strong> 나라장터 웹사이트(g2b.go.kr)는 공공기관 전자입찰 및 계약의 법적 효력을 위해 전자서명법에 따른 <strong>사업자 공동인증서 로그인</strong>이 의무화되어 있으며, 비회원의 웹 화면 실시간 검색 및 크롤링을 차단합니다.
+        </p>
+        <div class="p-3 bg-white/90 rounded-lg text-blue-950 border border-blue-200 leading-relaxed space-y-1.5">
+          <div><strong>🔑 로그인 ID와 암호가 필요한가요?</strong> <span class="font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">전혀 필요 없습니다 (0%)</span></div>
+          <div class="text-[11px] text-slate-600">
+            나라장터 회원 ID, 비밀번호, 공동인증서는 실제 입찰에 참가하여 투찰서를 제출할 때만 사용됩니다.<br>
+            본 자동화 수집·매칭 시스템은 공공데이터포털(data.go.kr)의 <strong>오픈 API 키(<code>G2B_API_KEY</code> 또는 <code>DATA_GO_KR_KEY</code>)</strong> 하나만 있으면 ID/암호 없이 모든 공고와 과업지시서 첨부파일을 100% 정상 수집합니다.
+          </div>
+        </div>
+      </div>
+
+      <div class="p-4 bg-emerald-50/70 rounded-xl border border-emerald-200 space-y-2">
+        <div class="flex items-center justify-between">
+          <h4 class="font-bold text-sm text-emerald-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-seedling text-emerald-600"></i> K-Startup 창업지원포털 (k-startup.go.kr)
+          </h4>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-200 text-emerald-900">OpenAPI 지원</span>
+        </div>
+        <p class="leading-relaxed text-emerald-950">
+          중소벤처기업부 및 창업진흥원의 전국 창업 공고를 수집합니다. 공공데이터포털에서 발급받은 <code>DATA_GO_KR_KEY</code>를 <code>.env</code> 파일에 입력하면 실시간 공고 수집이 가동됩니다.
+        </p>
+      </div>
+
+      <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+        <h4 class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+          <i class="fa-solid fa-globe text-slate-600"></i> IRIS, NTIS, NIPA, KEIT, SMTECH, KHIDI 등 국가 R&D 포털
+        </h4>
+        <p class="leading-relaxed text-slate-600">
+          국가 R&D 사업 공고는 대국민 공개 게시판 형태로 제공되므로 별도의 회원 로그인이나 API 키 없이 시스템의 <strong>자동 헤드리스 수집기(TypeC/TypeD)</strong>를 통해 즉시 수집 가능합니다.
+        </p>
+      </div>
+    </div>
+
+    <div class="px-6 py-3 bg-slate-100 text-right border-t border-slate-200">
+      <button onclick="closeAuthGuideModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
+        확인 완료
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+  let currentFilter = 'ALL';
+  let currentMainTab = 'PORTALS';
+  let currentMasterRegion = '전국';
+  let currentLocalRegion = '전국';
+
+  const masterProgramsData = {{ master_programs | tojson | safe }};
+
+  function switchMainTab(tab) {
+    currentMainTab = tab;
+    const secPortals = document.getElementById('section_portals');
+    const secMaster = document.getElementById('section_master');
+    const secLocal = document.getElementById('section_local');
+    const btnPortals = document.getElementById('tabBtn_portals');
+    const btnMaster = document.getElementById('tabBtn_master');
+    const btnLocal = document.getElementById('tabBtn_local');
+
+    // 초기화
+    secPortals.classList.add('hidden');
+    secMaster.classList.add('hidden');
+    secLocal.classList.add('hidden');
+    btnPortals.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+    btnMaster.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+    btnLocal.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+
+    if (tab === 'PORTALS') {
+      secPortals.classList.remove('hidden');
+      btnPortals.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-indigo-700 shadow-sm border border-slate-200";
+    } else if (tab === 'MASTER') {
+      secMaster.classList.remove('hidden');
+      btnMaster.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-amber-800 shadow-sm border border-slate-200";
+    } else if (tab === 'LOCAL') {
+      secLocal.classList.remove('hidden');
+      btnLocal.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200";
+    }
+  }
+
+  function openAuthGuideModal() {
+    document.getElementById('authGuideModal').classList.remove('hidden');
+  }
+
+  function closeAuthGuideModal() {
+    document.getElementById('authGuideModal').classList.add('hidden');
+  }
+
+  function openProgramDetailModal(progId) {
+    const prog = masterProgramsData.find(p => p.program_id === progId);
+    if (!prog) return;
+
+    document.getElementById('modal_prog_title').innerText = prog.program_name;
+    document.getElementById('modal_prog_ministry').innerText = prog.supervising_ministry;
+    document.getElementById('modal_prog_agency').innerText = prog.operating_agency;
+    document.getElementById('modal_prog_period').innerText = prog.expected_period;
+    document.getElementById('modal_prog_region').innerText = prog.region_scope;
+    document.getElementById('modal_prog_qualifications').innerText = prog.target_qualifications;
+    document.getElementById('modal_prog_scale').innerText = prog.support_scale;
+    document.getElementById('modal_prog_details').innerText = prog.support_details;
+    document.getElementById('modal_prog_inquiry').innerText = prog.inquiry_contact;
+
+    document.getElementById('programDetailModal').classList.remove('hidden');
+  }
+
+  function closeProgramDetailModal() {
+    document.getElementById('programDetailModal').classList.add('hidden');
+  }
+
+  // --------------------------------------------------------------------------
+  // Tab 1 필터 및 핑 로직
+  // --------------------------------------------------------------------------
+  function setFilter(type) {
+    currentFilter = type;
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      if (btn.getAttribute('data-filter') === type) {
+        btn.classList.add('bg-slate-900', 'text-white', 'border-slate-900');
+        btn.classList.remove('bg-slate-100', 'text-slate-700', 'border-slate-300');
+      } else {
+        btn.classList.remove('bg-slate-900', 'text-white', 'border-slate-900');
+        btn.classList.add('bg-slate-100', 'text-slate-700', 'border-slate-300');
+      }
+    });
+    filterPortalsTable();
+  }
+
+  function filterPortalsTable() {
+    const q = (document.getElementById('portalSearchInput').value || '').toLowerCase().trim();
+    const rows = document.querySelectorAll('.portal-row');
+
+    rows.forEach(row => {
+      const status = row.getAttribute('data-status');
+      const auth = row.getAttribute('data-auth');
+      const searchText = (row.getAttribute('data-search') || '').toLowerCase();
+
+      let matchFilter = true;
+      if (currentFilter === 'ACTIVE') matchFilter = (status === 'ACTIVE');
+      else if (currentFilter === 'NEEDS_ATTENTION') matchFilter = (status !== 'ACTIVE');
+      else if (currentFilter === 'API_KEY') matchFilter = (auth === 'API_KEY_REQUIRED' || auth === 'LOGIN_CERT_REQUIRED');
+      else if (currentFilter === 'PUBLIC') matchFilter = (auth === 'PUBLIC_BOARD');
+
+      const matchSearch = !q || searchText.includes(q);
+      row.style.display = (matchFilter && matchSearch) ? '' : 'none';
+    });
+  }
+
+  async function pingSinglePortal(portalId) {
+    const badge = document.getElementById(`ping_badge_${portalId}`);
+    const btn = document.getElementById(`ping_btn_${portalId}`);
+    if (!badge) return;
+
+    badge.innerHTML = '<i class="fa-solid fa-spinner fa-spin text-indigo-500"></i> 측정중...';
+    if (btn) btn.disabled = true;
+
+    try {
+      const resp = await fetch(`/api/portals/ping/${portalId}`, { method: 'POST' });
+      const data = await resp.json();
+      renderPingBadge(badge, data);
+    } catch (e) {
+      badge.innerHTML = '<span class="text-rose-600 font-bold">오류</span>';
+    } finally {
+      if (btn) btn.disabled = false;
+    }
+  }
+
+  async function pingAllPortals() {
+    const btn = document.getElementById('pingAllBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 일괄 핑 측정 중...';
+
+    try {
+      const resp = await fetch('/api/portals/ping-all', { method: 'POST' });
+      const data = await resp.json();
+      if (data.results) {
+        data.results.forEach(res => {
+          const badge = document.getElementById(`ping_badge_${res.portal_id}`);
+          if (badge) renderPingBadge(badge, res);
+        });
+      }
+    } catch (e) {
+      alert('일괄 핑 테스트 중 통신 오류가 발생했습니다.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-bolt"></i> 전체 실시간 핑(Ping) 진단';
+    }
+  }
+
+  function renderPingBadge(badgeEl, res) {
+    if (res.is_alive) {
+      let colorClass = 'text-emerald-700 bg-emerald-50 border-emerald-200';
+      if (res.latency_ms > 1500) colorClass = 'text-amber-700 bg-amber-50 border-amber-200';
+      badgeEl.innerHTML = `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[11px] font-mono font-bold ${colorClass}">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> ${res.latency_ms} ms (${res.http_status})
+        </span>
+      `;
+    } else {
+      badgeEl.innerHTML = `
+        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded border text-[11px] font-mono font-bold text-rose-700 bg-rose-50 border-rose-200">
+          <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> 오류 (${res.error || res.http_status})
+        </span>
+      `;
+    }
+  }
+
+  // --------------------------------------------------------------------------
+  // Tab 2: 🏛️ 마스터 총람 필터 로직
+  // --------------------------------------------------------------------------
+  function setMasterRegionFilter(region) {
+    currentMasterRegion = region;
+    document.querySelectorAll('.mregion-btn').forEach(btn => {
+      if (btn.getAttribute('data-mregion') === region) {
+        btn.classList.add('bg-slate-900', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-700');
+      } else {
+        btn.classList.remove('bg-slate-900', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      }
+    });
+    filterMasterTable();
+  }
+
+  function filterByPeriod(periodStr) {
+    switchMainTab('MASTER');
+    let m = 0;
+    if (periodStr.includes('1월')) m = 1;
+    else if (periodStr.includes('2월')) m = 2;
+    else if (periodStr.includes('3월')) m = 3;
+    else if (periodStr.includes('4월')) m = 4;
+
+    const rows = document.querySelectorAll('.master-row');
+    rows.forEach(r => {
+      const rowMonth = parseInt(r.getAttribute('data-month'), 10);
+      r.style.display = (m === 0 || rowMonth === m || rowMonth === 0) ? '' : 'none';
+    });
+  }
+
+  function filterMasterTable() {
+    const q = (document.getElementById('masterSearchInput').value || '').toLowerCase().trim();
+    const cat = document.getElementById('masterCategorySelect').value;
+    const rows = document.querySelectorAll('.master-row');
+
+    rows.forEach(row => {
+      const name = (row.getAttribute('data-name') || '').toLowerCase();
+      const ministry = (row.getAttribute('data-ministry') || '').toLowerCase();
+      const agency = (row.getAttribute('data-agency') || '').toLowerCase();
+      const reg = row.getAttribute('data-region') || '';
+      const rowCat = row.getAttribute('data-category') || '';
+      const desc = (row.getAttribute('data-desc') || '').toLowerCase();
+
+      let matchRegion = (currentMasterRegion === '전국') || (reg === '전국') || reg.includes(currentMasterRegion);
+      let matchCat = (cat === '전체') || (rowCat.includes(cat));
+      let matchQuery = !q || name.includes(q) || ministry.includes(q) || agency.includes(q) || desc.includes(q);
+
+      row.style.display = (matchRegion && matchCat && matchQuery) ? '' : 'none';
+    });
+  }
+
+  // --------------------------------------------------------------------------
+  // Tab 3: 🏢 전국 지자체 지원센터 필터 로직
+  // --------------------------------------------------------------------------
+  function setLocalRegionFilter(region) {
+    currentLocalRegion = region;
+    document.querySelectorAll('.lregion-btn').forEach(btn => {
+      if (btn.getAttribute('data-lregion') === region) {
+        btn.classList.add('bg-slate-900', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-700');
+      } else {
+        btn.classList.remove('bg-slate-900', 'text-white');
+        btn.classList.add('bg-slate-100', 'text-slate-700');
+      }
+    });
+    filterLocalCards();
+  }
+
+  function filterLocalCards() {
+    const q = (document.getElementById('localSearchInput').value || '').toLowerCase().trim();
+    const cat = document.getElementById('localCategorySelect').value;
+    const officeOnly = document.getElementById('localOfficeCheckbox').checked;
+    const grantsOnly = document.getElementById('localGrantsCheckbox').checked;
+    const cards = document.querySelectorAll('.local-card');
+
+    let visibleCount = 0;
+    cards.forEach(card => {
+      const reg = card.getAttribute('data-region') || '';
+      const subreg = card.getAttribute('data-subregion') || '';
+      const cCat = card.getAttribute('data-category') || '';
+      const hasOffice = card.getAttribute('data-office') === 'true';
+      const hasGrants = card.getAttribute('data-grants') === 'true';
+      const text = (card.getAttribute('data-text') || '').toLowerCase();
+
+      let matchReg = (currentLocalRegion === '전국') || (reg.includes(currentLocalRegion)) || (subreg.includes(currentLocalRegion));
+      let matchCat = (cat === '전체') || (cCat.includes(cat));
+      let matchOffice = !officeOnly || hasOffice;
+      let matchGrants = !grantsOnly || hasGrants;
+      let matchQuery = !q || text.includes(q);
+
+      const isVisible = matchReg && matchCat && matchOffice && matchGrants && matchQuery;
+      card.style.display = isVisible ? '' : 'none';
+      if (isVisible) visibleCount++;
+    });
+
+    const badge = document.getElementById('local_total_badge');
+    if (badge) badge.innerText = visibleCount;
+  }
+
+  async function runManualPipeline() {
+    const btn = document.getElementById('manualPipelineBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 가동 중...';
+
+    try {
+      const resp = await fetch('/api/pipeline/run', { method: 'POST' });
+      const data = await resp.json();
+      if (data.status === 'success') {
+        alert(data.message || '파이프라인이 성공적으로 완료되었습니다.');
+        window.location.reload();
+      } else {
+        alert('파이프라인 실행 실패: ' + (data.message || '알 수 없는 오류'));
+      }
+    } catch (e) {
+      alert('파이프라인 실행 중 통신 오류가 발생했습니다.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-play"></i> 파이프라인 수동 실행';
+    }
+  }
+</script>
+{% endblock %}

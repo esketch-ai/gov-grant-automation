@@ -35,7 +35,7 @@ DEFAULT_PROFILE: Dict[str, Any] = {
     "biz_reg_no": "",
     "opened_date": "",
     "founder_birth": "",
-    "founder_gender": "F",
+    "founder_gender": "",
     "address": "",
     "debt_ratio_pct": None,
     "has_rnd_lab": False,
@@ -100,7 +100,7 @@ class PreflightService:
             biz_reg_no=p.get("biz_reg_no") or "",
             opened_at_str=p.get("opened_date") or None,
             founder_birth_str=p.get("founder_birth") or None,
-            founder_gender=p.get("founder_gender") or "F",
+            founder_gender=p.get("founder_gender") or "",
             address=p.get("address") or "",
             certifications=list(p.get("certifications") or []),
         )
@@ -132,8 +132,9 @@ class PreflightService:
         # 2) 청년
         if cal.is_youth_39 or cal.is_youth_34:
             tags.append(f"만 {cal.founder_age}세 청년")
-        # 3) 여성기업
-        if cal.is_female_founder:
+        # 3) 여성기업 (남성 대표는 법적 배제 원칙 엄수)
+        gender = str(profile.get("founder_gender") or "").strip().upper()
+        if cal.is_female_founder and gender != "M":
             tags.append("여성기업")
         # 4) 지역
         if cal.region:

@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}도전 과제 워크스페이스 · SSHAI-CWA B2B SaaS{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+
+  <!-- ========================================================================= -->
+  <!-- 1. 상단 KPI & Vault 매칭 배너 -->
+  <!-- ========================================================================= -->
+  <div class="bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-rose-800/40">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-rose-500/20 text-rose-300 border border-rose-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <i class="fa-solid fa-bullseye text-rose-400"></i> Vault 자산 기반 초정밀 매칭
+          </span>
+          <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <i class="fa-solid fa-building-shield text-emerald-400"></i> 테넌트 격리
+          </span>
+        </div>
+        <h1 class="text-2xl font-bold tracking-tight">도전 과제 워크스페이스</h1>
+        <p class="text-slate-300 text-sm">
+          <span class="text-rose-200 font-semibold">{{ current_tenant.company_name }}</span> ·
+          Company Vault 자산으로 25대 사전지원조건 신호등 실행,
+          RED는 자동제거 후 Match Score 역순으로 권장 공고 추천.
+        </p>
+      </div>
+      <div class="flex gap-4 text-center">
+        <div class="bg-white/5 backdrop-blur border border-white/10 rounded-xl px-5 py-3 min-w-[110px]">
+          <div class="text-3xl font-extrabold text-rose-300">{{ kpi.count }}</div>
+          <div class="text-[11px] uppercase tracking-wider text-slate-400 mt-1">진행 과제</div>
+        </div>
+        <div class="bg-white/5 backdrop-blur border border-white/10 rounded-xl px-5 py-3 min-w-[110px]">
+          <div class="text-3xl font-extrabold text-blue-300">{{ kpi.avg_progress }}%</div>
+          <div class="text-[11px] uppercase tracking-wider text-slate-400 mt-1">평균 진전율</div>
+        </div>
+        <div class="bg-white/5 backdrop-blur border border-white/10 rounded-xl px-5 py-3 min-w-[110px]">
+          <div class="text-3xl font-extrabold text-amber-300">{{ kpi.urgent }}</div>
+          <div class="text-[11px] uppercase tracking-wider text-slate-400 mt-1">임박(D-7)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 2. Vault 매칭 권장 공고 (RED 자동제거, Match Score 역순) -->
+  <!-- ========================================================================= -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-wand-magic-sparkles text-rose-500"></i> Vault 매칭 권장 공고
+        <span class="text-xs font-normal text-slate-400">RED 자동 제외 · {{ recommendations|length }}건</span>
+      </h2>
+    </div>
+    <div class="p-6">
+      {% if recommendations %}
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="recGrid">
+        {% for r in recommendations %}
+        <div class="border rounded-xl p-4 shadow-sm bg-slate-50/50 flex flex-col" data-cid="{{ r.canonical_id }}"
+             style="border-color: {% if r.signal_light == 'green' %}#34d399{% elif r.signal_light == 'yellow' %}#fbbf24{% else %}#f87171{% endif %}; border-left-width: 4px;">
+          <div class="flex items-start justify-between gap-2">
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                  style="background: {% if r.signal_light == 'green' %}#d1fae5;color:#065f46{% elif r.signal_light == 'yellow' %}#fef3c7;color:#92400e{% else %}#fee2e2;color:#991b1b{% endif %};">
+              {{ r.signal_light|upper }}
+            </span>
+            <span class="text-xs font-mono text-slate-500">Score {{ r.match_score }}</span>
+          </div>
+          <div class="mt-2 flex-1">
+            <h3 class="text-sm font-semibold text-slate-800 line-clamp-2">{{ r.title or '(제목없음)' }}</h3>
+            <p class="text-xs text-slate-500 mt-1">{{ r.organization or '' }}{% if r.ministry %} · {{ r.ministry }}{% endif %}</p>
+            <div class="flex flex-wrap gap-1 my-2">
+              {% for tag in (r.tags or [])|slice(0, 4) %}
+              <span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{{ tag }}</span>
+              {% endfor %}
+            </div>
+            <div class="text-[11px] text-slate-500">
+              <i class="fa-solid fa-plus"></i> UDA 점수 <b class="text-emerald-600">+{{ r.bonus_points }}</b>
+              {% if r.matched_track %}<i class="fa-solid fa-route ml-1"></i>{{ r.matched_track }}{% endif %}
+            </div>
+          </div>
+          <button onclick="registerProject('{{ r.canonical_id }}')"
+                  class="mt-3 w-full bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-2 rounded-lg transition">
+            <i class="fa-solid fa-bullseye"></i> 🎯 도전 과제 등록
+          </button>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="text-center text-slate-400 py-12">
+        <i class="fa-solid fa-circle-info text-3xl mb-2"></i>
+        <p>등록된 2026 공고를 찾을 수 없습니다. 먼저 <a href="/announcements" class="text-rose-600 font-semibold">공고 관리</a>에서 수집해 보세요.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- 3. 진행 중인 도전 과제 -->
+  <!-- ========================================================================= -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
+        <i class="fa-solid fa-list-check text-rose-500"></i> 진행 중인 도전 과제
+        <span class="text-xs font-normal text-slate-400">{{ projects|length }}건</span>
+      </h2>
+    </div>
+    <div class="p-6">
+      <div id="projectGrid" class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {% for p in projects %}
+        <div class="border border-slate-200 rounded-xl p-5 shadow-sm" data-pid="{{ p.id }}">
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0 flex-1">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="text-sm font-bold text-slate-800 truncate">{{ p.announcement_title or p.announcement_id }}</span>
+                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-700">{{ p.status or 'INIT' }}</span>
+                {% if p.template_id %}<span class="text-[10px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{{ p.template_id }}</span>{% endif %}
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1 font-mono">{{ p.announcement_id }}</p>
+            </div>
+            <span class="text-xs font-bold px-2.5 py-1 rounded-lg {{ p.dday.badge_class }}">{{ p.dday.badge_text }}</span>
+          </div>
+
+          <div class="mt-3">
+            <div class="flex justify-between text-[11px] text-slate-500 mb-1">
+              <span>진행률</span><span class="font-mono font-bold text-slate-700">{{ p.progress_pct or 0 }}%</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+              <div class="h-2.5 rounded-full bg-gradient-to-r from-rose-500 to-orange-400 transition-all"
+                   style="width: {{ p.progress_pct or 0 }}%"></div>
+            </div>
+          </div>
+
+          <div class="mt-4 flex flex-wrap gap-2">
+            <a href="/proposals/tailor?project_id={{ p.id }}"
+               class="flex-1 min-w-[120px] text-center bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold py-2 rounded-lg transition">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> 🪄 코파일럿 이어쓰기
+            </a>
+            <button onclick="advanceProject('{{ p.id }}')"
+                    class="border border-blue-200 text-blue-600 hover:bg-blue-50 text-xs font-semibold px-3 rounded-lg transition">
+              <i class="fa-solid fa-arrow-up"></i> +10%
+            </button>
+            <button onclick="deleteProject('{{ p.id }}')"
+                    class="border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 text-xs px-3 rounded-lg transition">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% if not projects %}
+      <div id="emptyProjects" class="text-center text-slate-400 py-12">
+        <i class="fa-solid fa-rocket text-3xl mb-2"></i>
+        <p>아직 도전 과제가 없습니다. 위 권장 공고 중 하나를 <b>도전 과제 등록</b>하세요.</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const STATUS_TEXT = { INIT: '초기화', DRAFTING: '안건 작성', SUBMITTED: '제출 완료', COMPLETED: '완료', ARCHIVED: '아카이브' };
+
+async function api(method, url, body) {
+  const opt = { method, headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' };
+  if (body) opt.body = JSON.stringify(body);
+  const r = await fetch(url, opt);
+  if (!r.ok) { const e = await r.json().catch(() => ({})); throw new Error(e.message || r.statusText); }
+  return r.json();
+}
+
+async function refresh() {
+  location.reload();
+}
+
+async function registerProject(canonical_id) {
+  try {
+    const res = await api('POST', '/api/projects', { canonical_id });
+    alert(`도전 과제 등록 완료: ${res.announcement_title || canonical_id}`);
+    await refresh();
+  } catch (e) { alert('등록 실패: ' + e.message); }
+}
+
+async function advanceProject(project_id) {
+  try {
+    await api('PATCH', `/api/projects/${project_id}`, { progress_pct: 10 });
+    await refresh();
+  } catch (e) { alert('진행률 갱신 실패: ' + e.message); }
+}
+
+async function deleteProject(project_id) {
+  if (!confirm('해당 도전 과제를 삭제하시겠습니까?')) return;
+  try {
+    await api('DELETE', `/api/projects/${project_id}`);
+    await refresh();
+  } catch (e) { alert('삭제 실패: ' + e.message); }
+}
+</script>
+{% endblock %}

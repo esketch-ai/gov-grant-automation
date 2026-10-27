@@ -20,6 +20,7 @@
             <th class="py-3 px-4">RFP ID</th>
             <th class="py-3 px-4 text-center">매칭 점수</th>
             <th class="py-3 px-4">발송 시각</th>
+            <th class="py-3 px-4 text-center">맞춤 계획서</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -35,10 +36,16 @@
               </span>
             </td>
             <td class="py-3 px-4 text-slate-500 font-mono">{{ d.sent_at }}</td>
+            <td class="py-3 px-4 text-center">
+              <a href="/proposals/tailor?item_id={{ d.item_id }}&announcement_id={{ d.canonical_id }}"
+                 class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-2.5 py-1 rounded text-[11px] shadow-sm transition inline-flex items-center gap-1">
+                <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i> 맞춤 변환
+              </a>
+            </td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="6" class="py-12 text-center text-slate-400 text-xs">
+            <td colspan="7" class="py-12 text-center text-slate-400 text-xs">
               <i class="fa-solid fa-paper-plane text-3xl mb-2 text-slate-300"></i>
               <p>아직 발송된 내역이 없습니다.</p>
               <p class="text-slate-500 mt-1">매칭 점수가 기준 이상이고 적격인 과제가 발견되면 자동으로 여기에 기록됩니다.</p>

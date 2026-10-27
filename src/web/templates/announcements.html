@@ -347,6 +347,7 @@
           <label class="block text-[11px] font-semibold text-slate-700 mb-1">대표자 성별 (여성기업 판정)</label>
           <select id="prof_founder_gender" name="founder_gender"
                   class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+            <option value="">성별 미지정 / 비공개</option>
             <option value="F">여성 (Female)</option>
             <option value="M">남성 (Male)</option>
           </select>
@@ -508,7 +509,7 @@
         document.getElementById('prof_biz_reg_no').value = p.biz_reg_no || '';
         document.getElementById('prof_opened_date').value = p.opened_date || '';
         document.getElementById('prof_founder_birth').value = p.founder_birth || '';
-        document.getElementById('prof_founder_gender').value = p.founder_gender || 'F';
+        document.getElementById('prof_founder_gender').value = p.founder_gender || '';
         document.getElementById('prof_address').value = p.address || '';
         document.getElementById('prof_debt_ratio').value = p.debt_ratio_pct !== null ? p.debt_ratio_pct : '';
         document.getElementById('prof_pi_projects').value = p.current_pi_projects || 0;

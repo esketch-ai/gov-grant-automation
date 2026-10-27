@@ -8,13 +8,23 @@ REQ-020 · 사업주 프로필 및 사전 비행점검 웹 연동 단위 테스�
 """
 import pytest
 from starlette.testclient import TestClient
-from src.web.app import app
+from src.web.app import app, PROJECT_ROOT
 from src.common.db import GrantDatabase
 
 
 @pytest.fixture
 def client():
-    return TestClient(app)
+    db = GrantDatabase(PROJECT_ROOT / "storage" / "grant_master.db")
+    db.ensure_schema()
+    original_prof = db.get_company_profile()
+    try:
+        yield TestClient(app)
+    finally:
+        if original_prof and original_prof.get("company_name"):
+            db.upsert_company_profile(original_prof)
+        else:
+            db.clear_company_profile()
+
 
 
 def test_api_profile_empty_or_configured(client):

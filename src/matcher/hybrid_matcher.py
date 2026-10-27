@@ -90,7 +90,20 @@ class HybridMatcher:
             result.condition_checks = combined_checks
 
         # Offline/Degraded fallback score adjustment using semantic score
-        if result.match_score == 0 and result.is_eligible and sem_score > 0:
+        is_degraded = (
+            (not result.is_eligible or result.match_score == 0)
+            and ("degrade" in (result.note or "").lower() or "llm" in (result.note or "").lower())
+        )
+        if is_degraded and passed:
+            # Tier 1 룰 필터를 통과한 건: 시맨틱 점수 기반으로 안전 폴백 매칭
+            fallback_score = max(int(sem_score), 75 if len(shared_terms) >= 2 else 70 if shared_terms else 50)
+            result.is_eligible = True
+            result.match_score = fallback_score
+            result.note = f"Tier 1 사전규칙 자격 통과 & 시맨틱 벡터 평가 반영({fallback_score}점, LLM 폴백)"
+            result.proposal_alignment_strategy = (
+                f"핵심 공유 용어({shared_terms_str})를 중심으로 지원서 작성 권장 (오프라인 폴백)"
+            )
+        elif result.match_score == 0 and result.is_eligible and sem_score > 0:
             result.match_score = int(sem_score)
             result.note = f"{result.note} | 시맨틱 벡터 점수 반영({sem_score}점)"
 

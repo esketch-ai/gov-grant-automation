@@ -58,7 +58,7 @@ class RulePreFilter:
         # -------------------------------------------------------------
         core_keywords = routing.get("core_keywords", [])
         if core_keywords:
-            matched_keywords = [kw for kw in core_keywords if kw and kw in haystack]
+            matched_keywords = [kw for kw in core_keywords if kw and kw.strip().lower() in haystack.lower()]
             if not matched_keywords:
                 reason = "핵심 기술 키워드 일치 0건 (도메인 불일치)"
                 checks.append(

@@ -14,6 +14,8 @@ logger = get_logger(__name__)
 
 
 class OllamaClient(LLMClient):
+    _is_endpoint_disabled: bool = False  # 클래스 레벨 서킷 브레이커: 오프라인 시 전체 인스턴스 지연 방지
+
     def __init__(self, base_url: str = "http://127.0.0.1:11434", model: str = "qwen3:32b",
                  timeout: float = 300.0, max_retries: int = 1, keep_alive: str = "1h"):
         self.base_url = base_url.rstrip("/")
@@ -24,6 +26,9 @@ class OllamaClient(LLMClient):
 
     def _chat(self, unused_system: str, user_prompt: str) -> str:
         """Ollama /api/chat 호출. 실패 시 빈 문자열로 degrade(파이프라인 미중단)."""
+        if OllamaClient._is_endpoint_disabled:
+            return ""
+
         import httpx
 
         payload = {
@@ -36,13 +41,18 @@ class OllamaClient(LLMClient):
             "keep_alive": self.keep_alive,  # 모델 메모리 상주 유지(워밍업 효과)
         }
         try:
-            with httpx.Client(timeout=self.timeout) as client:
+            with httpx.Client(timeout=min(self.timeout, 5.0)) as client:
                 resp = client.post(f"{self.base_url}/api/chat", json=payload)
                 resp.raise_for_status()
                 data = resp.json()
             return data.get("message", {}).get("content", "") or ""
         except Exception as e:
-            logger.warning("Ollama 호출 실패: %s", e)
+            err_str = str(e).lower()
+            if "404" in err_str or "connect" in err_str or "refused" in err_str:
+                OllamaClient._is_endpoint_disabled = True
+                logger.warning("Ollama 엔드포인트 비활성 감지(전역 Fast-Fail 전환): %s", e)
+            else:
+                logger.warning("Ollama 호출 실패: %s", e)
             return ""
 
     def generate_structured(
@@ -52,6 +62,9 @@ class OllamaClient(LLMClient):
         user_prompt: str,
         response_schema: "object",
     ) -> dict:
+        if OllamaClient._is_endpoint_disabled:
+            raise LLMStructuredParseError("Ollama 엔드포인트 비활성 (Fast-Fail)")
+
         schema_json = _safe_json_schema(response_schema)
         instruction = (
             "\n\n[출력 형식 강제조항] 다음 JSON 문자열 하나만 출력하세요. "

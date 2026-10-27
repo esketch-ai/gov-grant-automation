@@ -10,6 +10,12 @@ from enum import Enum
 from typing import List, Optional
 
 from src.common.nationwide_regions import RegionInfo, detect_region_from_text
+from src.common.constants import (
+    YOUTH_AGE_LIMIT_GENERAL,
+    YOUTH_AGE_LIMIT_SPECIAL,
+    BIZ_AGE_EARLY_STAGE_YEARS,
+    BIZ_AGE_GROWTH_STAGE_YEARS,
+)
 
 
 class BizStage(str, Enum):
@@ -51,8 +57,8 @@ class ApplicantProfiler:
         biz_reg_no: str,
         opened_at_str: Optional[str] = None,   # "2024-04-15" 또는 "20240415"
         founder_birth_str: Optional[str] = None, # "1994-06-20" 또는 "19940620"
-        founder_gender: str = "F",              # "F" (여성) 또는 "M" (남성)
-        address: str = "부산광역시 해운대구 센텀중앙로",
+        founder_gender: str = "",              # "F" (여성), "M" (남성), "" (미설정)
+        address: str = "",
         certifications: Optional[List[str]] = None,
     ) -> CalculatedApplicantProfile:
         """사업자 정보로부터 1초 만에 법적 자격 상태를 산출합니다."""
@@ -69,9 +75,9 @@ class ApplicantProfiler:
         # 기업 생애주기 판정
         if biz_age_years == 0.0:
             biz_stage = BizStage.PRE_STARTUP
-        elif biz_age_years <= 3.0:
+        elif biz_age_years <= BIZ_AGE_EARLY_STAGE_YEARS:
             biz_stage = BizStage.EARLY_STAGE
-        elif biz_age_years <= 7.0:
+        elif biz_age_years <= BIZ_AGE_GROWTH_STAGE_YEARS:
             biz_stage = BizStage.GROWTH_STAGE
         else:
             biz_stage = BizStage.SCALEUP_MATURE
@@ -82,14 +88,22 @@ class ApplicantProfiler:
             age = self.ref_date.year - birth_date.year
             if (self.ref_date.month, self.ref_date.day) < (birth_date.month, birth_date.day):
                 age -= 1
+            is_youth_39 = age <= YOUTH_AGE_LIMIT_GENERAL
+            is_youth_34 = age <= YOUTH_AGE_LIMIT_SPECIAL
         else:
-            age = 45  # 생년월일 미기재 시 기본 성인
+            age = 0
+            is_youth_39 = False  # 생년월일 미기재 시 청년 혜택 자동 부여 금지
+            is_youth_34 = False
 
-        is_youth_39 = age <= 39
-        is_youth_34 = age <= 34
-
-        # 3. 여성기업 여부
-        is_female = (founder_gender.upper() == "F" or "여성기업" in certifications)
+        # 3. 여성기업 여부 (남성 대표 및 성별 미지정은 법적 배제 원칙)
+        gender_clean = (founder_gender or "").strip().upper()
+        if gender_clean in ("M", "NONE"):
+            is_female = False
+        elif gender_clean == "F":
+            is_female = True
+        else:
+            # 성별 미기재('') 상태: certifications에 명시되었더라도 대표자 성별 확인 전까지는 False
+            is_female = False
 
         # 4. 소재지 관할 지역 감지
         region = detect_region_from_text(address)

@@ -27,13 +27,21 @@
 | **REQ-018** | 포털 수집기 지수 백오프 재시도 및 서킷 브레이커 장애 복원력 | 김도윤/정민재/박준호/한지훈 | ✅ **DONE** | HIGH | REQ-001,009,011,016 | `tests/test_resilience_circuit.py` (6pass), `src/common/resilience.py` 및 포털 격리/헬스체크 | 2026-10-25 |
 | **REQ-019** | 공고 마감일 D-Day 카운트다운 및 표준 iCalendar(.ics) 내보내기 | 이승엽/정민재/최은정/박준호/한지훈 | ✅ **DONE** | HIGH | REQ-010,016,018 | `tests/test_deadline_calendar.py` (5pass), `src/common/deadline.py`, `ical_exporter.py` 및 캘린더 피드 | 2026-10-25 |
 | **REQ-020** | 다차원 매칭 및 25대 조건 사전 비행점검 웹 관리자 전면 연동 | 박준호/이승엽/최은정/한지훈 | ✅ **DONE** | HIGH | REQ-010,015,019 | `tests/test_web_profile_preflight.py` (5pass), 프로필CRUD, 4대 다차원 탭, 🚥신호등 비행점검 UI 연동, QA Swarm 140/140 만점 | 2026-10-26 |
-| **REQ-021** | 사업 아이템 ↔ 기업/대표자 프로필 통합 및 자동 상속 | 박준호/이승엽/최은정/한지훈 | 🚀 **IN PROGRESS** | HIGH | REQ-013,020 | `items/*/profile.yaml`에 `company_specs` 연동, `/items` UI 등록/수정 모달에 여성/청년/인증 폼 탑재 및 자동상속 | — |
+| **REQ-021** | 사업 아이템 ↔ 기업/대표자 프로필 통합 및 자동 상속 | 박준호/이승엽/최은정/한지훈 | ✅ **DONE** | HIGH | REQ-013,020 | `items/*/profile.yaml`에 `company_specs` 연동, `/items` UI 등록/수정 모달에 여성/청년/인증 폼 탑재 및 자동상속, 시뮬레이터 Preflight additive 바인딩, `tests/test_web_items_profile_integration.py` 3pass | 2026-10-27 |
+| **REQ-022** | 사업계획서(HWP/PDF/DOCX) 파일 업로드 기반 AI 아이템 자동 분석 및 Auto-fill | 박준호/정민재/이승엽/최은정 | ✅ **DONE** | HIGH | REQ-021 | HWP/PDF/DOCX 텍스트 파서(`ProposalParser`), LLM 정형 JSON 추출기(`ProposalExtractor`), `/api/items/analyze-proposal` 엔드포인트 및 모달 드롭존 Auto-fill UI 탑재, `tests/test_proposal_parser_and_extractor.py` 4pass | 2026-10-27 |
+| **REQ-026** | 포털 운영 관리 대시보드 및 사이트별 접속/인증/크롤링 현황판 | 박준호/김도윤/최은정 | ✅ **DONE** | HIGH | REQ-010,018 | `src/common/portal_manager.py`, `/portals`, `/api/portals/*`, 실시간 핑 및 인증 가이드, `tests/test_web_portals_management.py` 5pass | 2026-10-27 |
+| **REQ-027** | DocuMorph AI - 사업계획서 맞춤 변환 스튜디오 및 반자동 코파일럿 | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-022 | PSST/R&D 8문항 템플릿, 3단계 갭 분석 엔진, 개조식/수치 본문 합성 코파일럿, `/proposals/tailor` 스플릿 뷰 웹 UI, `tests/test_proposal_tailor_generator.py` 4pass | 2026-10-27 |
+| **REQ-028** | 상용 B2B 멀티테넌트 SaaS 및 Company Vault (기업 지식 데이터 룸 & 소셜 로그인) | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-027 | `tenants`/`users`/`tenant_assets` DB 완전 격리, 카카오/구글 소셜 세션, 4대 자산(계획서/IR덱/재무/특허) 데이터룸 UI(`/vault`), `tests/test_tenant_vault.py` 4pass | 2026-10-27 |
+| **REQ-029** | Company Vault 자산 기반 초정밀 맞춤 매칭 & 도전 과제 프로젝트 관리 (/projects) | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-028 | `VaultPreflightMatcher`(`tenants`+`tenant_assets` 파싱 자산→가상 company_specs→`PreflightService` 25대 신호등), RED(사전탈락) 자동제거 + `final_score` 정렬 초정밀 추천, `/projects`·`grant_projects` 도전과제 생성/트래킹(D-Day/진행률), `tests/test_grant_projects_workspace.py` 6pass | 2026-10-27 |
+| **REQ-030** | Zero-File-Retention 무보관 원칙, 테넌트 분리형 AES-256-GCM 암호화 보관 및 TLS 1.2+ 전송 보안 | GCWA/QCWA/QQAQC | 🟡 **QUEUED** | CRITICAL | REQ-028 | 원본 파일 디스크 무보관(메모리 즉시 파싱/폐기), 테넌트 고유 키 AES-256-GCM 필드 암호화, TLS 1.2+ 보안 헤더 구축 | — |
+| **REQ-031** | 대한민국 디지털정부 표준 UI/UX(KRDS) 가이드라인 준수 및 24+ 디자인 시스템 전면 적용 | GCWA/QCWA/QQAQC | 🟡 **QUEUED** | HIGH | REQ-029,030 | 7 레이아웃, 9 UI 컴포넌트, 8 효과/인터랙션 및 KRDS 디자인 토큰/접근성(KWCAG 2.1 AA) 전면 구현 | — |
+
 
 > 위 REQ-002~006은 `STATUS.md §5` 후보다. Gemini가 어느 것을 다음 라운드에 **실행**할지
 > `INBOX`/`REQ-NNN.md`로 명시하면 실무가 `QUEUED`로 승격한다.
 
 ## 상태 산(피보나치 추정)
-- DONE 18 · IN PROGRESS 1 (REQ-021) · DRAFT 대기 1 (REQ-002) · BACKLOG 0
+- DONE 21 · IN PROGRESS 0 · DRAFT 대기 1 (REQ-002) · BACKLOG 0
 
 ## 의사결정(DEC) 현황 — STATUS §4 연동
 

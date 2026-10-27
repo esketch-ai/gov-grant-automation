@@ -104,10 +104,62 @@ class GrantDatabase:
                     tags TEXT,
                     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
+                CREATE TABLE IF NOT EXISTS tenants (
+                    id TEXT PRIMARY KEY,
+                    company_name TEXT NOT NULL,
+                    biz_reg_no TEXT,
+                    opened_date TEXT,
+                    rep_name TEXT,
+                    region TEXT,
+                    plan_tier TEXT DEFAULT 'PRO',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS users (
+                    id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    email TEXT NOT NULL,
+                    name TEXT NOT NULL,
+                    avatar_url TEXT,
+                    auth_provider TEXT DEFAULT 'google',
+                    role TEXT DEFAULT 'OWNER',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+                );
+                CREATE TABLE IF NOT EXISTS tenant_assets (
+                    id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    asset_category TEXT NOT NULL,
+                    file_name TEXT NOT NULL,
+                    file_size INTEGER DEFAULT 0,
+                    content_text TEXT,
+                    parsed_metadata TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+                );
+                CREATE TABLE IF NOT EXISTS grant_projects (
+                    id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    announcement_id TEXT,
+                    announcement_title TEXT,
+                    template_id TEXT DEFAULT 'PSST',
+                    status TEXT DEFAULT 'DRAFTING',
+                    progress_pct INTEGER DEFAULT 0,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+                );
                 """
                 )
                 # company_profile 단일행(id=1) 기본행 확보(프로필 부재 시 빈 상태 반환 방지)
                 conn.execute("INSERT OR IGNORE INTO company_profile (id) VALUES (1);")
+                # 기본 테넌트 및 데모 사용자 시드 (하위 호환성 유지)
+                conn.execute("""
+                INSERT OR IGNORE INTO tenants (id, company_name, biz_reg_no, opened_date, rep_name, region, plan_tier)
+                VALUES ('tenant_default', '(주)초롱소프트 / SSHAI', '123-45-67890', '2024-01-15', '홍길동', '서울', 'PRO');
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO users (id, tenant_id, email, name, auth_provider, role)
+                VALUES ('user_default', 'tenant_default', 'ceo@chorong.ai', '홍길동 대표', 'local_demo', 'OWNER');
+                """)
                 # 기존 테이블 마이그레이션: target_year 컬럼 유무 점검 및 추가
                 cols = [r["name"] for r in conn.execute("PRAGMA table_info(announcements)").fetchall()]
                 if "target_year" not in cols:
@@ -178,6 +230,20 @@ class GrantDatabase:
         except Exception as e:
             logger.warning("upsert_rfp_chunk 실패[%s]: %s", rfp_id, e)
             return False
+
+    def get_rfp_chunks(self, canonical_id: str) -> List[dict]:
+        """공고의 저장된 RFP 청크 목록을 조회합니다."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    "SELECT rfp_id, canonical_id, rfp_number, rfp_title, markdown_content as content "
+                    "FROM rfp_chunks WHERE canonical_id=?",
+                    (canonical_id,),
+                )
+                return [dict(r) for r in cur.fetchall()]
+        except Exception as e:
+            logger.warning("get_rfp_chunks 실패[%s]: %s", canonical_id, e)
+            return []
 
     # ------------------------------------------------------------------ 발송 통제
     def is_dispatched(self, item_id: str, canonical_id: str, rfp_id: str) -> Optional[bool]:
@@ -369,7 +435,7 @@ class GrantDatabase:
             "biz_reg_no": (str(_g("biz_reg_no", "") or "")).strip(),
             "opened_date": (str(_g("opened_date", "") or "")).strip(),
             "founder_birth": (str(_g("founder_birth", "") or "")).strip(),
-            "founder_gender": (str(_g("founder_gender", "F") or "F")).strip().upper()[:1] or "F",
+            "founder_gender": (str(_g("founder_gender", "") or "")).strip().upper()[:1] or "",
             "address": (str(_g("address", "") or "")).strip(),
             "debt_ratio_pct": (float(_g("debt_ratio_pct")) if _g("debt_ratio_pct") not in (None, "", False) else None),
             "has_rnd_lab": 1 if _g("has_rnd_lab") else 0,
@@ -415,7 +481,7 @@ class GrantDatabase:
             with self._connect() as conn:
                 conn.execute(
                     "UPDATE company_profile SET company_name='', biz_reg_no='', opened_date='', "
-                    "founder_birth='', founder_gender='F', address='', debt_ratio_pct=NULL, "
+                    "founder_birth='', founder_gender='', address='', debt_ratio_pct=NULL, "
                     "has_rnd_lab=0, is_capital_impaired=0, has_tax_arrears=0, current_pi_projects=0, "
                     "current_member_projects=0, registered_patents_count=0, available_cash_fund=0, "
                     "prior_grant_history='[]', certifications='[]', tags='[]', updated_at=CURRENT_TIMESTAMP "
@@ -507,3 +573,311 @@ class GrantDatabase:
         except Exception as e:
             logger.warning("list_announcements 실패: %s", e)
             return []
+
+    # ------------------------------------------------------------------ 멀티테넌트 및 Vault 자산 관리
+    def get_tenant(self, tenant_id: str) -> Optional[dict]:
+        """테넌트 단일 조회."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute("SELECT * FROM tenants WHERE id = ?", (tenant_id,)).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_tenant 실패: %s", e)
+            return None
+
+    def upsert_tenant(self, data: dict) -> bool:
+        """테넌트 정보 등록 또는 수정."""
+        try:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO tenants (id, company_name, biz_reg_no, opened_date, rep_name, region, plan_tier)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        company_name = excluded.company_name,
+                        biz_reg_no = excluded.biz_reg_no,
+                        opened_date = excluded.opened_date,
+                        rep_name = excluded.rep_name,
+                        region = excluded.region,
+                        plan_tier = excluded.plan_tier;
+                    """,
+                    (
+                        data.get("id"),
+                        data.get("company_name", "미등록 기업"),
+                        data.get("biz_reg_no", ""),
+                        data.get("opened_date", ""),
+                        data.get("rep_name", ""),
+                        data.get("region", "서울"),
+                        data.get("plan_tier", "PRO"),
+                    ),
+                )
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.warning("upsert_tenant 실패: %s", e)
+            return False
+
+    def list_tenants(self) -> List[dict]:
+        """전체 테넌트 목록 조회."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute("SELECT * FROM tenants ORDER BY created_at DESC")
+                return [dict(r) for r in cur.fetchall()]
+        except Exception as e:
+            logger.warning("list_tenants 실패: %s", e)
+            return []
+
+    def get_user(self, user_id: str) -> Optional[dict]:
+        """사용자 단일 조회."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute("SELECT * FROM users WHERE id = ?", (user_id,)).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_user 실패: %s", e)
+            return None
+
+    def get_user_by_email(self, email: str) -> Optional[dict]:
+        """이메일 기반 사용자 조회."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute("SELECT * FROM users WHERE email = ?", (email,)).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_user_by_email 실패: %s", e)
+            return None
+
+    def upsert_user(self, data: dict) -> bool:
+        """사용자 계정 생성 또는 갱신."""
+        try:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO users (id, tenant_id, email, name, avatar_url, auth_provider, role)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        tenant_id = excluded.tenant_id,
+                        email = excluded.email,
+                        name = excluded.name,
+                        avatar_url = excluded.avatar_url,
+                        auth_provider = excluded.auth_provider,
+                        role = excluded.role;
+                    """,
+                    (
+                        data.get("id"),
+                        data.get("tenant_id"),
+                        data.get("email"),
+                        data.get("name"),
+                        data.get("avatar_url", ""),
+                        data.get("auth_provider", "google"),
+                        data.get("role", "OWNER"),
+                    ),
+                )
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.warning("upsert_user 실패: %s", e)
+            return False
+
+    def add_tenant_asset(self, asset: dict) -> bool:
+        """테넌트 지식 자산고(Vault)에 파일 및 메타데이터 적재."""
+        import json
+        try:
+            parsed_meta_str = asset.get("parsed_metadata")
+            if isinstance(parsed_meta_str, dict):
+                parsed_meta_str = json.dumps(parsed_meta_str, ensure_ascii=False)
+
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO tenant_assets (id, tenant_id, asset_category, file_name, file_size, content_text, parsed_metadata)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        asset_category = excluded.asset_category,
+                        file_name = excluded.file_name,
+                        file_size = excluded.file_size,
+                        content_text = excluded.content_text,
+                        parsed_metadata = excluded.parsed_metadata;
+                    """,
+                    (
+                        asset.get("id"),
+                        asset.get("tenant_id"),
+                        asset.get("asset_category", "PROPOSAL"),
+                        asset.get("file_name", "document.pdf"),
+                        int(asset.get("file_size", 0)),
+                        asset.get("content_text", ""),
+                        parsed_meta_str or "{}",
+                    ),
+                )
+                conn.commit()
+                return True
+        except Exception as e:
+            logger.warning("add_tenant_asset 실패: %s", e)
+            return False
+
+    def list_tenant_assets(self, tenant_id: str, category: Optional[str] = None) -> List[dict]:
+        """테넌트의 자산 목록 조회 (카테고리 필터 옵션)."""
+        import json
+        try:
+            with self._connect() as conn:
+                sql = "SELECT * FROM tenant_assets WHERE tenant_id = ?"
+                params = [tenant_id]
+                if category and category != "ALL":
+                    sql += " AND asset_category = ?"
+                    params.append(category)
+                sql += " ORDER BY created_at DESC"
+                cur = conn.execute(sql, params)
+                rows = []
+                for r in cur.fetchall():
+                    item = dict(r)
+                    if item.get("parsed_metadata"):
+                        try:
+                            item["parsed_metadata"] = json.loads(item["parsed_metadata"])
+                        except Exception:
+                            item["parsed_metadata"] = {}
+                    else:
+                        item["parsed_metadata"] = {}
+                    rows.append(item)
+                return rows
+        except Exception as e:
+            logger.warning("list_tenant_assets 실패: %s", e)
+            return []
+
+    def get_tenant_asset(self, asset_id: str, tenant_id: str) -> Optional[dict]:
+        """단일 자산 상세 조회 (테넌트 격리 보장)."""
+        import json
+        try:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT * FROM tenant_assets WHERE id = ? AND tenant_id = ?",
+                    (asset_id, tenant_id),
+                ).fetchone()
+                if not row:
+                    return None
+                item = dict(row)
+                if item.get("parsed_metadata"):
+                    try:
+                        item["parsed_metadata"] = json.loads(item["parsed_metadata"])
+                    except Exception:
+                        item["parsed_metadata"] = {}
+                return item
+        except Exception as e:
+            logger.warning("get_tenant_asset 실패: %s", e)
+            return None
+
+    def delete_tenant_asset(self, asset_id: str, tenant_id: str) -> bool:
+        """자산 삭제 (테넌트 격리 보장)."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    "DELETE FROM tenant_assets WHERE id = ? AND tenant_id = ?",
+                    (asset_id, tenant_id),
+                )
+                conn.commit()
+                return cur.rowcount > 0
+        except Exception as e:
+            logger.warning("delete_tenant_asset 실패: %s", e)
+            return False
+
+    def create_grant_project(self, project: dict) -> str:
+        """도전 과제 프로젝트 생성."""
+        import uuid
+        pid = project.get("id") or f"proj_{uuid.uuid4().hex[:12]}"
+        try:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO grant_projects (id, tenant_id, announcement_id, announcement_title, template_id, status, progress_pct)
+                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    ON CONFLICT(id) DO UPDATE SET
+                        announcement_title = excluded.announcement_title,
+                        template_id = excluded.template_id,
+                        status = excluded.status,
+                        progress_pct = excluded.progress_pct;
+                    """,
+                    (
+                        pid,
+                        project.get("tenant_id"),
+                        project.get("announcement_id"),
+                        project.get("announcement_title", "지원 과제"),
+                        project.get("template_id", "PSST"),
+                        project.get("status", "DRAFTING"),
+                        int(project.get("progress_pct", 0)),
+                    ),
+                )
+                conn.commit()
+                return pid
+        except Exception as e:
+            logger.warning("create_grant_project 실패: %s", e)
+            return pid
+
+    def list_grant_projects(self, tenant_id: str) -> List[dict]:
+        """테넌트의 도전 과제 프로젝트 목록 조회."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    "SELECT * FROM grant_projects WHERE tenant_id = ? ORDER BY created_at DESC",
+                    (tenant_id,),
+                )
+                return [dict(r) for r in cur.fetchall()]
+        except Exception as e:
+            logger.warning("list_grant_projects 실패: %s", e)
+            return []
+
+    def get_grant_project(self, project_id: str, tenant_id: str) -> Optional[dict]:
+        """단일 도전 과제 프로젝트 조회."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT * FROM grant_projects WHERE id = ? AND tenant_id = ?",
+                    (project_id, tenant_id),
+                ).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_grant_project 실패: %s", e)
+            return None
+
+    def update_grant_project(self, project_id: str, tenant_id: str, **fields: Any) -> bool:
+        """도전 과제 프로젝트 상태/진행률/템플릿 수정 (REQ-029, 테넌트 격리).
+
+        허용 컬럼만 반영하며 WHERE tenant_id 조건으로 타 테넌트 편집을 차단한다.
+        fields가 없으면 실제 변경 없이 존재 여부만 반환 (no-op).
+        """
+        allowed = {"status", "progress_pct", "template_id", "announcement_title"}
+        payload = {k: v for k, v in fields.items() if k in allowed}
+        if "progress_pct" in payload:
+            try:
+                payload["progress_pct"] = max(0, min(100, int(payload["progress_pct"])))
+            except (ValueError, TypeError):
+                payload.pop("progress_pct")
+        try:
+            with self._connect() as conn:
+                if not payload:
+                    cur = conn.execute(
+                        "SELECT 1 FROM grant_projects WHERE id = ? AND tenant_id = ?",
+                        (project_id, tenant_id),
+                    ).fetchone()
+                    return cur is not None
+                cols = ", ".join(f"{k} = ?" for k in payload)
+                cur = conn.execute(
+                    f"UPDATE grant_projects SET {cols} WHERE id = ? AND tenant_id = ?",
+                    list(payload.values()) + [project_id, tenant_id],
+                )
+                return cur.rowcount > 0
+        except Exception as e:
+            logger.warning("update_grant_project 실패: %s", e)
+            return False
+
+    def delete_grant_project(self, project_id: str, tenant_id: str) -> bool:
+        """도전 과제 프로젝트 삭제 (REQ-029, 테넌트 격리). 타 테넌트는 차단."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    "DELETE FROM grant_projects WHERE id = ? AND tenant_id = ?",
+                    (project_id, tenant_id),
+                )
+                return cur.rowcount > 0
+        except Exception as e:
+            logger.warning("delete_grant_project 실패: %s", e)
+            return False
+

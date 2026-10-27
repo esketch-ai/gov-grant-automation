@@ -6,6 +6,9 @@ python-dotenv>=1.0
 
 # pdf/hwp parsing (optional, degrade가 되어 있어 설치 안 해도 동작은 함)
 PyMuPDF>=1.24
+pypdf>=5.0
+olefile>=0.47
+python-multipart>=0.0.18
 
 # crawler (playwright binary separate install: `python -m playwright install chromium`)
 playwright>=1.44

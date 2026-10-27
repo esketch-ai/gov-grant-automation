@@ -1,0 +1,42 @@
+item_meta:
+  item_id: 20261027_iDEA
+  item_name: 디지털 ESG 얼라이언스소개
+  recipients:
+  - admin@company.com
+collection_scope:
+  selected_bookmarks:
+  - k_startup
+  - ntis
+  - iris
+  - nipa
+  - smtech
+  - g2b
+  enable_open_web_discovery: true
+eligibility_specs:
+  entity_type: 법인사업자
+  business_age_years: 3
+  headquarters_location: 서울특별시
+rnd_and_bid_specs:
+  current_trl: 6
+  current_trl_range: '4'
+domain_routing:
+  core_keywords:
+  - AI
+  - 클라우드
+  - SaaS
+  - 플랫폼
+  - 탄소중립
+  min_match_score: 75
+company_specs:
+  company_name: ''
+  biz_reg_no: ''
+  opened_date: ''
+  founder_birth: ''
+  founder_gender: ''
+  address: ''
+  debt_ratio_pct: null
+  has_rnd_lab: false
+  registered_patents_count: 0
+  certifications: []
+owner_confirmed_policies:
+  max_acceptable_cash_match_krw: 50000000

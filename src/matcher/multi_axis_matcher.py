@@ -30,7 +30,7 @@ class ApplicantProfile:
     biz_age_years: float              # 업력 (예: 0.5=6개월, 2.0=2년, 4.5=4년 6개월)
     founder_age: int                  # 대표자 만 나이 (청년 기준: 만 39세 이하)
     is_female_founder: bool = False   # 여성 기업 여부
-    location: str = "서울"            # 본사 소재지 (예: "부산", "대구", "전남")
+    location: str = ""                # 본사 소재지 (예: "서울", "부산", "대구" / 공백 시 전국)
     is_social_venture: bool = False   # 소셜벤처/사회적기업 여부
     tags: List[str] = field(default_factory=list)  # 사업 키워드 (예: ["심리상담", "플랫폼"])
 

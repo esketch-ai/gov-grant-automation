@@ -9,7 +9,7 @@ portals:
     name: "나라장터 국가종합전자조달"
     adapter_type: "TypeB_G2B_API"
     base_url: "https://www.g2b.go.kr/"
-    api_endpoint: "http://apis.data.go.kr/1230000/BidPublicInfoService04/getBidPblancListInfoServcPPSSrch01"
+    api_endpoint: "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc"
 
   ntis:
     name: "NTIS 국가과학기술지식정보서비스"
@@ -61,3 +61,22 @@ portals:
     base_url: "https://www.songpase.org/bbs.asp"
     static_params:
       pc: "n01"
+
+  bizinfo:
+    name: "기업마당 (BizInfo)"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.bizinfo.go.kr/"
+    ministry: "중소벤처기업부"
+
+  smes:
+    name: "중소벤처24"
+    adapter_type: "TypeD_AgencyBoard"
+    base_url: "https://www.smes.go.kr/"
+    ministry: "중소벤처기업부"
+
+  rnd24:
+    name: "연구24 (국가R&D 통합로그인)"
+    adapter_type: "TypeC_RndAggregator"
+    base_url: "https://www.rnd24.go.kr/"
+    ministry: "과학기술정보통신부"
+

@@ -258,7 +258,7 @@ AGENCY_NOTICE_POOL: List[Dict[str, Any]] = [
             organization="조달청",
             ministry="기획재정부",
             deadline="2026-12-25 18:00",
-            detail_url="https://www.g2b.go.kr:8081/ep/invitation/publish/bidInfoDtl.do?bidno=20261009120&bidseq=00&releaseYn=Y&taskClCd=5",
+            detail_url="https://www.g2b.go.kr#PNPE027_01?bidPbancNo=20261009120&bidPbancOrd=00",
             body_text="상용화 직전 시제품(TRL 7 이상) 보유 기업 대상. 공공기관 테스트베드 매칭 및 수의계약 지원.",
         ),
         "target_audience": "시제품 보유 조달 혁신기업 (전 업종)",

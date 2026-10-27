@@ -33,6 +33,8 @@ class WebQAAgent(BaseAuditAgent):
             ("/items", "GET", 200, ["사업 아이템 프로파일", "item_01_carbon_dmrv"]),
             ("/matches", "GET", 200, ["알림 발송 이력", "dispatch_history"]),
             ("/audit", "GET", 200, ["다각도 시스템 무결성 종합 감사 현황", "Agent-YearAudit"]),
+            ("/portals", "GET", 200, ["포털", "수집"]),
+            ("/api/portals/status", "GET", 200, ["status", "portals"]),
             ("/api/scheduler/status", "GET", 200, ["enabled", "interval_seconds"]),
             ("/api/status", "GET", 200, ["healthy", "2026_strict", "qa_swarm", "scheduler"]),
             ("/api/calendar/2026.ics", "GET", 200, ["BEGIN:VCALENDAR", "END:VCALENDAR"]),

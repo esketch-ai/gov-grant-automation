@@ -4,6 +4,50 @@
 
 ---
 
+## [2026-10-27] 세션 `sprint10-v1.6.1` — 조달청 나라장터 BidPublicInfoService 기술가이드 반영 & 마스터 총람 연동
+
+### Done
+- **조달청 나라장터 `BidPublicInfoService` Open API 기술가이드 규격 반영**:
+  - `src/collector/multi_collector.py`: `_collect_g2b`에 기술가이드 필수 파라미터(`inqryDiv='1'`, `inqryBgnDt`/`inqryEndDt` 12자리 `YYYYMMDDHHMM` 1개월 제약) 준수.
+  - `G2B_API_KEY` 및 공공데이터포털 통합 키 `DATA_GO_KR_KEY` 자동 fallback 연동.
+  - `_safe_items`: 공공데이터포털 JSON 스키마의 `response.body.items` (배열/객체/단일항목) 안전 추출기 정밀화.
+  - 첨부파일 수집: 표준 규격서(`stdNtceDocUrl`) 및 과업지시서/RFP 원본(`ntceSpecDocUrl1`~`ntceSpecDocUrl5`) 전수 추출.
+  - 메타데이터 보강: 수요기관(`dminsttNm`), 배정예산(`asignBdgtAmt`), 추정가격(`presmptPrce`), 계약방식(`cntrctCnclsMthdNm`) 요약문 자동 생성.
+  - `config/master_portals.yaml`: 공식 엔드포인트 `http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc` (용역) 및 연계 오퍼레이션(`getBidPblancListInfoCnstwk`, `getBidPblancListInfoThng`) 체계 확립.
+- **테스트 및 거버넌스 검증**:
+  - `tests/test_g2b_collector_api.py` (3건 신규 작성 및 통과).
+  - 단위 테스트: **173 passed / 0 failed (100%)**.
+  - QQAQC QA Swarm 전수 검사: **140.0 / 140.0 만점 (Deploy-Ready)**.
+
+---
+
+## [2026-10-27] 세션 `sprint9-v1.6.0` — REQ-021/022 & 카파시 헌장 & QQAQC 전수 검사 (v1.6.0)
+
+### Done
+- **REQ-021 [사업 아이템 ↔ 기업/대표자 프로필 통합 및 자동 상속]**:
+  - `items/*/profile.yaml`에 `company_specs` 연동, `/items` UI 등록/수정 모달에 여성/청년/인증 폼 탑재 및 자동 상속.
+  - 시뮬레이터 Preflight additive 바인딩, `tests/test_web_items_profile_integration.py` 3pass.
+- **REQ-022 [사업계획서(HWP/HWPX/PDF/DOCX) 파일 업로드 기반 AI 아이템 자동 분석 및 Auto-fill]**:
+  - `src/parser/proposal_parser.py`: 순수 파이썬 파서(HWPX/HWP/PDF/DOCX/TXT 무의존 추출).
+  - `src/parser/proposal_extractor.py`: LLM + 한국어 정규식 안전 폴백 구조화 추출기.
+  - `/api/items/analyze-proposal` 엔드포인트 및 모달 상단 드롭존 Auto-fill 탑재, `items/<id>/proposal.md` 영속화.
+- **안드레이 카파시 4원칙 준수 헌장 및 하드코딩 완전 제거 (SSOT 구축)**:
+  - `CLAUDE.md`, `docs/karpathy_4_principles.md` 제정.
+  - `src/common/constants.py` 신설 (`YOUTH_AGE_LIMIT_GENERAL=39`, `YOUTH_AGE_LIMIT_SPECIAL=34`, `BIZ_AGE_EARLY_STAGE_YEARS=3.0`, `BIZ_AGE_GROWTH_STAGE_YEARS=7.0`, `DEFAULT_MIN_MATCH_SCORE=75` 등).
+  - 미지정 성별(`NONE`/빈값) 시 여성기업 판정 100% 배제 원칙 강화, 신규 등록 모달 초기화(`resetCreateForm`) 버그 해결.
+- **파이프라인 실행 가시성 및 나라장터(G2B) 딥링크 정합성 복구**:
+  - 파이프라인 수동 실행 시 DB 기보관 2026 공고 자동 병합 및 결과 모달(`#pipelineResultModal`) 팝업.
+  - 나라장터 공고 링크 비표준 포트 `:8081` 제거 및 차세대 나라장터 해시 딥링크(`#PNPE`) 표준화.
+- **QQAQC 30년차 최고전문가단 전수 검사 완결**:
+  - 13대 적대적 시나리오 100% 방어 (`storage/qqaqc_adversarial_report.md`).
+  - 8대 BM × 14대 기관 공고 (112쌍) 100% 정합률 달성 (`storage/qqaqc_multi_agency_matrix_report.md`).
+
+### 검증
+- `pytest -q` → **160 passed / 0 failed in 17.10s** (100% Pass).
+- `audit_runner` 실행 → **140.0/140.0 점 (100.0%, 🟢 APPROVED / Deploy-Ready)** 7대 검수단 전원 만점.
+
+---
+
 ## [2026-10-25] 세션 `sprint7-r2` — REQ-018 (v1.3.0)
 
 ### Done

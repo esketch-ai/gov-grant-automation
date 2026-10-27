@@ -15,14 +15,15 @@
 
 | 항목 | 값 |
 |---|---|
-| 보고 대상 | Gemini (총괄 PM · `opencode/agents/chief-architect`) |
-| 실무 수행자 | QWEN 3.8 27b 교수급 6인 (TEAM.md) |
-| 최신 갱신 | 2026-10-26 (세션 `sprint8-multi-axis-web-done`) |
-| 버전 | **v1.5.0** |
-| 테스트 | pytest **133 pass / 0 fail** (0.85s) |
-| 종합 감사 스코어 | **140.0 / 140.0 점** (🟢 **APPROVED / Deploy-Ready**, 7대 검수단 전원 만점, 실제 외부 포털 2026 라이브 핑 검증 완료) |
-| 오프라인 스모크 | `TARGET_YEAR=2026 LLM_OFFLINE=1 src.main` → 2아이템·**0 error** (브라우저클릭검증+다차원매칭+전국17개시도+25대비행점검+웹UI전면연동+7대QA스웜 통과) |
-| 다음 요청 후보 | **REQ-002 [실 API 연동 E2E (API 키 주입 시 활성화)]** |
+| 보고 대상 | Gemini (총괄 PM · `GCWA`) |
+| 실무 수행자 | QCWA (개발 구현) / QQAQC (검수·단위테스트) / GCWA (총괄 조정·검토) |
+| 최신 갱신 | 2026-10-27 (세션 `sprint12-vault-precision-matching-project-workspace`) |
+| 버전 | **v1.5.1** |
+| 테스트 | pytest **193 pass / 0 fail** |
+| 종합 감사 스코어 | **140.0 / 140.0 점** (🟢 **APPROVED / Deploy-Ready**, 7대 검수단 전원 만점) |
+| QQAQC 감사 지표 | GAN 적대적 13대 공격 **100% 방어** · 8대 BM × 14대 기관 공고 (112쌍) **100.0% 정합률 (Grade S)** |
+| 오프라인 스모크 | `TARGET_YEAR=2026 LLM_OFFLINE=1 src.main` → 멀티테넌트 Company Vault + DocuMorph + Vault 초정밀 매칭/도전과제 워크스페이스 연동 0 error |
+| 다음 요청 후보 | **REQ-030 [Zero-File-Retention 무보관·AES-256-GCM]** |
 
 ---
 
@@ -56,6 +57,14 @@
 | **Pillar-Nationwide** | 대한민국 전국 17개 시도 지자체 포털 매핑 및 사업주 상태 1초 자동 계산기 | 김도윤 / 정민재 / 박준호 | ✅ `tests/test_nationwide_demographics.py` 5건 통과, 사업자등록 기반 청년/여성/업력 자동 판정 |
 | **Pillar-PreFlight** | 부채비율 3년특례, 연구소, 3책5공, 중복수혜 등 25대 숨겨진 조건 사전 비행점검기 | 이승엽 / 박준호 / 한지훈 | ✅ `tests/test_advanced_eligibility_validator.py` 6건 통과, 신호등(Green/Yellow/Red) 진단 |
 | **REQ-020** | 다차원 매칭 및 25대 비행점검 웹 관리자 전면 연동 (프로필CRUD, 4대트랙 탭, 🚥신호등 모달) | 박준호 / 이승엽 / 최은정 / 한지훈 | ✅ `tests/test_web_profile_preflight.py` 5건 통과, `PreflightService`, `/api/profile`, `/api/matcher/preflight` 완결 |
+| **REQ-021** | 사업 아이템 ↔ 기업/대표자 프로필 통합 및 자동 상속 (`company_specs`, 모달 폼 연동) | 박준호 / 이승엽 / 최은정 / 한지훈 | ✅ `tests/test_web_items_profile_integration.py` 3건 통과, SSOT 자동 상속, 여성/청년/부채비율 폼 완성 |
+| **REQ-022** | 사업계획서(HWP/HWPX/PDF/DOCX) 파일 업로드 기반 AI 아이템 자동 분석 및 Auto-fill | 박준호 / 정민재 / 이승엽 / 최은정 | ✅ `tests/test_proposal_parser_and_extractor.py` 4건 통과, `ProposalParser`, `ProposalExtractor`, `/api/items/analyze-proposal` 완결 |
+| **REQ-026** | 포털 운영 관리 대시보드 (`/portals`) 및 각 사이트별 접속/인증/크롤링 현황판 | 박준호 / 김도윤 / 최은정 | ✅ `tests/test_web_portals_management.py` 5건 통과, `PortalStatusService`, 12대 포털 메타/실시간 핑/인증 가이드 완결 |
+| **Gov-Karpathy** | 안드레이 카파시 4원칙 준수 헌장 제정 및 하드코딩 제거 SSOT 구축 | 박준호 / 한지훈 / 이승엽 | ✅ `tests/test_karpathy_hardcoding_cleanup.py` 5건 통과, `constants.py` 분리, 미지정 성별 오탐 차단 |
+| **Gov-Pipeline** | 수동 파이프라인 가시성 확보 및 나라장터(G2B) 차세대 딥링크 규격 복구 | 박준호 / 김도윤 / 최은정 | ✅ `tests/test_pipeline_execution_feedback.py` 통과, 2026 DB 공고 매칭 결과 요약 모달(`#pipelineResultModal`) 및 G2B `:8081` 제거/`#PNPE` 표준화 |
+| **REQ-027** | 조달청 나라장터 `BidPublicInfoService` 기술가이드 표준 규격 완결 및 수집 어댑터 강화 | 박준호 / 김도윤 / 한지훈 | ✅ `tests/test_g2b_collector_api.py` 3건 통과, 필수 파라미터(`inqryDiv=1`, `inqryBgnDt` 12자리) 준수 및 과업지시서 1~5 첨부파일 추출 완결 |
+| **REQ-028** | 상용 B2B 멀티테넌트 SaaS 및 Company Vault (기업 지식 데이터 룸 & 소셜 로그인) | 박준호 / 김도윤 / 최은정 / 한지훈 | ✅ `tenants`/`users`/`tenant_assets`/`grant_projects` 완전 격리, 카카오/구글/데모 소셜 세션, 4대 자산 데이터룸 UI(`/vault`), `tests/test_tenant_vault.py` 4건 통과 |
+| **REQ-029** | Company Vault 자산 기반 초정밀 맞춤 매칭 & 도전 과제 프로젝트 관리(`/projects`) | 박준호 / 이승엽 / 최은정 / 한지훈 | ✅ `VaultPreflightMatcher`(자산→가상 company_specs→25대 신호등), RED 자동제거 + `final_score` 정렬 초정밀 추천, `/projects`·`grant_projects` D-Day/진행률 트래킹, `tests/test_grant_projects_workspace.py` 6건 통과 |
 
 **핵심 부장(완료 증빙)**:
 - **5대 전문 검수 에이전트(QA Swarm) 구축 완료**:
@@ -83,7 +92,7 @@
 
 ## 3. 품질 게이트 달성 여부 (TEAM.md §7 기준)
 
-- [x] import 성공 & `pytest` 전 통과 (**128건 전원 통과**, 0 fail, 오프라인)
+- [x] import 성공 & `pytest` 전 통과 (**193건 전원 통과**, 0 fail, 오프라인)
 - [x] 예외 전 경로가 파이프라인을 중단시키지 않음 (스모크 0 error, 복원력 에이전트 0 Crash 검증)
 - [x] 비밀 100% 외부화 (소스 내 하드코딩 0건, SecurityGate 에이전트 통과)
 - [x] Structured Output 파싱 실패 시 안전 기본 결과로 degrade
@@ -101,6 +110,8 @@
 - [x] 웹 관리자 실시간 시스템 로그 콘솔 및 종합 감사 보고서 다운로드 (REQ-017 완결)
 - [x] 포털 수집기 지수 백오프 자동 복구 및 서킷 브레이커 장애 격리 (REQ-018 완결)
 - [x] 마감일 D-Day 카운트다운 및 표준 iCalendar(.ics) 캘린더 피드 (REQ-019 완결)
+- [x] 멀티테넌트 Company Vault & 소셜 로그인 완전 격리 (`tenants`/`users`/`tenant_assets`) (REQ-028 완결)
+- [x] Vault 자산 기반 초정밀 매칭(RED 자동제거 + `final_score` 정렬) & `/projects` 도전과제 트래킹 (REQ-029 완결)
 
 ---
 

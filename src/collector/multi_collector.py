@@ -87,11 +87,14 @@ class MultiPortalCollector:
     # ------------------------------------------------------------------ OpenAPI
     async def _collect_kstartup(self, pid: str, cfg: dict, keywords: List[str]) -> List[RawNotice]:
         import os
+        import urllib.parse
 
-        service_key = os.environ.get("DATA_GO_KR_KEY", "")
+        service_key = os.environ.get("DATA_GO_KR_KEY", "").strip()
         if not service_key:
             logger.warning("K-Startup 수집 건너뜀: DATA_GO_KR_KEY 미설정")
             return []
+        if "%" in service_key:
+            service_key = urllib.parse.unquote(service_key)
 
         notices: List[RawNotice] = []
         endpoint = cfg.get("api_endpoint", "")
@@ -134,47 +137,98 @@ class MultiPortalCollector:
 
     async def _collect_g2b(self, pid: str, cfg: dict, keywords: List[str], profile: dict) -> List[RawNotice]:
         import os
+        import urllib.parse
+        from datetime import datetime, timedelta
 
-        service_key = os.environ.get("G2B_API_KEY", "")
+        # 조달청 나라장터 Open API 인증키 (G2B_API_KEY 또는 공공데이터포털 통합 DATA_GO_KR_KEY 호환)
+        service_key = (
+            os.environ.get("G2B_API_KEY", "").strip()
+            or os.environ.get("DATA_GO_KR_KEY", "").strip()
+        )
         if not service_key:
             logger.warning("G2B 수집 건너뜀: G2B_API_KEY 미설정")
             return []
+        if "%" in service_key:
+            service_key = urllib.parse.unquote(service_key)
 
         notices: List[RawNotice] = []
         endpoint = cfg.get("api_endpoint", "")
+        if not endpoint:
+            # 기술가이드 기본: 조달청 나라장터 용역 입찰공고 서비스
+            endpoint = "http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc"
+
         license_codes = profile.get("rnd_and_bid_specs", {}).get("g2b_license_codes", [])
+
+        # 기술가이드(BidPublicInfoService) 필수 파라미터:
+        # inqryDiv='1' (공고게시일시 기준), inqryBgnDt / inqryEndDt (YYYYMMDDHHMM 12자리, 최대 1개월 이내 준수)
+        now = datetime.now()
+        bgn_dt = (now - timedelta(days=28)).strftime("%Y%m%d0000")
+        end_dt = now.strftime("%Y%m%d2359")
+
         try:
             async with httpx.AsyncClient(timeout=self.timeout) as client:
                 for kw in keywords[:3]:
                     params = {
                         "serviceKey": service_key,
-                        "numOfRows": 15,
+                        "numOfRows": 25,
                         "pageNo": 1,
                         "type": "json",
+                        "inqryDiv": "1",
+                        "inqryBgnDt": bgn_dt,
+                        "inqryEndDt": end_dt,
                         "bidNtceNm": kw,
                     }
                     resp = await client.get(endpoint, params=params)
                     resp.raise_for_status()
                     data = resp.json()
                     for row in _safe_items(data):
-                        attach_url = row.get("stdNtceDocUrl") or ""
-                        bid_no = row.get("bidNtceNo") or row.get("bidno") or ""
-                        bid_seq = row.get("bidNtceOrd") or row.get("bidseq") or "00"
+                        # 과업지시서 및 규격서 첨부파일 목록 수집 (stdNtceDocUrl + ntceSpecDocUrl1~5)
+                        attachments: List[str] = []
+                        if row.get("stdNtceDocUrl"):
+                            attachments.append(str(row["stdNtceDocUrl"]).strip())
+                        for i in range(1, 6):
+                            spec_url = row.get(f"ntceSpecDocUrl{i}")
+                            if spec_url and str(spec_url).strip():
+                                attachments.append(str(spec_url).strip())
+
+                        bid_no = str(row.get("bidNtceNo") or row.get("bidno") or "").strip()
+                        bid_seq = str(row.get("bidNtceOrd") or row.get("bidseq") or "00").strip()
                         if bid_no:
-                            direct_url = f"https://www.g2b.go.kr:8081/ep/invitation/publish/bidInfoDtl.do?bidno={bid_no}&bidseq={bid_seq}&releaseYn=Y&taskClCd=5"
+                            # 차세대 나라장터 딥링크
+                            direct_url = f"https://www.g2b.go.kr#PNPE027_01?bidPbancNo={bid_no}&bidPbancOrd={bid_seq}"
                         else:
-                            direct_url = str(row.get("bidNtceDtlUrl") or row.get("bidNtceUrcNm") or cfg.get("base_url", ""))
+                            direct_url = str(row.get("bidNtceDtlUrl") or row.get("bidNtceUrcNm") or "https://www.g2b.go.kr#PNPE001_01")
+
+                        dminstt_nm = str(row.get("dminsttNm") or "").strip()
+                        ntce_instt_nm = str(row.get("ntceInsttNm") or "").strip()
+                        org_name = dminstt_nm or ntce_instt_nm or "한국조달청"
+
+                        deadline_raw = str(row.get("bidClseDt") or row.get("bidNtceEndDt") or "").strip()
+                        deadline = deadline_raw if deadline_raw else "상세공고 참조"
+
+                        # 메타데이터 본문 요약 (수요기관, 배정예산, 추정가격, 계약방법)
+                        meta_items = []
+                        if dminstt_nm:
+                            meta_items.append(f"수요기관: {dminstt_nm}")
+                        if row.get("asignBdgtAmt"):
+                            meta_items.append(f"배정예산: {row.get('asignBdgtAmt')}원")
+                        if row.get("presmptPrce"):
+                            meta_items.append(f"추정가격: {row.get('presmptPrce')}원")
+                        if row.get("cntrctCnclsMthdNm") or row.get("bidMethdNm"):
+                            mthd = row.get("cntrctCnclsMthdNm") or row.get("bidMethdNm")
+                            meta_items.append(f"계약방식: {mthd}")
+                        body_meta = " | ".join(meta_items)
 
                         notices.append(
                             RawNotice(
                                 portal_id=pid,
                                 title=str(row.get("bidNtceNm") or "제목없음").strip(),
-                                organization="한국조달청",
-                                ministry="기타(조달)",
-                                deadline=str(row.get("bidNtceEndDt") or "상세공고 참조"),
+                                organization=org_name,
+                                ministry="조달청 (공공입찰)",
+                                deadline=deadline,
                                 detail_url=direct_url,
-                                body_text="",
-                                attachment_urls=[attach_url] if attach_url else [],
+                                body_text=body_meta,
+                                attachment_urls=attachments,
                             )
                         )
             if notices and license_codes:
@@ -318,10 +372,41 @@ def _safe_items(data: dict) -> list:
     out: list = []
     if not isinstance(data, dict):
         return out
-    for candidate in data.get("response", {}).values() if "response" in data else []:
-        if isinstance(candidate, dict):
-            out.extend(candidate.get("item", []) or [])
-    # 일부 응답은 data.list / items
-    out.extend(data.get("list", []) or [])
-    out.extend(data.get("items", []) or [])
+
+    # 1. response.body.items (조달청/중기부 data.go.kr 표준 JSON 구조)
+    resp = data.get("response")
+    if isinstance(resp, dict):
+        body = resp.get("body")
+        if isinstance(body, dict):
+            items_field = body.get("items")
+            if isinstance(items_field, list):
+                out.extend([x for x in items_field if isinstance(x, dict)])
+            elif isinstance(items_field, dict):
+                sub = items_field.get("item", [])
+                if isinstance(sub, list):
+                    out.extend([x for x in sub if isinstance(x, dict)])
+                elif isinstance(sub, dict):
+                    out.append(sub)
+            if not out and "item" in body:
+                sub = body.get("item")
+                if isinstance(sub, list):
+                    out.extend([x for x in sub if isinstance(x, dict)])
+                elif isinstance(sub, dict):
+                    out.append(sub)
+
+        # 2. response 내부 기타 하위 dict fallback
+        if not out:
+            for candidate in resp.values():
+                if isinstance(candidate, dict):
+                    sub = candidate.get("item") or candidate.get("items")
+                    if isinstance(sub, list):
+                        out.extend([x for x in sub if isinstance(x, dict)])
+                    elif isinstance(sub, dict):
+                        out.append(sub)
+
+    # 3. 루트 레벨 list / items fallback
+    if isinstance(data.get("items"), list):
+        out.extend([x for x in data["items"] if isinstance(x, dict)])
+    if isinstance(data.get("list"), list):
+        out.extend([x for x in data["list"] if isinstance(x, dict)])
     return out

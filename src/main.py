@@ -21,8 +21,9 @@ from pathlib import Path
 from datetime import datetime
 
 from .common.logging_config import get_logger, setup_logging
-from .common.schemas import resolve_env_refs
+from .common.schemas import resolve_env_refs, RawNotice
 from .common.llm import build_llm_client
+from .common.constants import DEFAULT_MIN_MATCH_SCORE
 from .common.db import GrantDatabase
 from .collector.multi_collector import MultiPortalCollector
 from .collector.year_filter import YearFilter
@@ -95,16 +96,18 @@ async def run_daily_pipeline(root_dir: Path, llm_client=None) -> dict:
             "unique": 0,
             "year_dropped": 0,
             "year_kept": 0,
+            "evaluated": 0,
             "persistence": 0,
             "matched": 0,
             "dispatched": 0,
             "skipped_dup": 0,
             "errors": 0,
+            "matched_details": [],
         }
         try:
             profile = _load_yaml(profile_path)
             proposal_md = proposal_path.read_text(encoding="utf-8")
-            min_score = profile.get("domain_routing", {}).get("min_match_score", 75)
+            min_score = profile.get("domain_routing", {}).get("min_match_score", DEFAULT_MIN_MATCH_SCORE)
 
             # 1) 수집
             raw_notices = await collector.collect_for_item(profile, master_portals)
@@ -119,11 +122,36 @@ async def run_daily_pipeline(root_dir: Path, llm_client=None) -> dict:
             item_summary["year_kept"] = len(year_kept)
             item_summary["year_dropped"] = len(unique_notices) - len(year_kept)
 
+            # 2.6) 평가 대상 공고 풀 구성: 신규 수집 공고 + DB 기보관 2026 공고 (신규 아이템 매칭 보장)
+            eval_notices_map = {}
+            for n in year_kept:
+                cid = _canonical_id(n)
+                eval_notices_map[cid] = (n, cid)
+
+            # DB의 2026 공고 풀 병합 (외부 수집이 0건이어도 기존 2026 공고들에 대한 평가 보장)
+            try:
+                db_rows = db.list_announcements(year_filter="2026", limit=500)
+                for r in db_rows:
+                    cid = r.get("canonical_id") or ""
+                    if cid and cid not in eval_notices_map:
+                        rn = RawNotice(
+                            portal_id=r.get("source_portal", "db"),
+                            title=r.get("title", ""),
+                            organization=r.get("organization", ""),
+                            ministry=r.get("ministry", ""),
+                            deadline=r.get("deadline", ""),
+                            detail_url=r.get("detail_url", ""),
+                            body_text=r.get("body_text", "") or "",
+                        )
+                        eval_notices_map[cid] = (rn, cid)
+            except Exception as e:
+                logger.warning("DB 공고 풀 병합 실패(degrade): %s", e)
+
+            item_summary["evaluated"] = len(eval_notices_map)
             matched_candidates = []   # (notice, eval_res, canonical_id, rfp_id)
             seen_in_item: set = set()
-            for notice in year_kept:
-                canonical_id = _canonical_id(notice)
 
+            for canonical_id, (notice, _) in eval_notices_map.items():
                 # 3) RFP 파싱/분할
                 try:
                     rfp_chunks = parser.extract_and_split_rfps(notice.downloaded_files)
@@ -131,11 +159,16 @@ async def run_daily_pipeline(root_dir: Path, llm_client=None) -> dict:
                     logger.exception("RFP 파싱 실패[%s]: %s", notice.title, e)
                     item_summary["errors"] += 1
                     rfp_chunks = []
+                is_new_parsed = bool(rfp_chunks)
                 if not rfp_chunks:
-                    rfp_chunks = [
-                        {"rfp_number": "단일공고", "rfp_title": notice.title,
-                         "content": notice.body_text}
-                    ]
+                    existing_chunks = db.get_rfp_chunks(canonical_id)
+                    if existing_chunks:
+                        rfp_chunks = existing_chunks
+                    else:
+                        rfp_chunks = [
+                            {"rfp_number": "단일공고", "rfp_title": notice.title,
+                             "content": notice.body_text or notice.title}
+                        ]
 
                 # 3.5) DB 영속화(announcements, REQ-003)
                 if db.upsert_announcement(notice, canonical_id):
@@ -143,8 +176,9 @@ async def run_daily_pipeline(root_dir: Path, llm_client=None) -> dict:
 
                 # 4) 자격 검증 + 역질문 (한 공고는 최고점 chunk 1건만 채택)
                 for ch_idx, chunk in enumerate(rfp_chunks):
-                    rfp_id = f"{canonical_id}::{chunk.get('rfp_number','single')}#{ch_idx}"
-                    db.upsert_rfp_chunk(chunk, canonical_id, rfp_id)
+                    rfp_id = chunk.get("rfp_id") or f"{canonical_id}::{chunk.get('rfp_number','single')}#{ch_idx}"
+                    if is_new_parsed:
+                        db.upsert_rfp_chunk(chunk, canonical_id, rfp_id)
                     try:
                         eval_res = matcher.evaluate_notice(
                             profile, proposal_md, notice, chunk
@@ -159,27 +193,35 @@ async def run_daily_pipeline(root_dir: Path, llm_client=None) -> dict:
                             matched_candidates.append((notice, eval_res, canonical_id, rfp_id))
 
             item_summary["matched"] = len(matched_candidates)
+            item_summary["matched_details"] = [
+                {
+                    "canonical_id": sid,
+                    "title": n.title,
+                    "score": er.match_score,
+                    "rfp_id": rid,
+                }
+                for n, er, sid, rid in matched_candidates
+            ]
 
             # 5) 중복발송 방지(REQ-005) + 발송 + DB 기록(REQ-003)
             final_for_email = []
-            send_keys = []
             for notice, eval_res, sid, rid in matched_candidates:
-                # is_dispatched: True=이미 발송 / False=새건 / None=DB degrade(안보손적으로 skip)
+                # is_dispatched: True=이미 발송 / False=새건 / None=DB degrade
                 dup = db.is_dispatched(item_summary["item_id"], sid, rid)
                 if dup is not False:
                     item_summary["skipped_dup"] += 1
                     if dup is None:
                         logger.warning("DB degrade -> 발송 건너뜀(%s/%s)", sid, rid)
                     continue
+
+                # 신규 매칭 건은 DB에 즉시 영속화 (이메일 발송 여부와 무관하게 시스템 매칭 이력 보장)
+                if db.record_dispatch(item_summary["item_id"], sid, rid, eval_res.match_score):
+                    item_summary["dispatched"] += 1
                 final_for_email.append((notice, eval_res))
-                send_keys.append((sid, rid, eval_res.match_score))
 
             if final_for_email:
                 try:
                     notifier.send_item_digest(profile, final_for_email)
-                    for sid, rid, score in send_keys:
-                        if db.record_dispatch(item_summary["item_id"], sid, rid, score):
-                            item_summary["dispatched"] += 1
                 except Exception as e:
                     logger.exception("이메일 발송 예외[%s]: %s", item_folder.name, e)
                     item_summary["errors"] += 1
@@ -189,12 +231,13 @@ async def run_daily_pipeline(root_dir: Path, llm_client=None) -> dict:
 
         summary["items"].append(item_summary)
         logger.info(
-            "완료 item=%s collected=%d unique=%d year_kept=%d dropped=%d persisted=%d "
+            "완료 item=%s collected=%d unique=%d year_kept=%d evaluated=%d dropped=%d persisted=%d "
             "matched=%d dispatched=%d skipped_dup=%d errors=%d",
             item_folder.name,
             item_summary["collected"],
             item_summary["unique"],
             item_summary["year_kept"],
+            item_summary["evaluated"],
             item_summary["year_dropped"],
             item_summary["persistence"],
             item_summary["matched"],

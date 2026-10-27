@@ -11,6 +11,7 @@ storage/downloads/**
 storage/downloads/*
 !storage/downloads/.gitkeep
 storage/chroma_db/**
+storage/*.db
 storage/grant_master.db
 storage/logs/
 logs/

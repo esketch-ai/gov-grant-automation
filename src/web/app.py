@@ -18,7 +18,7 @@ import yaml
 from pathlib import Path
 from typing import Optional, List
 
-from fastapi import FastAPI, Request, Form, BackgroundTasks, Response
+from fastapi import FastAPI, Request, Form, BackgroundTasks, Response, File, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 
@@ -28,7 +28,12 @@ from ..common.db import GrantDatabase
 from ..common.scheduler import AsyncScheduler
 from ..common.deadline import calculate_dday, get_dday_statistics
 from ..common.ical_exporter import export_single_notice_ics, export_bundle_calendar_ics
+from ..common.item_profile_merger import merge_item_company_specs, COMPANY_SPECS_FIELDS
+from ..common.constants import DEFAULT_NOTIFICATION_EMAIL, DEFAULT_MIN_MATCH_SCORE
+from ..parser.proposal_parser import ProposalParser
+from ..parser.proposal_extractor import ProposalExtractor
 from ..matcher.preflight import PreflightService
+from ..matcher.vault_preflight import VaultPreflightMatcher
 from ..matcher.multi_axis_matcher import classify_notice_track, NoticeTrack
 
 logger = get_logger("web_admin")
@@ -37,7 +42,7 @@ BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 
-app = FastAPI(title="SSHAI-CWA 2026 관리자 대시보드", version="1.5.0")
+app = FastAPI(title="SSHAI-CWA 2026 관리자 대시보드", version="1.5.1")
 templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
 
 # REQ-020: 1초 내 사전 비행점검 서비스 인스턴스(무상태 → 전역 재사용)
@@ -127,6 +132,11 @@ def _get_items_summary() -> List[dict]:
     items = []
     if not items_dir.exists():
         return items
+
+    # 글로벌 사업주 프로필 로드 (REQ-021 상속 기준)
+    stored_profile = _profile_from_db()
+    global_p = stored_profile if not stored_profile.get("__empty__") else {}
+
     for folder in sorted(items_dir.iterdir()):
         if not folder.is_dir():
             continue
@@ -140,14 +150,38 @@ def _get_items_summary() -> List[dict]:
             meta = data.get("item_meta", {})
             routing = data.get("domain_routing", {})
             specs = data.get("rnd_and_bid_specs", {})
+            item_company_specs = data.get("company_specs", {})
             prop_preview = prop_path.read_text(encoding="utf-8") if prop_path.exists() else ""
+
+            # REQ-021: 글로벌 프로필 상속 및 유효 프로필 산출
+            effective_profile = merge_item_company_specs(item_company_specs, global_p)
+            try:
+                cal = _preflight_service.compute_qualifications(effective_profile)
+                qualification_tags = cal.get("tags", [])
+                is_female = cal.get("is_female_founder", False)
+                is_youth = cal.get("is_youth_39", False)
+                region = cal.get("region_name", "")
+            except Exception:
+                qualification_tags = []
+                is_female = bool(effective_profile.get("founder_gender") == "F")
+                is_youth = False
+                region = ""
+
             items.append({
                 "id": meta.get("item_id", folder.name),
                 "name": meta.get("item_name", folder.name),
                 "recipients": meta.get("recipients", []),
-                "min_score": routing.get("min_match_score", 75),
+                "min_score": routing.get("min_match_score", DEFAULT_MIN_MATCH_SCORE),
                 "keywords": routing.get("core_keywords", []),
                 "target_trl": specs.get("current_trl_range") or str(specs.get("current_trl", "")),
+                "company_specs": item_company_specs,
+                "effective_profile": effective_profile,
+                "qualification_tags": qualification_tags,
+                "is_female_founder": is_female,
+                "is_youth_39": is_youth,
+                "has_rnd_lab": bool(effective_profile.get("has_rnd_lab", False)),
+                "region_name": region,
+                "certifications": list(effective_profile.get("certifications", [])),
                 "proposal_preview": prop_preview[:150],
                 "proposal_full": prop_preview,
             })
@@ -537,6 +571,12 @@ async def simulate_match_api(request: Request):
         eval_dict["semantic_score"] = sem_res.get("semantic_score", 0.0)
         eval_dict["semantic_shared_terms"] = sem_res.get("shared_terms", [])
 
+        # REQ-021: 아이템 company_specs + 글로벌 프로필 상속 기반 Preflight additive 실행
+        stored_profile = _profile_from_db()
+        global_p = stored_profile if not stored_profile.get("__empty__") else {}
+        effective_profile = merge_item_company_specs(profile.get("company_specs", {}), global_p)
+        eval_dict["preflight"] = _preflight_service.run(effective_profile, notice_obj)
+
         return {
             "status": "success",
             "item_id": item_id,
@@ -718,17 +758,25 @@ async def create_item_api(request: Request):
     item_dir.mkdir(parents=True, exist_ok=True)
 
     name = data.get("name", item_id)
-    recipients = data.get("recipients", ["admin@company.com"])
-    if isinstance(recipients, str):
-        recipients = [r.strip() for r in recipients.split(",") if r.strip()]
+    default_recips = [DEFAULT_NOTIFICATION_EMAIL] if DEFAULT_NOTIFICATION_EMAIL else []
+    raw_recips = data.get("recipients")
+    if raw_recips is None:
+        recipients = default_recips
+    elif isinstance(raw_recips, str):
+        recipients = [r.strip() for r in raw_recips.split(",") if r.strip()]
+    elif isinstance(raw_recips, list):
+        recipients = [str(r).strip() for r in raw_recips if str(r).strip()]
+    else:
+        recipients = default_recips
 
     keywords = data.get("keywords", [])
     if isinstance(keywords, str):
         keywords = [k.strip() for k in keywords.split(",") if k.strip()]
 
-    min_score = int(data.get("min_score", 75))
+    min_score = int(data.get("min_score", DEFAULT_MIN_MATCH_SCORE))
     target_trl = str(data.get("target_trl", "6"))
     proposal_text = data.get("proposal_text", f"# {name}\n\n사업 아이템 제안서 본문 요약")
+    company_specs = data.get("company_specs", {})
 
     profile_content = {
         "item_meta": {
@@ -753,6 +801,7 @@ async def create_item_api(request: Request):
             "core_keywords": keywords,
             "min_match_score": min_score,
         },
+        "company_specs": company_specs if isinstance(company_specs, dict) else {},
         "owner_confirmed_policies": {
             "max_acceptable_cash_match_krw": 50000000,
         },
@@ -805,6 +854,8 @@ async def update_item_api(item_id: str, request: Request):
             current_data.setdefault("domain_routing", {})["min_match_score"] = int(data["min_score"])
         if "target_trl" in data:
             current_data.setdefault("rnd_and_bid_specs", {})["current_trl_range"] = str(data["target_trl"])
+        if "company_specs" in data and isinstance(data["company_specs"], dict):
+            current_data["company_specs"] = data["company_specs"]
 
         with open(p_path, "w", encoding="utf-8") as f:
             yaml.dump(current_data, f, allow_unicode=True, sort_keys=False)
@@ -817,6 +868,42 @@ async def update_item_api(item_id: str, request: Request):
     except Exception as e:
         logger.exception("사업 아이템 수정 실패: %s", e)
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@app.post("/api/items/analyze-proposal")
+async def analyze_proposal_api(file: UploadFile = File(...)):
+    """
+    REQ-022: 사업계획서(HWP/HWPX/PDF/DOCX/TXT) 첨부파일 AI 분석 & 폼 Auto-fill API.
+    """
+    if not file or not file.filename:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "업로드된 파일이 없습니다."})
+
+    try:
+        content_bytes = await file.read()
+        if not content_bytes:
+            return JSONResponse(status_code=400, content={"status": "error", "message": "빈 파일입니다."})
+
+        # 1. 텍스트 추출 (순수 파이썬 파서: HWPX/HWP/PDF/DOCX/TXT)
+        text = ProposalParser.extract_text(content_bytes, file.filename)
+        if not text or not text.strip():
+            return JSONResponse(
+                status_code=422,
+                content={"status": "error", "message": "문서에서 텍스트를 추출할 수 없습니다. 암호화되었거나 지원되지 않는 형식입니다."},
+            )
+
+        # 2. 정형 JSON 스펙 추출 (결정론적 고속 실행)
+        extractor = ProposalExtractor()
+        extracted = extractor.extract_sync(text)
+
+        return {
+            "status": "success",
+            "filename": file.filename,
+            "text_length": len(text),
+            "data": extracted,
+        }
+    except Exception as e:
+        logger.exception("사업계획서 분석 실패: %s", e)
+        return JSONResponse(status_code=500, content={"status": "error", "message": f"분석 중 오류 발생: {str(e)}"})
 
 
 @app.delete("/api/items/{item_id}")
@@ -863,6 +950,157 @@ async def matches_view(request: Request):
             "dispatches": dispatches,
         },
     )
+
+
+@app.get("/portals", response_class=HTMLResponse)
+async def portals_view(request: Request):
+    """각 사이트별 크롤링/접속 요건 및 전국 통합공고 종합 관리 뷰어."""
+    from src.common.portal_manager import PortalStatusService
+    from src.common.master_grant_directory import MasterGrantService
+    from src.common.local_centers_directory import LocalCentersService
+    service = PortalStatusService(db=_get_db())
+    portals = service.get_all_portal_statuses()
+
+    mg_service = MasterGrantService()
+    master_programs = mg_service.get_all_programs()
+    monthly_timeline = mg_service.get_monthly_timeline()
+
+    lc_service = LocalCentersService()
+    local_centers = lc_service.get_centers()
+
+    return templates.TemplateResponse(
+        request=request,
+        name="portals.html",
+        context={
+            "active_page": "portals",
+            "portals": portals,
+            "master_programs": master_programs,
+            "monthly_timeline": monthly_timeline,
+            "local_centers": local_centers,
+        },
+    )
+
+
+@app.get("/api/portals/status")
+async def get_portals_status_api():
+    """전체 포털 운영/인증/헬스 상태 JSON 반환 API."""
+    from src.common.portal_manager import PortalStatusService
+    service = PortalStatusService(db=_get_db())
+    portals = service.get_all_portal_statuses()
+    return {
+        "status": "success",
+        "count": len(portals),
+        "portals": portals,
+    }
+
+
+@app.post("/api/portals/ping/{portal_id}")
+async def ping_single_portal_api(portal_id: str):
+    """특정 포털 실시간 핑(Ping) 진단 API."""
+    from src.common.portal_manager import PortalStatusService
+    service = PortalStatusService(db=_get_db())
+    res = await service.ping_portal(portal_id)
+    return res
+
+
+@app.post("/api/portals/ping-all")
+async def ping_all_portals_api():
+    """전체 포털 일괄 병렬 핑(Ping) 진단 API."""
+    from src.common.portal_manager import PortalStatusService
+    service = PortalStatusService(db=_get_db())
+    results = await service.ping_all_portals()
+    return {
+        "status": "success",
+        "count": len(results),
+        "results": results,
+    }
+
+
+@app.get("/api/portals/master-grants")
+async def get_master_grants_api(
+    region: Optional[str] = None,
+    agency: Optional[str] = None,
+    category: Optional[str] = None,
+    month: Optional[int] = None,
+    q: Optional[str] = None,
+):
+    """중앙부처 및 전국 지자체 통합공고 총람 과제 목록 검색 API."""
+    from src.common.master_grant_directory import MasterGrantService
+    mg_service = MasterGrantService()
+    programs = mg_service.get_all_programs(
+        region=region,
+        agency=agency,
+        category=category,
+        month=month,
+        keyword=q,
+    )
+    return {
+        "status": "success",
+        "count": len(programs),
+        "programs": programs,
+    }
+
+
+@app.get("/api/portals/master-grants/timeline")
+async def get_master_grants_timeline_api():
+    """월별(1~12월/수시) 공고 예정 타임라인 캘린더 API."""
+    from src.common.master_grant_directory import MasterGrantService
+    mg_service = MasterGrantService()
+    timeline = mg_service.get_monthly_timeline()
+    return {
+        "status": "success",
+        "timeline": timeline,
+    }
+
+
+@app.get("/api/portals/master-grants/recommend/{item_id}")
+async def recommend_master_grants_api(item_id: str):
+    """사업 아이템 프로필에 기반한 연간 추천 과제 로드맵 도출 API."""
+    from src.common.master_grant_directory import MasterGrantService
+    item_dir = PROJECT_ROOT / "items" / item_id
+    if not item_dir.exists():
+        return JSONResponse(status_code=404, content={"status": "error", "message": "해당 아이템을 찾을 수 없습니다."})
+
+    profile_file = item_dir / "profile.yaml"
+    profile_data = {}
+    if profile_file.exists():
+        profile_data = yaml.safe_load(profile_file.read_text(encoding="utf-8")) or {}
+
+    mg_service = MasterGrantService()
+    recommendations = mg_service.recommend_roadmap_for_item(profile_data)
+    return {
+        "status": "success",
+        "item_id": item_id,
+        "count": len(recommendations),
+        "recommendations": recommendations,
+    }
+
+
+@app.get("/api/portals/local-centers")
+async def get_local_centers_api(
+    region: Optional[str] = None,
+    category: Optional[str] = None,
+    office_only: bool = False,
+    grants_only: bool = False,
+    q: Optional[str] = None,
+):
+    """전국 지자체별 과제 및 사무실(입주) 지원센터 검색 API."""
+    from src.common.local_centers_directory import LocalCentersService
+    lc_service = LocalCentersService()
+    centers = lc_service.get_centers(
+        region=region,
+        category=category,
+        office_only=office_only,
+        grants_only=grants_only,
+        keyword=q,
+    )
+    return {
+        "status": "success",
+        "count": len(centers),
+        "centers": centers,
+        "regions_summary": lc_service.get_regions_summary(),
+    }
+
 
 
 @app.get("/audit", response_class=HTMLResponse)
@@ -949,10 +1187,46 @@ async def get_logs_api(lines: int = 150):
 
 @app.post("/api/pipeline/run")
 async def trigger_pipeline_api():
-    """웹에서 파이프라인을 비동기로 수동 실행."""
+    """웹에서 파이프라인을 비동기로 수동 실행 및 상세 요약 반환."""
     try:
         res = await scheduler.trigger_now()
-        return {"status": "success", "message": "파이프라인 실행 완료", "summary": res}
+        items = res.get("items", []) if isinstance(res, dict) else []
+        total_items = len(items)
+        total_collected = sum(it.get("collected", 0) for it in items)
+        total_evaluated = sum(it.get("evaluated", 0) for it in items)
+        total_matched = sum(it.get("matched", 0) for it in items)
+        total_dispatched = sum(it.get("dispatched", 0) for it in items)
+        total_skipped_dup = sum(it.get("skipped_dup", 0) for it in items)
+
+        detail_items = []
+        for it in items:
+            m_details = it.get("matched_details", [])
+            detail_items.append({
+                "item_id": it.get("item_id", ""),
+                "evaluated": it.get("evaluated", 0),
+                "matched": it.get("matched", 0),
+                "dispatched": it.get("dispatched", 0),
+                "matches": m_details,
+            })
+
+        summary_msg = (
+            f"아이템 {total_items}개 분석 완료: "
+            f"공고 {total_evaluated}건 평가 중 적합 공고 {total_matched}건 발견 "
+            f"(신규 등록/발송: {total_dispatched}건, 기존 중복: {total_skipped_dup}건)"
+        )
+
+        return {
+            "status": "success",
+            "message": summary_msg,
+            "total_items": total_items,
+            "total_collected": total_collected,
+            "total_evaluated": total_evaluated,
+            "total_matched": total_matched,
+            "total_dispatched": total_dispatched,
+            "total_skipped_dup": total_skipped_dup,
+            "detail_items": detail_items,
+            "summary": res,
+        }
     except Exception as e:
         logger.exception("웹 수동 파이프라인 실행 오류: %s", e)
         return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
@@ -973,6 +1247,499 @@ async def scheduler_toggle_api():
     return status
 
 
+# ==============================================================================
+# REQ-027: DocuMorph AI - 사업계획서 맞춤 변환 및 코파일럿 엔드포인트
+# ==============================================================================
+def _get_item_detail(item_id: str) -> Dict[str, Any]:
+    """아이템 ID에 대응하는 전체 프로필 및 제안서 본문 로드."""
+    items_dir = PROJECT_ROOT / "items" / item_id
+    item_dict: Dict[str, Any] = {
+        "id": item_id,
+        "name": item_id,
+        "summary": "",
+        "keywords": [],
+        "trl": 4,
+        "target_stage": "초기창업",
+        "proposal_text": "",
+        "company_specs": {},
+    }
+    if not items_dir.exists():
+        all_items = _get_items_summary()
+        if all_items:
+            first_id = all_items[0]["id"]
+            if first_id != item_id:
+                return _get_item_detail(first_id)
+        return item_dict
+
+    p_path = items_dir / "profile.yaml"
+    prop_path = items_dir / "proposal.md"
+
+    if p_path.exists():
+        try:
+            data = yaml.safe_load(resolve_env_refs(p_path.read_text(encoding="utf-8"))) or {}
+            meta = data.get("item_meta", {})
+            routing = data.get("domain_routing", {})
+            specs = data.get("rnd_and_bid_specs", {})
+            comp = data.get("company_specs", {})
+            item_dict["name"] = meta.get("item_name", item_id)
+            item_dict["summary"] = meta.get("summary") or meta.get("description", "")
+            item_dict["keywords"] = routing.get("core_keywords", [])
+            trl_val = specs.get("current_trl") or specs.get("current_trl_range") or 4
+            try:
+                item_dict["trl"] = int(str(trl_val)[0])
+            except Exception:
+                item_dict["trl"] = 4
+            item_dict["target_stage"] = specs.get("target_stage", "초기창업")
+            item_dict["company_specs"] = comp
+        except Exception as e:
+            logger.warning("profile.yaml 읽기 실패: %s", e)
+
+    if prop_path.exists():
+        try:
+            item_dict["proposal_text"] = prop_path.read_text(encoding="utf-8")
+        except Exception as e:
+            logger.warning("proposal.md 읽기 실패: %s", e)
+
+    return item_dict
+
+
+@app.get("/proposals/tailor", response_class=HTMLResponse)
+async def proposal_tailor_view(
+    request: Request,
+    item_id: Optional[str] = None,
+    announcement_id: Optional[str] = None,
+    template_id: Optional[str] = None,
+    project_id: Optional[str] = None,
+):
+    """사업계획서 맞춤 변환 및 코파일럿 스튜디오 화면. (REQ-029: project_id 이어쓰기 지원)"""
+    from ..generator.template_schemas import get_template, detect_template_for_announcement
+    from ..generator.gap_analyzer import ProposalGapAnalyzer
+
+    # REQ-029: 도전 과제(project) 이어쓰기 — 테넌트 격리로 project → announcement/template 해석
+    if project_id:
+        tenant, _ = _tenant_service.get_current_session(request)
+        proj = _get_db().get_grant_project(project_id, tenant["id"])
+        if proj:
+            announcement_id = proj.get("announcement_id") or announcement_id
+            template_id = proj.get("template_id") or template_id
+
+    all_items = _get_items_summary()
+    active_item_id = item_id or (all_items[0]["id"] if all_items else "default_item")
+    item_detail = _get_item_detail(active_item_id)
+
+    db = _get_db()
+    announcement = None
+    if announcement_id:
+        try:
+            with sqlite3.connect(str(db.db_path)) as conn:
+                conn.row_factory = sqlite3.Row
+                row = conn.execute(
+                    "SELECT canonical_id, title, organization, ministry, deadline FROM announcements WHERE canonical_id = ?",
+                    (announcement_id,),
+                ).fetchone()
+                if row:
+                    announcement = dict(row)
+        except Exception as e:
+            logger.warning("공고 상세 조회 실패: %s", e)
+
+    if template_id:
+        tpl = get_template(template_id)
+    elif announcement:
+        tpl = detect_template_for_announcement(announcement.get("title", ""), announcement.get("ministry", ""))
+    else:
+        tpl = get_template("PSST")
+
+    analyzer = ProposalGapAnalyzer()
+    gap_result = analyzer.analyze(item_detail, tpl)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="tailor.html",
+        context={
+            "active_page": "tailor",
+            "all_items": all_items,
+            "current_item": item_detail,
+            "template": tpl,
+            "announcement": announcement,
+            "gap_analysis": gap_result,
+        },
+    )
+
+
+@app.get("/api/proposals/templates")
+async def api_proposals_templates():
+    """제공 중인 표준 계획서 템플릿 목록 반환."""
+    from ..generator.template_schemas import get_all_templates
+    return {"status": "success", "templates": get_all_templates()}
+
+
+@app.post("/api/proposals/gap-analysis")
+async def api_proposals_gap_analysis(request: Request):
+    """마스터 계획서와 타깃 템플릿 간 갭 분석 수행 API."""
+    from ..generator.template_schemas import get_template
+    from ..generator.gap_analyzer import ProposalGapAnalyzer
+
+    data = await request.json()
+    item_id = data.get("item_id", "")
+    template_id = data.get("template_id", "PSST")
+
+    item_detail = _get_item_detail(item_id)
+    tpl = get_template(template_id)
+    analyzer = ProposalGapAnalyzer()
+    gap_result = analyzer.analyze(item_detail, tpl)
+
+    return {"status": "success", "gap_analysis": gap_result}
+
+
+@app.post("/api/proposals/generate-section")
+async def api_proposals_generate_section(request: Request):
+    """코파일럿 팩트 기반 섹션 맞춤 초안 생성 API."""
+    from ..generator.template_schemas import get_template
+    from ..generator.gap_analyzer import ProposalGapAnalyzer
+    from ..generator.doc_morpher import DocMorpher
+
+    data = await request.json()
+    item_id = data.get("item_id", "")
+    template_id = data.get("template_id", "PSST")
+    section_id = data.get("section_id", "")
+    user_facts = data.get("user_facts", {})
+
+    item_detail = _get_item_detail(item_id)
+    tpl = get_template(template_id)
+    target_sec = next((s for s in tpl.sections if s.section_id == section_id), None)
+    if not target_sec:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "존재하지 않는 문항 ID입니다."})
+
+    analyzer = ProposalGapAnalyzer()
+    gap_data = analyzer.analyze(item_detail, tpl)
+    sec_gap = next((s for s in gap_data["sections"] if s["section_id"] == section_id), None)
+    master_context = sec_gap.get("matched_master_text", "") if sec_gap else ""
+
+    morpher = DocMorpher()
+    draft = await morpher.generate_section_draft(
+        section=target_sec,
+        template=tpl,
+        master_context=master_context,
+        user_facts=user_facts,
+        item_meta=item_detail,
+    )
+
+    return {
+        "status": "success",
+        "section_id": section_id,
+        "draft": draft,
+    }
+
+
+@app.post("/api/proposals/export")
+async def api_proposals_export(request: Request):
+    """전체 완성된 계획서 마크다운 취합본 생성 API."""
+    from ..generator.template_schemas import get_template
+    from ..generator.doc_morpher import DocMorpher
+
+    data = await request.json()
+    item_id = data.get("item_id", "")
+    template_id = data.get("template_id", "PSST")
+    section_drafts = data.get("section_drafts", {})
+
+    item_detail = _get_item_detail(item_id)
+    tpl = get_template(template_id)
+    morpher = DocMorpher()
+    full_content = morpher.assemble_full_document(item_detail, tpl, section_drafts)
+
+    return {
+        "status": "success",
+        "content": full_content,
+        "filename": f"{item_id}_{template_id}_사업계획서.md",
+    }
+
+
+# ==============================================================================
+# REQ-028: Multi-Tenant & Company Vault (기업 지식 데이터 룸)
+# ==============================================================================
+from ..tenant.tenant_service import TenantService, COOKIE_SESSION_NAME
+_tenant_service = TenantService()
+
+
+@app.get("/vault", response_class=HTMLResponse)
+async def vault_view(request: Request):
+    """기업 지식 데이터 룸 (Company Vault) 화면."""
+    tenant, user = _tenant_service.get_current_session(request)
+    summary = _tenant_service.get_vault_summary(tenant["id"])
+    return templates.TemplateResponse(
+        request=request,
+        name="vault.html",
+        context={
+            "active_page": "vault",
+            "current_tenant": tenant,
+            "current_user": user,
+            "vault_summary": summary,
+        },
+    )
+
+
+@app.post("/api/vault/upload")
+async def api_vault_upload(
+    request: Request,
+    file: UploadFile = File(...),
+    category: str = Form("PROPOSAL"),
+):
+    """지식 데이터 룸에 파일 업로드 및 자동 AI 스펙 추출."""
+    tenant, user = _tenant_service.get_current_session(request)
+    file_bytes = await file.read()
+    asset = await _tenant_service.ingest_vault_file(
+        tenant_id=tenant["id"],
+        filename=file.filename or "unknown.pdf",
+        file_bytes=file_bytes,
+        category=category,
+    )
+    return {"status": "success", "asset": asset}
+
+
+@app.get("/api/vault/assets")
+async def api_vault_list_assets(request: Request, category: Optional[str] = None):
+    """테넌트의 지식 자산 목록 조회."""
+    tenant, user = _tenant_service.get_current_session(request)
+    assets = _tenant_service.db.list_tenant_assets(tenant["id"], category)
+    return {"status": "success", "count": len(assets), "assets": assets}
+
+
+@app.delete("/api/vault/assets/{asset_id}")
+async def api_vault_delete_asset(request: Request, asset_id: str):
+    """지식 자산 삭제."""
+    tenant, user = _tenant_service.get_current_session(request)
+    success = _tenant_service.db.delete_tenant_asset(asset_id, tenant["id"])
+    if not success:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "자산을 찾을 수 없거나 삭제 권한이 없습니다."})
+    return {"status": "success"}
+
+
+@app.post("/api/auth/social-login")
+async def api_auth_social_login(request: Request):
+    """소셜 로그인(카카오, 구글) 또는 데모 계정 간이 전환 API."""
+    data = await request.json()
+    provider = data.get("provider", "demo")
+    email = data.get("email", "user@demo.kr")
+    name = data.get("name", "사업자")
+    company_name = data.get("company_name", "(주)자사명")
+    biz_reg_no = data.get("biz_reg_no", "")
+
+    tenant, user, token = _tenant_service.login_social_or_demo(
+        provider=provider,
+        email=email,
+        name=name,
+        company_name=company_name,
+        biz_reg_no=biz_reg_no,
+    )
+
+    resp = JSONResponse(content={
+        "status": "success",
+        "tenant": tenant,
+        "user": user,
+    })
+    resp.set_cookie(
+        key=COOKIE_SESSION_NAME,
+        value=token,
+        max_age=2592000,
+        httponly=True,
+        samesite="lax",
+    )
+    return resp
+
+
+@app.post("/api/auth/logout")
+async def api_auth_logout():
+    """로그아웃 처리."""
+    resp = JSONResponse(content={"status": "success"})
+    resp.delete_cookie(key=COOKIE_SESSION_NAME)
+    return resp
+
+
+# =========================================================
+# 11.5b. REQ-029 · 도전자 프로젝트 워크스페이스 (/projects) + Vault 매칭
+# =========================================================
+_vault_matcher: Optional[VaultPreflightMatcher] = None
+
+
+def _get_vault_matcher() -> VaultPreflightMatcher:
+    global _vault_matcher
+    if _vault_matcher is None:
+        _vault_matcher = VaultPreflightMatcher(_get_db())
+    return _vault_matcher
+
+
+def _announcement_by_id(canonical_id: Optional[str]) -> Optional[dict]:
+    if not canonical_id:
+        return None
+    db = _get_db()
+    try:
+        with sqlite3.connect(str(db.db_path), timeout=5.0) as conn:
+            conn.row_factory = sqlite3.Row
+            row = conn.execute("SELECT * FROM announcements WHERE canonical_id = ?", (canonical_id,)).fetchone()
+            return dict(row) if row else None
+    except Exception as e:
+        logger.warning("공고 조회 실패: %s", e)
+        return None
+
+
+def _notices_from_db(limit: int = 40) -> List[RawNotice]:
+    """DB 최신 2026 공고를 매칭 대상 RawNotice 리스트로 변환."""
+    out: List[RawNotice] = []
+    db = _get_db()
+    try:
+        with sqlite3.connect(str(db.db_path), timeout=5.0) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute(
+                "SELECT * FROM announcements WHERE target_year = 2026 ORDER BY created_at DESC LIMIT ?",
+                (limit,),
+            ).fetchall()
+            for d in rows:
+                out.append(RawNotice(
+                    portal_id=d.get("canonical_id", d.get("source_portal", "portal")),
+                    title=d.get("title", ""),
+                    organization=d.get("organization", ""),
+                    ministry=d.get("ministry", ""),
+                    deadline=d.get("deadline", ""),
+                    detail_url=d.get("detail_url", ""),
+                    body_text=d.get("title", ""),
+                ))
+    except Exception as e:
+        logger.warning("매칭용 공고 조회 실패: %s", e)
+    return out
+
+
+def _decorate_project(project: dict) -> dict:
+    """도전 과제 행에 마감 D-Day 배지 + 공고를 붙임."""
+    p = dict(project)
+    ann = _announcement_by_id(p.get("announcement_id"))
+    info = calculate_dday(ann.get("deadline") if ann else None)
+    p["dday"] = info or {"d_day": None, "status": "UNKNOWN",
+                         "badge_text": "D-?", "badge_class": "bg-slate-100 text-slate-500 border"}
+    if ann and not p.get("announcement_title"):
+        p["announcement_title"] = ann.get("title", "")
+    return p
+
+
+@app.get("/projects", response_class=HTMLResponse)
+async def projects_view(request: Request):
+    """도전 과제 프로젝트 워크스페이스 (/projects, 테넌트 격리)."""
+    tenant, user = _tenant_service.get_current_session(request)
+    db = _get_db()
+    projects = [_decorate_project(p) for p in db.list_grant_projects(tenant["id"])]
+
+    active = len(projects)
+    avg_progress = round(sum(p.get("progress_pct", 0) or 0 for p in projects) / active, 1) if active else 0.0
+    urgent = 0
+    for p in projects:
+        d = p["dday"]
+        st = d.get("status")
+        dd = d.get("d_day")
+        if st in ("TODAY", "CRITICAL", "WARNING") or (dd is not None and dd <= 7):
+            urgent += 1
+
+    recommendations = _get_vault_matcher().match(tenant["id"], _notices_from_db())[:10]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="projects.html",
+        context={
+            "active_page": "projects",
+            "current_tenant": tenant,
+            "current_user": user,
+            "projects": projects,
+            "kpi": {"count": active, "avg_progress": avg_progress, "urgent": urgent},
+            "recommendations": recommendations,
+        },
+    )
+
+
+@app.get("/api/vault/match")
+async def vault_match_api(request: Request):
+    """Vault 자산 기반 초정밀 권장 공고 목록 (RED 자동제거, Match Score 정렬)."""
+    tenant, user = _tenant_service.get_current_session(request)
+    recommendations = _get_vault_matcher().match(tenant["id"], _notices_from_db())
+    return {
+        "status": "success",
+        "tenant_id": tenant["id"],
+        "count": len(recommendations),
+        "recommendations": recommendations[:15],
+    }
+
+
+@app.get("/api/projects")
+async def list_projects_api(request: Request):
+    """테넌트의 도전 과제 프로젝트 목록 (진행률, 마감 D-Day, 템플릿 포함)."""
+    tenant, user = _tenant_service.get_current_session(request)
+    db = _get_db()
+    projects = [_decorate_project(p) for p in db.list_grant_projects(tenant["id"])]
+    return {
+        "status": "success",
+        "tenant_id": tenant["id"],
+        "projects": projects,
+        "kpi": {
+            "count": len(projects),
+            "avg_progress": round(sum((p.get("progress_pct", 0) or 0) for p in projects) / len(projects), 1) if projects else 0.0,
+        },
+    }
+
+
+@app.post("/api/projects")
+async def create_project_api(request: Request):
+    """[🎯 도전 과제 등록] canonical_id + template_id로 신규 도전 과제 생성 (테넌트 격리)."""
+    import re
+    tenant, user = _tenant_service.get_current_session(request)
+    data = await request.json()
+    canonical_id = str(data.get("canonical_id", "")).strip()
+    if not canonical_id or not re.match(r"^[a-zA-Z0-9_\-:.]+$", canonical_id):
+        return JSONResponse(status_code=400, content={"status": "error", "message": "유효하지 않은 canonical_id 형식입니다."})
+
+    ann = _announcement_by_id(canonical_id)
+    if not ann:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "해당 공고를 찾을 수 없습니다."})
+
+    template_id = str(data.get("template_id", "")).strip() or "PSST"
+    pid = _get_db().create_grant_project({
+        "tenant_id": tenant["id"],
+        "announcement_id": canonical_id,
+        "announcement_title": ann.get("title", ""),
+        "template_id": template_id,
+        "status": "INIT",
+        "progress_pct": 0,
+    })
+    return {"status": "success", "project_id": pid, "announcement_title": ann.get("title", "")}
+
+
+@app.patch("/api/projects/{project_id}")
+async def update_project_api(project_id: str, request: Request):
+    """도전 과제 상태/진행률 수정 (테넌트 격리, 타 테넌트 편집 차단)."""
+    tenant, user = _tenant_service.get_current_session(request)
+    data = await request.json()
+    fields: dict = {}
+    if str(data.get("status", "")).strip():
+        fields["status"] = str(data["status"]).strip()
+    for key in ("progress_pct", "progress"):
+        if key in data and data[key] is not None:
+            try:
+                fields["progress_pct"] = max(0, min(100, int(data[key])))
+            except (ValueError, TypeError):
+                pass
+            break
+    found = _get_db().update_grant_project(project_id, tenant["id"], **fields)
+    if not found:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "프로젝트를 찾을 수 없습니다."})
+    return {"status": "success", "project_id": project_id, "updated": fields}
+
+
+@app.delete("/api/projects/{project_id}")
+async def delete_project_api(project_id: str, request: Request):
+    """도전 과제 프로젝트 삭제 (테넌트 격리, 타 테넌트 삭제 차단)."""
+    tenant, user = _tenant_service.get_current_session(request)
+    deleted = _get_db().delete_grant_project(project_id, tenant["id"])
+    if not deleted:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "프로젝트를 찾을 수 없습니다."})
+    return {"status": "success", "deleted": project_id}
+
+
 @app.get("/api/status")
 async def api_status():
     """시스템 건강도, 통계, QA Swarm, 서킷 브레이커 및 자동 스케줄러 상태 API."""
@@ -988,7 +1755,7 @@ async def api_status():
         ann_count = int(row[0]) if row else 0
     return {
         "status": "healthy",
-        "version": "1.4.0",
+        "version": app.version,
         "year_policy": "2026_strict",
         "registered_items": len(items),
         "persisted_announcements": ann_count,

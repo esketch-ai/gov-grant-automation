@@ -85,3 +85,25 @@ def resolve_env_refs(text: str) -> str:
         return os.environ.get(m.group(1), "")
 
     return _ENV_REF.sub(_sub, text)
+
+
+def load_dotenv(path: Optional[Path] = None) -> None:
+    """순수 파이썬 .env 로더 (외부 라이브러리 무의존): 프로젝트 루트 .env 주입."""
+    target = path or (Path(__file__).resolve().parent.parent.parent / ".env")
+    if not target.is_file():
+        return
+    try:
+        for line in target.read_text(encoding="utf-8").splitlines():
+            line = line.strip()
+            if not line or line.startswith("#") or "=" not in line:
+                continue
+            k, v = line.split("=", 1)
+            k, v = k.strip(), v.strip().strip("'\"")
+            if k and k not in os.environ:
+                os.environ[k] = v
+    except Exception:
+        pass
+
+
+# 모듈 import 시 .env 자동 활성화
+load_dotenv()

@@ -80,3 +80,46 @@ portals:
     base_url: "https://www.rnd24.go.kr/"
     ministry: "과학기술정보통신부"
 
+  # =========================================================================
+  # 해외 주요 선진국 및 거점 도시 글로벌 유치 포털 (영국·프랑스·호주·UAE·KSC)
+  # =========================================================================
+  uk_dbt_gep:
+    name: "영국 기업통상부(DBT) GEP 글로벌 포털"
+    adapter_type: "TypeG_GlobalGovernment"
+    base_url: "https://www.great.gov.uk/international/content/invest/how-we-help-you-invest-in-the-uk/global-entrepreneur-programme/"
+    ministry: "영국 기업통상부 (DBT) / 내무부 (Home Office)"
+    country: "영국"
+    region_hub: "런던"
+
+  fr_cite_stationf:
+    name: "프랑스 Cité des Arts & La French Tech (Station F)"
+    adapter_type: "TypeG_GlobalGovernment"
+    base_url: "https://www.citedesarts.net/"
+    ministry: "프랑스 문화부 / 경제재정부 / Station F"
+    country: "프랑스"
+    region_hub: "파리"
+
+  au_austrade_landing:
+    name: "호주 무역투자대표부 (Austrade) & DFAT 한호재단"
+    adapter_type: "TypeG_GlobalGovernment"
+    base_url: "https://www.austrade.gov.au/"
+    ministry: "호주 외교통상부 (DFAT) / Austrade"
+    country: "호주"
+    region_hub: "퍼스 / 시드니"
+
+  uae_hub71_adgm:
+    name: "UAE 아부다비 Hub71 & ADGM 글로벌 테크 포털"
+    adapter_type: "TypeG_GlobalGovernment"
+    base_url: "https://www.hub71.com/"
+    ministry: "아부다비 경제개발부 / ADGM (Ghadan 21)"
+    country: "UAE"
+    region_hub: "아부다비"
+
+  kr_ksc_global:
+    name: "중기부·창진원 K-스타트업 센터 (KSC) 글로벌 진출 포털"
+    adapter_type: "TypeA_OpenAPI_Scrape"
+    base_url: "https://www.k-startup.go.kr/"
+    ministry: "중소벤처기업부 / 창업진흥원 / 중진공"
+    country: "대한민국 (글로벌)"
+    region_hub: "실리콘밸리 / 파리 / 싱가포르 / 도쿄 등"
+

@@ -4,6 +4,26 @@
 
 ---
 
+## [2026-10-28] 세션 `req049-global-grants-portal` — 해외·거점도시 글로벌 유치 지원사업 디렉토리 & 포털 연동 (REQ-049)
+
+> sprint11 상용 궤도 후속: 국내 R&D/정부과제 매칭 외 '해외 선진국·거점도시 특화 유치 지원사업' 수요를 SSOT 카탈로그로 catalog화하고 포털 UI/엔드포인트에 노출. 영속 `SYNC/requests/REQ-049-global-grants-portal.md`.
+
+### Done — 글로벌 유치 포털 (REQ-049)
+- **REQ-049 [글로벌(해외·거점) 유치 지원사업 디렉토리 & 포털]**: 신규 `src/common/global_grant_directory.py`(`GlobalGrantProgram` frozen dataclass · `GLOBAL_GRANTS_CATALOG` 5개국/거점 35개 포털 · `GlobalGrantsService.get_all_programs/get_summary_by_country`).
+  - 대상 거점 5곳: **영국(런던) DBT GEP**, **프랑스(파리) City&Station F**, **호주(퍼스/시드니) Austrade/Landing Pad**, **UAE(아부다비) Hub71/ADGM**, **대한민국(글로벌) KSC/글로벌**.
+  - `config/master_portals.yaml` +43 포털 엔트리, `src/common/master_grant_directory.py` + `src/common/portal_manager.py`(`PortalStatusService.global_grants_service`) 통합.
+  - `src/web/app.py`: `GET /api/portals/global-grants` + `GET /api/portals/global-grants/summary`; `/portals` 렌더에 `global_programs`/`global_summary`.
+  - `src/web/templates/portals.html`: 글로벌 KPI 카드 + `#global-grants-panel` (500여 라인).
+  - 완료증: `tests/test_global_grants_portal.py` (5/5 pass) — 카탈로그 구조·국가/거점 집계·`portal_count` 검증.
+
+### Verification
+- pytest: `267 passed` (0 fail / 0 skip) — `tests/test_global_grants_portal.py` 5개 포함.
+- audit_runner: `100.0/100.0` (Raw 140.0/140.0), `APPROVED (Deploy-Ready)`, 7/7 에이전트 20.0/20.0 — `storage/audit_report.{json,md}` fresh 2026-10-28 23:01.
+- REGISTRY: REQ-049행 추가, 산 DONE 40→41.
+- 2026-10-28 23:01
+
+---
+
 ## [2026-10-28] 세션 `sprint11-v2.0-commercial` — 실전 수익형 B2B SaaS 전면 개편 & K-Horizon 2027 (REQ-032 ~ REQ-048 연착륙)
 
 > v1.6.0 (REQ-029/030/031)에서 v2.0 상용화 궤도로의 전환. `SYNC/requests/REGISTRY.md`가 본 세션의 완료 근거 보드이며, 신규 요청문 `REQ-032`~`REQ-048` 17건이 `SYNC/requests/`에 영속됨. `docs/MASTER_PLAN_SSOT.md`로 기획 단일 정본(SSOT) 재정립.

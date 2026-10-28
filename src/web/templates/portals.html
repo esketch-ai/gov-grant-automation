@@ -22,7 +22,7 @@
           <span class="sr-only">각 사이트별 수집·접속 및 통합공고 관리</span>
         </h1>
         <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
-          G2B, K-Startup 등 12개 실시간 포털 관제, 31선 중앙/지자체 연간 로드맵, 전국 지자체 지원센터를 종합 관리합니다.
+          G2B, K-Startup 및 영국·프랑스·호주·UAE 등 17개 글로벌/국내 실시간 포털 관제, 36선 통합공고 로드맵, 전국 지원센터를 종합 관리합니다.
         </p>
       </div>
 
@@ -41,20 +41,27 @@
     </div>
   </section>
 
-  <!-- 메인 모드 선택 탭 (1. 실시간 포털 관제 vs 2. 통합공고 종합 정리함 vs 3. 지자체별 사무실·과제 지원센터) -->
-  <div class="flex border-b border-slate-200 bg-slate-100/80 p-1.5 rounded-xl gap-1">
+  <!-- 메인 모드 선택 탭 (1. 실시간 포털 관제 vs 2. 통합공고 종합 정리함 vs 3. 지자체 지원센터 vs 4. 글로벌 유치 포털) -->
+  <div class="flex border-b border-slate-200 bg-slate-100/80 p-1.5 rounded-xl gap-1 flex-wrap sm:flex-nowrap">
     <button onclick="switchMainTab('PORTALS')" id="tabBtn_portals"
-            class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-indigo-700 shadow-sm border border-slate-200">
-      <i class="fa-solid fa-network-wired text-sm"></i> 1. 실시간 수집 포털 관제 (12개 포털)
+            class="flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 bg-white text-indigo-700 shadow-sm border border-slate-200">
+      <i class="fa-solid fa-network-wired text-sm"></i> 1. 실시간 수집 포털 관제
+      <span class="bg-indigo-100 text-indigo-800 text-xs px-1.5 py-0.5 rounded-full font-semibold">{{ portals|length }}개</span>
     </button>
     <button onclick="switchMainTab('MASTER')" id="tabBtn_master"
-            class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
-      <i class="fa-solid fa-book-bookmark text-sm text-amber-600"></i> 2. 🏛️ 중앙부처 및 지자체 통합공고 총람 (31선)
+            class="flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900">
+      <i class="fa-solid fa-book-bookmark text-sm text-amber-600"></i> 2. 🏛️ 중앙/지자체 총람
+      <span class="bg-amber-100 text-amber-800 text-xs px-1.5 py-0.5 rounded-full font-semibold">{{ master_programs|length }}선</span>
     </button>
     <button onclick="switchMainTab('LOCAL')" id="tabBtn_local"
-            class="flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900">
-      <i class="fa-solid fa-building-user text-sm text-blue-600"></i> 3. 🏢 지자체별 사무실·과제 지원센터
-      <span class="bg-blue-100 text-blue-800 text-xs px-2 py-0.5 rounded-full font-semibold">송파·강남·판교 등 {{ local_centers|length }}선</span>
+            class="flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900">
+      <i class="fa-solid fa-building-user text-sm text-blue-600"></i> 3. 🏢 지자체 지원센터
+      <span class="bg-blue-100 text-blue-800 text-xs px-1.5 py-0.5 rounded-full font-semibold">{{ local_centers|length }}선</span>
+    </button>
+    <button onclick="switchMainTab('GLOBAL')" id="tabBtn_global"
+            class="flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900">
+      <i class="fa-solid fa-earth-americas text-sm text-purple-600"></i> 4. 🌐 해외 거점 정부 유치 포털
+      <span class="bg-purple-100 text-purple-800 text-xs px-1.5 py-0.5 rounded-full font-semibold">5대 거점 특화</span>
     </button>
   </div>
 
@@ -596,6 +603,407 @@
 
   </div>
 
+  <!-- ========================================================================= -->
+  <!-- TAB 4: 🌐 해외 거점 정부 및 글로벌 특화 유치 포털 영역 -->
+  <!-- ========================================================================= -->
+  <div id="section_global" class="hidden space-y-6">
+
+    <!-- 상단 5대 글로벌 거점 브리핑 카드 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3.5">
+      <!-- 1. 영국 (런던) -->
+      <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-xl p-4 border border-indigo-700/40 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-base">🇬🇧 영국 런던</span>
+            <span class="bg-indigo-500/30 text-indigo-200 text-xs px-2 py-0.5 rounded font-mono font-bold">DBT GEP</span>
+          </div>
+          <h4 class="font-bold text-sm text-white mt-2">AI·딥테크·SaaS</h4>
+          <p class="text-indigo-200/80 text-xs mt-1 leading-relaxed">
+            24인 딜메이커 1:1 전담, 최소투자금 없는 혁신가 비자 연계, 3년 후 영주권(ILR) 취득.
+          </p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-indigo-700/40 text-xs text-indigo-300 flex items-center justify-between font-mono">
+          <span>임페리얼 산학 R&D</span>
+          <span class="text-emerald-400 font-bold">투자금 요건 0원</span>
+        </div>
+      </div>
+
+      <!-- 2. 프랑스 (파리) -->
+      <div class="bg-gradient-to-br from-blue-900 to-slate-900 text-white rounded-xl p-4 border border-blue-700/40 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-base">🇫🇷 프랑스 파리</span>
+            <span class="bg-blue-500/30 text-blue-200 text-xs px-2 py-0.5 rounded font-mono font-bold">Cité / Station F</span>
+          </div>
+          <h4 class="font-bold text-sm text-white mt-2">창의예술 &amp; 디지털테크</h4>
+          <p class="text-blue-200/80 text-xs mt-1 leading-relaxed">
+            40m² 전용 작업실/주거 6개월 체재비·항공료 전액 지원, Station F 라 프렌치 텍 입주.
+          </p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-blue-700/40 text-xs text-blue-300 flex items-center justify-between font-mono">
+          <span>삼성문화재단 연계</span>
+          <span class="text-emerald-400 font-bold">체재비 100% 무상</span>
+        </div>
+      </div>
+
+      <!-- 3. 호주 (퍼스/시드니) -->
+      <div class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-xl p-4 border border-emerald-700/40 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-base">🇦🇺 호주 퍼스/시드니</span>
+            <span class="bg-emerald-500/30 text-emerald-200 text-xs px-2 py-0.5 rounded font-mono font-bold">DFAT / Austrade</span>
+          </div>
+          <h4 class="font-bold text-sm text-white mt-2">호스피탈리티·F&B·CleanTech</h4>
+          <p class="text-emerald-200/80 text-xs mt-1 leading-relaxed">
+            한-호 랜딩패드 주간 왕복 항공·숙박 지원, HORECA 및 대형 유통체인 바이어 1:1 직연계.
+          </p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-emerald-700/40 text-xs text-emerald-300 flex items-center justify-between font-mono">
+          <span>Spacecubed 코워킹</span>
+          <span class="text-emerald-400 font-bold">항공·숙박 보조금</span>
+        </div>
+      </div>
+
+      <!-- 4. 중동 UAE (아부다비) -->
+      <div class="bg-gradient-to-br from-amber-900 to-slate-900 text-white rounded-xl p-4 border border-amber-700/40 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-base">🇦🇪 UAE 아부다비</span>
+            <span class="bg-amber-500/30 text-amber-200 text-xs px-2 py-0.5 rounded font-mono font-bold">ADGM Hub71</span>
+          </div>
+          <h4 class="font-bold text-sm text-white mt-2">AI·핀테크·헬스·기후</h4>
+          <p class="text-amber-200/80 text-xs mt-1 leading-relaxed">
+            최대 750,000 AED(한화 약 2.8억, 현금+현물), WeWork 사무실, 고급 주거, 10년 골든비자.
+          </p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-amber-700/40 text-xs text-amber-300 flex items-center justify-between font-mono">
+          <span>Ghadan 21 펀드</span>
+          <span class="text-amber-400 font-bold">최대 75만 AED</span>
+        </div>
+      </div>
+
+      <!-- 5. 대한민국 (KSC 글로벌) -->
+      <div class="bg-gradient-to-br from-purple-900 to-slate-900 text-white rounded-xl p-4 border border-purple-700/40 shadow-sm flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between">
+            <span class="text-base">🇰🇷 대한민국 (KSC)</span>
+            <span class="bg-purple-500/30 text-purple-200 text-xs px-2 py-0.5 rounded font-mono font-bold">중기부 창진원</span>
+          </div>
+          <h4 class="font-bold text-sm text-white mt-2">7대 거점 글로벌 스케일업</h4>
+          <p class="text-purple-200/80 text-xs mt-1 leading-relaxed">
+            기업당 6천만 원 해외 진출 자금 지원, 실리콘밸리·파리·싱가포르 공유오피스 무상 배정.
+          </p>
+        </div>
+        <div class="mt-3 pt-2 border-t border-purple-700/40 text-xs text-purple-300 flex items-center justify-between font-mono">
+          <span>14주 탑티어 AC</span>
+          <span class="text-purple-300 font-bold">기업당 6,000만 원</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1. 해외 정부 포털 실시간 연계망 현황판 -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-server text-purple-600"></i>
+            <span>해외 주요국 정부 및 글로벌 유치 기관 포털 수집 연동망 (5개 거점)</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            국가별 특화 정부 포털의 OpenAPI 및 공식 공고 사이트를 TypeG(해외정부연계) 어댑터로 실시간 관제합니다.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="bg-purple-50 text-purple-700 border border-purple-200 text-xs px-2.5 py-1 rounded-lg font-bold">
+            <i class="fa-solid fa-bolt mr-1"></i>TypeG 글로벌 어댑터 가동
+          </span>
+        </div>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 uppercase tracking-wider text-xs border-b border-slate-200">
+            <tr>
+              <th class="py-3 px-4">국가 / 거점</th>
+              <th class="py-3 px-4">연동 포털명</th>
+              <th class="py-3 px-4">주관 정부 / 기구</th>
+              <th class="py-3 px-4">특화 분야</th>
+              <th class="py-3 px-4">수집 어댑터</th>
+              <th class="py-3 px-4 text-center">실시간 핑 (도달성)</th>
+              <th class="py-3 px-4 text-right">포털 바로가기</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100 font-medium">
+            {% for p in portals if p.is_global %}
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-3 px-4 whitespace-nowrap">
+                <span class="font-bold text-slate-900">
+                  {% if p.country == '영국' %}🇬🇧 영국 (런던)
+                  {% elif p.country == '프랑스' %}🇫🇷 프랑스 (파리)
+                  {% elif p.country == '호주' %}🇦🇺 호주 (퍼스/시드니)
+                  {% elif p.country == 'UAE' %}🇦🇪 UAE (아부다비)
+                  {% else %}🇰🇷 대한민국 (글로벌 7대 거점)
+                  {% endif %}
+                </span>
+              </td>
+              <td class="py-3 px-4">
+                <div class="font-bold text-slate-900">{{ p.name }}</div>
+                <div class="text-xs text-slate-400 font-mono mt-0.5">{{ p.portal_id }}</div>
+              </td>
+              <td class="py-3 px-4 text-slate-700">
+                {{ p.ministry }}
+              </td>
+              <td class="py-3 px-4 text-slate-600 max-w-xs truncate" title="{{ p.specialized_fields }}">
+                <span class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs font-medium">{{ p.specialized_fields }}</span>
+              </td>
+              <td class="py-3 px-4 whitespace-nowrap">
+                <span class="bg-purple-50 text-purple-700 border border-purple-200 px-2 py-0.5 rounded text-xs font-mono font-semibold">
+                  {{ p.crawling_method }}
+                </span>
+              </td>
+              <td class="py-3 px-4 text-center whitespace-nowrap">
+                <div id="ping_badge_{{ p.portal_id }}" class="inline-block">
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded border text-xs font-mono font-bold text-emerald-700 bg-emerald-50 border-emerald-200">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> 정상 가동
+                  </span>
+                </div>
+                <button onclick="pingSinglePortal('{{ p.portal_id }}')" id="ping_btn_{{ p.portal_id }}"
+                        class="ml-1 text-slate-400 hover:text-indigo-600 p-1 rounded transition" title="핑 측정">
+                  <i class="fa-solid fa-arrows-rotate text-xs"></i>
+                </button>
+              </td>
+              <td class="py-3 px-4 text-right whitespace-nowrap">
+                <a href="{{ p.base_url }}" target="_blank" rel="noopener noreferrer"
+                   class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold transition text-xs">
+                  공식 포털 <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+                </a>
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 2. 국가별·분야별 특화 지원사업 정밀 카탈로그 -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <div>
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-passport text-amber-500"></i>
+            <span>국가별·분야별 해외 유치 특화 지원사업 총람 (총 {{ global_programs|length }}선)</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            비자 특혜, 파격 현금/현물 지원, 40m² 레지던시, 1:1 딜메이커 등 주요 혜택 및 신청 요건을 비교·탐색합니다.
+          </p>
+        </div>
+
+        <!-- 필터 컨트롤 그룹 -->
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- 국가 선택 버튼 그룹 -->
+          <div class="flex bg-slate-100 p-1 rounded-lg gap-1 text-xs font-medium">
+            <button onclick="setGlobalCountryFilter('전체')" class="gcountry-btn px-2.5 py-1 rounded bg-slate-900 text-white font-bold transition" data-country="전체">전체</button>
+            <button onclick="setGlobalCountryFilter('영국')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="영국">🇬🇧 영국</button>
+            <button onclick="setGlobalCountryFilter('프랑스')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="프랑스">🇫🇷 프랑스</button>
+            <button onclick="setGlobalCountryFilter('호주')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="호주">🇦🇺 호주</button>
+            <button onclick="setGlobalCountryFilter('UAE')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="UAE">🇦🇪 UAE</button>
+            <button onclick="setGlobalCountryFilter('대한민국')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="대한민국">🇰🇷 KSC</button>
+          </div>
+
+          <!-- 분야 셀렉트 -->
+          <select id="globalFieldSelect" onchange="filterGlobalCards()"
+                  class="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-purple-500 font-medium">
+            <option value="전체">모든 특화 분야</option>
+            <option value="AI">AI / 딥테크 / SaaS</option>
+            <option value="시각예술">시각예술 / 문화·디지털</option>
+            <option value="호스피탈리티">호스피탈리티 / F&B</option>
+            <option value="핀테크">핀테크 / 헬스 / 기후테크</option>
+            <option value="바이오">바이오 / 친환경 / 로봇</option>
+          </select>
+
+          <!-- 비자 특혜 체크박스 -->
+          <label class="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
+            <input type="checkbox" id="globalVisaOnly" onchange="filterGlobalCards()" class="rounded text-purple-600 focus:ring-purple-500">
+            <span>비자·영주권 혜택 필수</span>
+          </label>
+
+          <!-- 키워드 검색창 -->
+          <div class="relative">
+            <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-400 text-xs"></i>
+            <input type="text" id="globalSearchInput" oninput="filterGlobalCards()" placeholder="과제명, 기술, 혜택 검색..."
+                   class="pl-7 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-300 rounded-lg w-48 focus:w-64 transition-all focus:outline-none focus:ring-1 focus:ring-purple-500">
+          </div>
+        </div>
+      </div>
+
+      <!-- 카드 그리드 -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="globalCardsContainer">
+        {% for prog in global_programs %}
+        <div class="global-card bg-slate-50/70 hover:bg-white rounded-xl border border-slate-200 hover:border-purple-300 p-5 transition shadow-sm hover:shadow-md flex flex-col justify-between"
+             data-country="{{ prog.country }}"
+             data-fields="{{ prog.specialized_fields | join(',') }}"
+             data-visa="{{ prog.visa_benefit }}"
+             data-text="{{ prog.program_name }} {{ prog.program_name_en }} {{ prog.supervising_entity }} {{ prog.operating_entity }} {{ prog.financial_benefit }} {{ prog.space_facility_benefit }} {{ prog.case_studies | join(' ') }}">
+          
+          <div class="space-y-3">
+            <!-- 상단 헤더: 국가/거점 & 지원 유형 -->
+            <div class="flex items-center justify-between gap-2">
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-xs px-2 py-0.5 rounded-md
+                  {% if prog.country == '영국' %}bg-indigo-100 text-indigo-800
+                  {% elif prog.country == '프랑스' %}bg-blue-100 text-blue-800
+                  {% elif prog.country == '호주' %}bg-emerald-100 text-emerald-800
+                  {% elif prog.country == 'UAE' %}bg-amber-100 text-amber-800
+                  {% else %}bg-purple-100 text-purple-800{% endif %}">
+                  {{ prog.country }} &middot; {{ prog.city_hub }}
+                </span>
+                <span class="text-xs text-slate-500 font-mono">{{ prog.program_id }}</span>
+              </div>
+              <span class="bg-slate-200/80 text-slate-700 text-xs font-semibold px-2 py-0.5 rounded">
+                {{ prog.support_type }}
+              </span>
+            </div>
+
+            <!-- 제목 및 영문명 -->
+            <div>
+              <h4 class="font-bold text-sm text-slate-900 hover:text-purple-700 transition">
+                {{ prog.program_name }}
+              </h4>
+              <p class="text-xs text-slate-500 font-mono mt-0.5">{{ prog.program_name_en }}</p>
+            </div>
+
+            <!-- 특화 분야 뱃지 리스트 -->
+            <div class="flex flex-wrap gap-1">
+              {% for f in prog.specialized_fields %}
+              <span class="bg-purple-50 text-purple-700 border border-purple-200/60 text-xs font-semibold px-2 py-0.5 rounded">
+                #{{ f }}
+              </span>
+              {% endfor %}
+            </div>
+
+            <!-- 4대 핵심 혜택 박스 그리드 -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs pt-1">
+              <div class="bg-white p-2.5 rounded-lg border border-slate-200/80 space-y-0.5">
+                <div class="font-bold text-emerald-700 flex items-center gap-1">
+                  <i class="fa-solid fa-coins"></i> 재정 지원 / 투자 연계
+                </div>
+                <p class="text-slate-600 line-clamp-2 leading-relaxed">{{ prog.financial_benefit }}</p>
+              </div>
+
+              <div class="bg-white p-2.5 rounded-lg border border-slate-200/80 space-y-0.5">
+                <div class="font-bold text-indigo-700 flex items-center gap-1">
+                  <i class="fa-solid fa-passport"></i> 비자 &amp; 영주권 특혜
+                </div>
+                <p class="text-slate-600 line-clamp-2 leading-relaxed">{{ prog.visa_benefit }}</p>
+              </div>
+
+              <div class="bg-white p-2.5 rounded-lg border border-slate-200/80 space-y-0.5">
+                <div class="font-bold text-blue-700 flex items-center gap-1">
+                  <i class="fa-solid fa-building"></i> 공간 &amp; 연구 인프라
+                </div>
+                <p class="text-slate-600 line-clamp-2 leading-relaxed">{{ prog.space_facility_benefit }}</p>
+              </div>
+
+              <div class="bg-white p-2.5 rounded-lg border border-slate-200/80 space-y-0.5">
+                <div class="font-bold text-amber-700 flex items-center gap-1">
+                  <i class="fa-solid fa-handshake"></i> 멘토링 &amp; 파트너십
+                </div>
+                <p class="text-slate-600 line-clamp-2 leading-relaxed">{{ prog.mentoring_network }}</p>
+              </div>
+            </div>
+
+            <!-- 신청 자격 및 선발 규모 -->
+            <div class="bg-slate-100/80 p-2.5 rounded-lg text-xs space-y-1">
+              <div class="flex items-start gap-1">
+                <span class="text-slate-500 shrink-0 font-bold">지원 자격:</span>
+                <span class="text-slate-800 font-medium">{{ prog.target_qualifications }}</span>
+              </div>
+              <div class="flex items-center gap-1 text-xs text-slate-500">
+                <span class="font-bold shrink-0">선발 규모:</span>
+                <span>{{ prog.selection_scale }}</span>
+              </div>
+            </div>
+
+            <!-- 주요 한국 기업 진출/연계 사례 -->
+            {% if prog.case_studies %}
+            <div class="text-xs flex items-center gap-1.5 flex-wrap">
+              <span class="text-slate-400 font-semibold shrink-0"><i class="fa-solid fa-trophy text-amber-500 text-xs"></i> 진출 사례:</span>
+              {% for cs in prog.case_studies %}
+              <span class="bg-white border border-slate-200 px-1.5 py-0.5 rounded text-xs font-medium text-slate-700">{{ cs }}</span>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+
+          <!-- 하단 버튼 및 대표 창구 -->
+          <div class="mt-4 pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
+            <div class="text-slate-500 truncate max-w-xs" title="{{ prog.inquiry_contact }}">
+              <i class="fa-solid fa-headset mr-1"></i>{{ prog.inquiry_contact }}
+            </div>
+            <a href="{{ prog.detail_url }}" target="_blank" rel="noopener noreferrer"
+               class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1 shrink-0">
+              공식 상세 안내 <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
+            </a>
+          </div>
+
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 3. 사업계획서 기반 자동 매칭 알고리즘 스키마 & DB 필드 매핑 안내 -->
+    <div class="bg-slate-900 text-white rounded-xl p-6 border border-slate-800 shadow-md space-y-4">
+      <div class="flex items-center justify-between">
+        <h4 class="text-sm font-bold flex items-center gap-2">
+          <i class="fa-solid fa-code text-cyan-400"></i>
+          <span>사업계획서 기반 글로벌 자동 매칭 JSON 스키마 &amp; DB 필드 매핑 구조</span>
+        </h4>
+        <span class="text-xs text-slate-400 font-mono">REQ-050 &middot; Global Grant Matcher Schema</span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono space-y-2">
+          <div class="text-amber-400 font-bold">// 1. 창업 기업 프로파일 매칭 조건 스키마</div>
+          <pre class="text-xs text-slate-300 leading-relaxed overflow-x-auto">
+{
+  "company_specs": {
+    "tech_domains": ["AI", "SaaS", "Hospitality", "Arts"],
+    "target_countries": ["GB", "FR", "AU", "AE"],
+    "has_english_ir_deck": true,
+    "willing_to_relocate_hq": true,
+    "revenue_stage": "seed_to_series_a"
+  },
+  "matching_rules": {
+    "prefer_visa_sponsorship": true,
+    "prefer_cash_grant": true,
+    "prefer_studio_residency": false
+  }
+}</pre>
+        </div>
+
+        <div class="bg-slate-950 p-4 rounded-lg border border-slate-800 font-mono space-y-2">
+          <div class="text-cyan-400 font-bold">// 2. 글로벌 공고 DB 매핑 필드 구조</div>
+          <pre class="text-xs text-slate-300 leading-relaxed overflow-x-auto">
+CREATE TABLE global_grants (
+  program_id          TEXT PRIMARY KEY,
+  country             TEXT NOT NULL,
+  city_hub            TEXT NOT NULL,
+  specialized_fields  JSON NOT NULL,
+  financial_benefit   TEXT,
+  visa_benefit        TEXT,
+  space_benefit       TEXT,
+  source_portal       TEXT REFERENCES portals(id),
+  auto_match_score    INTEGER DEFAULT 0
+);</pre>
+        </div>
+      </div>
+      <p class="text-slate-400 text-xs leading-relaxed">
+        ※ 사용자가 사업소개서 또는 IR 덱을 업로드하면, 기술 도메인 키워드와 타깃 국가 희망 여부를 분석하여 위 5대 거점 특화 지원사업 중 최적 프로그램을 1초 만에 자동 추천 매칭합니다.
+      </p>
+    </div>
+
+  </div>
+
 </div>
 
 <!-- 마스터 과제 상세 모달 -->
@@ -724,6 +1132,7 @@
   let currentMainTab = 'PORTALS';
   let currentMasterRegion = '전국';
   let currentLocalRegion = '전국';
+  let currentGlobalCountry = '전체';
 
   const masterProgramsData = {{ master_programs | tojson | safe }};
 
@@ -732,27 +1141,36 @@
     const secPortals = document.getElementById('section_portals');
     const secMaster = document.getElementById('section_master');
     const secLocal = document.getElementById('section_local');
+    const secGlobal = document.getElementById('section_global');
     const btnPortals = document.getElementById('tabBtn_portals');
     const btnMaster = document.getElementById('tabBtn_master');
     const btnLocal = document.getElementById('tabBtn_local');
+    const btnGlobal = document.getElementById('tabBtn_global');
 
     // 초기화
-    secPortals.classList.add('hidden');
-    secMaster.classList.add('hidden');
-    secLocal.classList.add('hidden');
-    btnPortals.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
-    btnMaster.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
-    btnLocal.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 text-slate-600 hover:text-slate-900";
+    if (secPortals) secPortals.classList.add('hidden');
+    if (secMaster) secMaster.classList.add('hidden');
+    if (secLocal) secLocal.classList.add('hidden');
+    if (secGlobal) secGlobal.classList.add('hidden');
+
+    const defaultBtnClass = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 text-slate-600 hover:text-slate-900";
+    if (btnPortals) btnPortals.className = defaultBtnClass;
+    if (btnMaster) btnMaster.className = defaultBtnClass;
+    if (btnLocal) btnLocal.className = defaultBtnClass;
+    if (btnGlobal) btnGlobal.className = defaultBtnClass;
 
     if (tab === 'PORTALS') {
-      secPortals.classList.remove('hidden');
-      btnPortals.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-indigo-700 shadow-sm border border-slate-200";
+      if (secPortals) secPortals.classList.remove('hidden');
+      if (btnPortals) btnPortals.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 bg-white text-indigo-700 shadow-sm border border-slate-200";
     } else if (tab === 'MASTER') {
-      secMaster.classList.remove('hidden');
-      btnMaster.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-amber-800 shadow-sm border border-slate-200";
+      if (secMaster) secMaster.classList.remove('hidden');
+      if (btnMaster) btnMaster.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 bg-white text-amber-800 shadow-sm border border-slate-200";
     } else if (tab === 'LOCAL') {
-      secLocal.classList.remove('hidden');
-      btnLocal.className = "flex-1 py-2.5 px-4 text-xs font-bold rounded-lg transition flex items-center justify-center gap-2 bg-white text-blue-700 shadow-sm border border-slate-200";
+      if (secLocal) secLocal.classList.remove('hidden');
+      if (btnLocal) btnLocal.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 bg-white text-blue-700 shadow-sm border border-slate-200";
+    } else if (tab === 'GLOBAL') {
+      if (secGlobal) secGlobal.classList.remove('hidden');
+      if (btnGlobal) btnGlobal.className = "flex-1 py-2.5 px-3 text-xs font-bold rounded-lg transition flex items-center justify-center gap-1.5 bg-white text-purple-700 shadow-sm border border-slate-200";
     }
   }
 
@@ -980,6 +1398,44 @@
 
     const badge = document.getElementById('local_total_badge');
     if (badge) badge.innerText = visibleCount;
+  }
+
+  // --------------------------------------------------------------------------
+  // Tab 4: 🌐 해외 거점 정부 및 글로벌 특화 지원사업 필터 로직
+  // --------------------------------------------------------------------------
+  function setGlobalCountryFilter(country) {
+    currentGlobalCountry = country;
+    document.querySelectorAll('.gcountry-btn').forEach(btn => {
+      if (btn.getAttribute('data-country') === country) {
+        btn.classList.add('bg-slate-900', 'text-white', 'font-bold');
+        btn.classList.remove('text-slate-700');
+      } else {
+        btn.classList.remove('bg-slate-900', 'text-white', 'font-bold');
+        btn.classList.add('text-slate-700');
+      }
+    });
+    filterGlobalCards();
+  }
+
+  function filterGlobalCards() {
+    const q = (document.getElementById('globalSearchInput').value || '').toLowerCase().trim();
+    const field = document.getElementById('globalFieldSelect').value;
+    const visaOnly = document.getElementById('globalVisaOnly').checked;
+    const cards = document.querySelectorAll('.global-card');
+
+    cards.forEach(card => {
+      const country = card.getAttribute('data-country') || '';
+      const fields = card.getAttribute('data-fields') || '';
+      const visa = card.getAttribute('data-visa') || '';
+      const text = (card.getAttribute('data-text') || '').toLowerCase();
+
+      let matchCountry = (currentGlobalCountry === '전체') || (country === currentGlobalCountry);
+      let matchField = (field === '전체') || (fields.includes(field));
+      let matchVisa = !visaOnly || (visa.includes('비자') || visa.includes('영주권'));
+      let matchQuery = !q || text.includes(q);
+
+      card.style.display = (matchCountry && matchField && matchVisa && matchQuery) ? '' : 'none';
+    });
   }
 
   async function runManualPipeline() {

@@ -1045,6 +1045,7 @@ async def portals_view(request: Request):
     from src.common.portal_manager import PortalStatusService
     from src.common.master_grant_directory import MasterGrantService
     from src.common.local_centers_directory import LocalCentersService
+    from src.common.global_grant_directory import GlobalGrantsService
     service = PortalStatusService(db=_get_db())
     portals = service.get_all_portal_statuses()
 
@@ -1055,6 +1056,10 @@ async def portals_view(request: Request):
     lc_service = LocalCentersService()
     local_centers = lc_service.get_centers()
 
+    gg_service = GlobalGrantsService()
+    global_programs = gg_service.get_all_programs()
+    global_summary = gg_service.get_summary_by_country()
+
     return templates.TemplateResponse(
         request=request,
         name="portals.html",
@@ -1064,6 +1069,8 @@ async def portals_view(request: Request):
             "master_programs": master_programs,
             "monthly_timeline": monthly_timeline,
             "local_centers": local_centers,
+            "global_programs": global_programs,
+            "global_summary": global_summary,
         },
     )
 
@@ -1186,6 +1193,40 @@ async def get_local_centers_api(
         "count": len(centers),
         "centers": centers,
         "regions_summary": lc_service.get_regions_summary(),
+    }
+
+
+@app.get("/api/portals/global-grants")
+async def get_global_grants_api(
+    country: Optional[str] = None,
+    field: Optional[str] = None,
+    visa_required: Optional[bool] = None,
+    q: Optional[str] = None,
+):
+    """해외 주요 선진국 및 거점 도시 특화 유치 지원사업 검색 API."""
+    from src.common.global_grant_directory import GlobalGrantsService
+    gg_service = GlobalGrantsService()
+    programs = gg_service.get_all_programs(
+        country=country,
+        field=field,
+        visa_required=visa_required,
+        q=q,
+    )
+    return {
+        "status": "success",
+        "count": len(programs),
+        "programs": programs,
+    }
+
+
+@app.get("/api/portals/global-grants/summary")
+async def get_global_grants_summary_api():
+    """국가별 거점 지원사업 통계 및 핵심 혜택 요약 API."""
+    from src.common.global_grant_directory import GlobalGrantsService
+    gg_service = GlobalGrantsService()
+    return {
+        "status": "success",
+        "summary": gg_service.get_summary_by_country(),
     }
 
 

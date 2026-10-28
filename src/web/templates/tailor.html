@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}사업계획서 맞춤 변환 스튜디오 &middot; SSHAI-CWA DocuMorph AI{% endblock %}
+{% block title %}공고별 심사 요건 및 가점 정밀 분석 스튜디오 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
@@ -8,25 +8,26 @@
   <!-- ========================================================================= -->
   <!-- 1. 상단 컨트롤 바: 아이템 선택, 템플릿 선택, 준비도 게이지 -->
   <!-- ========================================================================= -->
-  <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-purple-800/40">
+  <section class="kh-page-hero tone-indigo reveal mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
       <div class="space-y-2">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="bg-purple-500/20 text-purple-300 border border-purple-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-            <i class="fa-solid fa-wand-magic-sparkles text-purple-300"></i> DocuMorph AI Copilot
+          <span class="bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <i class="fa-solid fa-clipboard-check text-purple-300"></i> 요건 정밀 분석 어시스턴트
+            <span class="sr-only">DocuMorph AI</span>
           </span>
           {% if announcement %}
-          <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-[11px] font-semibold px-2.5 py-0.5 rounded-full">
+          <span class="bg-amber-500/20 text-amber-300 border border-amber-400/30 text-xs font-semibold px-2.5 py-0.5 rounded-full">
             <i class="fa-solid fa-bullhorn text-amber-300 mr-1"></i>타깃 공고: {{ announcement.title }}
           </span>
           {% endif %}
         </div>
         <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-          공고별 사업계획서 맞춤 변환 & 코파일럿 스튜디오
+          <span>공고별 심사 기준 대조 및 필수 제출 요건 분석</span>
+          <span class="sr-only">공고 요건 정밀 분석 및 심사 대응 전략 스튜디오</span>
         </h1>
         <p class="text-xs text-purple-200/80 max-w-2xl leading-relaxed">
-          사업자의 <strong>마스터 사업계획서</strong>를 공고별 심사 기준(PSST, R&D)에 맞추어 
-          <strong>문체 변환, 갭(Gap) 팩트 보강, 공식 서식 초안 생성</strong>을 반자동으로 지원합니다.
+          기업의 보유 기술 및 스펙을 공고별 심사 기준 및 가점 항목과 1:1 대조하여 전략적 지원 포인트를 도출합니다.
         </p>
       </div>
 
@@ -34,7 +35,7 @@
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white/10 p-3.5 rounded-xl border border-white/10 backdrop-blur-md">
         <!-- 대상 아이템 선택 -->
         <div class="space-y-1">
-          <label class="text-[10px] text-purple-200 font-bold block uppercase tracking-wider">마스터 사업 아이템</label>
+          <label class="text-xs text-purple-200 font-bold block uppercase tracking-wider">마스터 사업 아이템</label>
           <select id="itemSelect" onchange="switchItemOrTemplate()" class="w-full sm:w-44 px-2.5 py-1.5 rounded-lg bg-slate-900/90 text-white border border-purple-400/30 text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none">
             {% for item in all_items %}
             <option value="{{ item.id }}" {% if item.id == current_item.id %}selected{% endif %}>
@@ -46,7 +47,7 @@
 
         <!-- 템플릿 선택 -->
         <div class="space-y-1">
-          <label class="text-[10px] text-purple-200 font-bold block uppercase tracking-wider">공고 표준 양식</label>
+          <label class="text-xs text-purple-200 font-bold block uppercase tracking-wider">공고 표준 양식</label>
           <select id="templateSelect" onchange="switchItemOrTemplate()" class="w-full sm:w-56 px-2.5 py-1.5 rounded-lg bg-slate-900/90 text-white border border-purple-400/30 text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none">
             <option value="PSST" {% if template.template_id == 'PSST' %}selected{% endif %}>K-Startup PSST 표준 (예창패·초창패)</option>
             <option value="RND_SMTECH" {% if template.template_id == 'RND_SMTECH' %}selected{% endif %}>중기부 SMTECH R&D (디딤돌·TIPS)</option>
@@ -55,7 +56,7 @@
 
         <!-- 전체 내보내기 버튼 -->
         <div class="space-y-1 sm:self-end">
-          <label class="text-[10px] text-transparent hidden sm:block">Action</label>
+          <label class="text-xs text-transparent hidden sm:block">Action</label>
           <button onclick="openFullPreviewModal()" class="w-full px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-lg shadow transition flex items-center justify-center gap-1.5 whitespace-nowrap">
             <i class="fa-solid fa-file-export"></i> 전체 취합본
           </button>
@@ -68,7 +69,7 @@
       <div class="md:col-span-2 space-y-1.5">
         <div class="flex items-center justify-between text-xs">
           <span class="font-bold text-purple-200 flex items-center gap-1.5">
-            <i class="fa-solid fa-gauge-high text-purple-400"></i> 양식 준비도 (Readiness Score)
+            <i class="fa-solid fa-gauge-high text-purple-400"></i> 양식 준비도
           </span>
           <span class="font-mono font-bold text-white text-sm" id="readinessScoreText">{{ gap_analysis.readiness_score }}%</span>
         </div>
@@ -80,20 +81,20 @@
 
       <div class="md:col-span-2 flex items-center justify-start md:justify-end gap-3 text-xs">
         <span class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
-          <i class="fa-solid fa-circle-check text-emerald-400 text-[10px]"></i> 완전매핑 <strong>{{ gap_analysis.direct_count }}</strong>
+          <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i> 완전매핑 <strong>{{ gap_analysis.direct_count }}</strong>
         </span>
         <span class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg">
-          <i class="fa-solid fa-triangle-exclamation text-amber-400 text-[10px]"></i> 각색필요 <strong>{{ gap_analysis.adapt_count }}</strong>
+          <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs"></i> 각색필요 <strong>{{ gap_analysis.adapt_count }}</strong>
         </span>
         <span class="inline-flex items-center gap-1.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded-lg">
-          <i class="fa-solid fa-circle-xmark text-rose-400 text-[10px]"></i> 팩트필요 <strong>{{ gap_analysis.deficient_count }}</strong>
+          <i class="fa-solid fa-circle-xmark text-rose-400 text-xs"></i> 팩트필요 <strong>{{ gap_analysis.deficient_count }}</strong>
         </span>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- ========================================================================= -->
-  <!-- 2. 스플릿 뷰 워크스페이스: 좌측 문항 트리 vs 우측 섹션 초안 작성기 -->
+  <!-- 2. 스플릿 뷰 워크스페이스: 좌측 문항 트리 vs 우측 섹션 요건 분석기 -->
   <!-- ========================================================================= -->
   <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
@@ -104,7 +105,7 @@
           <h2 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
             <i class="fa-solid fa-list-check text-purple-600"></i> 공고 양식 문항 목록
           </h2>
-          <span class="text-[11px] text-slate-400 font-mono">총 {{ template.sections|length }}개 문항</span>
+          <span class="text-xs text-slate-600 font-mono">총 {{ template.sections|length }}개 문항</span>
         </div>
 
         <div class="space-y-1.5" id="sectionsNavList">
@@ -113,26 +114,26 @@
                data-sec-id="{{ sec.section_id }}"
                class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group {% if loop.first %}bg-purple-50/70 border-purple-400 shadow-sm{% else %}bg-slate-50/50 hover:bg-slate-50{% endif %}">
             <div class="space-y-1 flex-1 min-w-0">
-              <div class="text-[10px] text-slate-400 font-semibold truncate">{{ sec.category_name }}</div>
+              <div class="text-xs text-slate-600 font-semibold truncate">{{ sec.category_name }}</div>
               <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
                 {{ sec.title }}
               </div>
             </div>
             <div class="shrink-0 flex flex-col items-end gap-1">
               {% if sec.status == 'DIRECT_FIT' %}
-              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
                 완전매핑
               </span>
               {% elif sec.status == 'ADAPT_FIT' %}
-              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-200">
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
                 각색필요
               </span>
               {% else %}
-              <span class="px-1.5 py-0.5 rounded text-[10px] font-bold bg-rose-100 text-rose-800 border border-rose-200">
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
                 팩트필요
               </span>
               {% endif %}
-              <span class="draft-badge hidden text-[10px] text-purple-600 font-semibold" id="badge_done_{{ sec.section_id }}">
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_{{ sec.section_id }}">
                 <i class="fa-solid fa-check"></i> 작성완료
               </span>
             </div>
@@ -144,23 +145,23 @@
       <!-- 안내 팁 카드 -->
       <div class="bg-indigo-50/80 rounded-xl p-4 border border-indigo-100 text-xs text-indigo-950 space-y-2">
         <div class="font-bold flex items-center gap-1.5 text-indigo-800">
-          <i class="fa-solid fa-lightbulb text-amber-500"></i> 반자동 코파일럿 작성 팁
+          <i class="fa-solid fa-lightbulb text-amber-500"></i> 심사 대응 가이드 도출 팁
         </div>
-        <p class="text-slate-600 leading-relaxed text-[11px]">
+        <p class="text-slate-600 leading-relaxed text-xs">
           공고 문항에 맞는 대표님만의 <strong>구체적인 수치(인원수, 예산, 목표 성능)</strong>를 우측 가이드 문답창에 짧게 입력하세요.
-          DocuMorph AI가 심사위원이 선호하는 전문적인 문장과 서식으로 초안을 확장해 드립니다.
+          공고 심사 기준에 부합하는 핵심 수치와 가점 요건을 1:1 대조하여 전략 가이드를 제공합니다.
         </p>
       </div>
     </div>
 
-    <!-- [우측 8컬럼]: 섹션별 실시간 초안 작성 및 코파일럿 워크스페이스 -->
+    <!-- [우측 8컬럼]: 섹션별 실시간 공고 요건 분석 및 전략 워크스페이스 -->
     <div class="lg:col-span-8 space-y-5">
       <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
         
         <!-- 문항 헤더 및 심사위원 배점 가이드 -->
         <div class="space-y-3 pb-4 border-b border-slate-100">
           <div class="flex items-center justify-between gap-3">
-            <span class="px-2.5 py-0.5 rounded text-[10px] font-bold bg-purple-100 text-purple-800 border border-purple-200" id="currentCategoryText">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-800 border border-purple-200" id="currentCategoryText">
               {{ template.sections[0].category_name }}
             </span>
             <span class="text-xs text-slate-500 font-mono" id="currentRecommendedPages">
@@ -176,23 +177,23 @@
           <div class="p-3 bg-purple-50/60 rounded-xl border border-purple-100 text-xs text-purple-950 flex items-start gap-2.5">
             <i class="fa-solid fa-circle-info text-purple-600 mt-0.5"></i>
             <div class="space-y-0.5">
-              <div class="font-bold text-purple-900">심사위원 중점 평가 포인트 (Evaluation Focus)</div>
-              <p class="text-slate-700 text-[11px] leading-relaxed" id="currentEvaluationFocus">
+              <div class="font-bold text-purple-900">심사위원 중점 평가 포인트<span class="sr-only"> (Evaluation Focus)</span></div>
+              <p class="text-slate-700 text-xs leading-relaxed" id="currentEvaluationFocus">
                 {{ template.sections[0].evaluation_focus }}
               </p>
             </div>
           </div>
         </div>
 
-        <!-- 1) 마스터 계획서 발췌 원문 아코디언 -->
+        <!-- 1) 기업 아이템 소개 발췌 원문 아코디언 -->
         <details class="group bg-slate-50 rounded-xl border border-slate-200 overflow-hidden text-xs" open>
           <summary class="p-3 font-bold text-slate-700 cursor-pointer flex items-center justify-between bg-slate-100/70 hover:bg-slate-100 transition">
             <span class="flex items-center gap-1.5">
-              <i class="fa-solid fa-folder-open text-indigo-600"></i> 마스터 계획서 발췌 내용 (Source Context)
+              <i class="fa-solid fa-folder-open text-indigo-600"></i> 기업 아이템 소개 발췌 내용<span class="sr-only"> (Source Context)</span>
             </span>
             <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition"></i>
           </summary>
-          <div class="p-4 bg-white text-slate-600 text-[11px] leading-relaxed border-t border-slate-200 whitespace-pre-wrap font-mono" id="currentMasterText">
+          <div class="p-4 bg-white text-slate-600 text-xs leading-relaxed border-t border-slate-200 whitespace-pre-wrap font-mono" id="currentMasterText">
             {{ gap_analysis.sections[0].matched_master_text }}
           </div>
         </details>
@@ -203,10 +204,10 @@
             <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
               <i class="fa-solid fa-comment-dots text-purple-600"></i> 코파일럿 가이드 문답 (핵심 팩트 보완)
             </h3>
-            <span class="text-[10px] text-purple-700 bg-purple-100 px-2 py-0.5 rounded font-semibold">반자동 어시스턴트</span>
+            <span class="text-xs text-purple-700 bg-purple-100 px-2 py-0.5 rounded font-semibold">반자동 어시스턴트</span>
           </div>
-          <p class="text-[11px] text-slate-500">
-            아래 가이드 질문에 단답형 수치나 핵심 키워드를 입력하시면, AI가 양식 문체에 맞춰 본문 초안을 작성합니다.
+          <p class="text-xs text-slate-600">
+            아래 가이드 질문에 단답형 수치나 핵심 키워드를 입력하시면, AI가 공고 평가 기준에 맞춰 필수 심사 요건 대응 체크포인트를 요약해 드립니다.
           </p>
 
           <div class="space-y-3" id="questionsContainer">
@@ -214,49 +215,49 @@
           </div>
 
           <div class="flex items-center justify-between pt-2">
-            <div class="text-[11px] text-slate-400">
+            <div class="text-xs text-slate-600">
               <i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Ollama 로컬 LLM / 고밀도 규칙 기반 하이브리드 엔진
             </div>
             <button id="generateBtn" onclick="generateSectionDraft()"
                     class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-md transition flex items-center gap-2">
               <i class="fa-solid fa-wand-magic-sparkles"></i>
-              <span>✨ 맞춤 초안 생성하기</span>
+              <span>✨ 심사 기준별 대응 가이드 도출</span>
             </button>
           </div>
         </div>
 
-        <!-- 3) 맞춤 변환 초안 편집기 -->
+        <!-- 3) 맞춤 대응 가이드 및 전략 메모 편집기 -->
         <div class="space-y-2">
           <div class="flex items-center justify-between">
             <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-              <i class="fa-solid fa-pen-nib text-slate-600"></i> 최종 맞춤 본문 초안 (편집 가능)
+              <i class="fa-solid fa-pen-nib text-slate-600"></i> 공고 요건별 전략 메모 및 대응 가이드 (편집 가능)
             </label>
             <div class="flex items-center gap-3 text-xs">
-              <span class="text-slate-400 font-mono text-[11px]" id="charCount">0자</span>
+              <span class="text-slate-600 font-mono text-xs" id="charCount">0자</span>
               <button onclick="copyDraftToClipboard()" class="text-slate-600 hover:text-purple-600 transition flex items-center gap-1">
                 <i class="fa-regular fa-copy"></i> 복사
               </button>
-              <button onclick="clearCurrentDraft()" class="text-slate-400 hover:text-rose-600 transition flex items-center gap-1">
+              <button onclick="clearCurrentDraft()" class="text-slate-600 hover:text-rose-600 transition flex items-center gap-1">
                 <i class="fa-solid fa-rotate-left"></i> 비우기
               </button>
             </div>
           </div>
 
           <textarea id="sectionDraftTextarea" oninput="updateCharCount()" rows="12"
-                    placeholder="우측의 [✨ 맞춤 초안 생성하기] 버튼을 누르면 이 영역에 공고 맞춤형 초안이 자동으로 작성됩니다. 생성된 후 자유롭게 수정하세요."
+                    placeholder="우측의 버튼을 누르면 이 영역에 공고 맞춤형 대응 가이드가 요약됩니다. 전략 메모를 자유롭게 추가하세요."
                     class="w-full text-xs p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none bg-slate-50/30 leading-relaxed font-sans text-slate-800"></textarea>
         </div>
 
         <!-- 하단 섹션 이동 버튼 바 -->
         <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
           <button onclick="navigateSection(-1)" class="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium transition flex items-center gap-1.5">
-            <i class="fa-solid fa-chevron-left text-[10px]"></i> 이전 문항
+            <i class="fa-solid fa-chevron-left text-xs"></i> 이전 문항
           </button>
           
           <div class="flex items-center gap-2">
             <button onclick="saveAndNextSection()" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow transition flex items-center gap-1.5">
               <span>저장 후 다음 문항</span>
-              <i class="fa-solid fa-chevron-right text-[10px]"></i>
+              <i class="fa-solid fa-chevron-right text-xs"></i>
             </button>
           </div>
         </div>
@@ -269,14 +270,14 @@
 </div>
 
 <!-- ========================================================================= -->
-<!-- 3. 전체 취합 계획서 미리보기 & 다운로드 모달 -->
+<!-- 3. 전체 취합 공고 요건 대응 전략서 미리보기 & 다운로드 모달 -->
 <!-- ========================================================================= -->
 <div id="fullPreviewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
   <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
     <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
       <div class="flex items-center gap-2">
         <i class="fa-solid fa-file-invoice text-purple-400 text-lg"></i>
-        <h3 class="font-bold text-base">전체 맞춤 사업계획서 취합본 미리보기</h3>
+        <h3 class="font-bold text-base">공고별 요건 분석 및 지원 전략서 취합본 미리보기</h3>
       </div>
       <button onclick="closeFullPreviewModal()" class="text-slate-400 hover:text-white transition">
         <i class="fa-solid fa-xmark text-lg"></i>
@@ -288,8 +289,8 @@
         <div>
           <strong>적용 양식:</strong> {{ template.name }} | <strong>아이템:</strong> {{ current_item.name }}
         </div>
-        <div class="font-mono text-[11px] text-purple-700" id="modalProgressText">
-          작성 진행률: 0 / {{ template.sections|length }} 완료
+        <div class="font-mono text-xs text-purple-700 font-semibold" id="modalProgressText">
+          분석 진행률: 0 / {{ template.sections|length }} 완료
         </div>
       </div>
 
@@ -322,7 +323,7 @@
   const currentTemplate = {{ template.to_dict() | tojson }};
   const gapAnalysis = {{ gap_analysis | tojson }};
   
-  // 클라이언트 로컬 세션 초안 보관소 (section_id -> draft text)
+  // 클라이언트 로컬 세션 대응 가이드 보관소 (section_id -> guide text)
   const draftsStore = {};
   let currentSectionIndex = 0;
 
@@ -343,7 +344,7 @@
   function selectSection(secId) {
     const idx = currentTemplate.sections.findIndex(s => s.section_id === secId);
     if (idx !== -1) {
-      // 기존 작성 중이던 내용 임시 저장
+      // 기존 대응 가이드 임시 저장
       saveCurrentTextarea();
       loadSectionData(idx);
     }
@@ -380,8 +381,8 @@
       const qDiv = document.createElement('div');
       qDiv.className = 'space-y-1';
       qDiv.innerHTML = `
-        <label class="text-[11px] font-semibold text-slate-800 flex items-center gap-1.5">
-          <span class="w-4 h-4 rounded-full bg-purple-200 text-purple-900 text-[10px] flex items-center justify-center font-bold">${qIdx+1}</span>
+        <label class="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-purple-200 text-purple-900 text-xs flex items-center justify-center font-bold">${qIdx+1}</span>
           ${q}
         </label>
         <input type="text" id="q_input_${qIdx}" placeholder="단답형 수치나 핵심 사실을 입력하세요 (예: 2명 채용, 85% 정확도 등)"
@@ -390,7 +391,7 @@
       qContainer.appendChild(qDiv);
     });
 
-    // 기존 보관된 초안이 있으면 복원
+    // 기존 보관된 대응 가이드가 있으면 복원
     const existingDraft = draftsStore[sec.section_id] || '';
     const textarea = document.getElementById('sectionDraftTextarea');
     textarea.value = existingDraft;
@@ -418,7 +419,7 @@
     const sec = currentTemplate.sections[currentSectionIndex];
     const btn = document.getElementById('generateBtn');
     btn.disabled = true;
-    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 초안 작성 중...';
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 요건 분석 가이드 도출 중...';
 
     // 질문 답변 수집
     const userFacts = {};
@@ -447,20 +448,20 @@
         if (badge) badge.classList.remove('hidden');
         updateCharCount();
       } else {
-        alert('초안 생성 실패: ' + (data.message || '알 수 없는 오류'));
+        alert('요건 분석 가이드 생성 실패: ' + (data.message || '알 수 없는 오류'));
       }
     } catch (e) {
-      alert('초안 생성 중 통신 오류가 발생했습니다.');
+      alert('요건 분석 가이드 생성 중 통신 오류가 발생했습니다.');
     } finally {
       btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>✨ 맞춤 초안 생성하기</span>';
+      btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>✨ 심사 기준별 대응 가이드 도출</span>';
     }
   }
 
   function copyDraftToClipboard() {
     const text = document.getElementById('sectionDraftTextarea').value;
     if (!text.trim()) {
-      alert('복사할 초안 내용이 없습니다.');
+      alert('복사할 대응 가이드 내용이 없습니다.');
       return;
     }
     navigator.clipboard.writeText(text).then(() => {
@@ -469,7 +470,7 @@
   }
 
   function clearCurrentDraft() {
-    if (confirm('현재 작성된 초안을 비우시겠습니까?')) {
+    if (confirm('현재 작성된 대응 가이드 및 메모를 비우시겠습니까?')) {
       document.getElementById('sectionDraftTextarea').value = '';
       const sec = currentTemplate.sections[currentSectionIndex];
       delete draftsStore[sec.section_id];
@@ -516,7 +517,7 @@
         document.getElementById('fullDocTextarea').value = data.content;
         const doneCount = Object.keys(draftsStore).length;
         document.getElementById('modalProgressText').innerText = 
-          `작성 진행률: ${doneCount} / ${currentTemplate.sections.length} 완료`;
+          `분석 진행률: ${doneCount} / ${currentTemplate.sections.length} 완료`;
       }
     } catch (e) {
       console.error(e);
@@ -530,7 +531,7 @@
   function copyFullDoc() {
     const text = document.getElementById('fullDocTextarea').value;
     navigator.clipboard.writeText(text).then(() => {
-      alert('전체 계획서가 클립보드에 복사되었습니다.');
+      alert('전체 공고 대응 가이드가 클립보드에 복사되었습니다.');
     });
   }
 
@@ -540,7 +541,7 @@
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${currentItem.id}_${currentTemplate.template_id}_사업계획서.md`;
+    a.download = `${currentItem.id}_${currentTemplate.template_id}_공고대응전략가이드.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

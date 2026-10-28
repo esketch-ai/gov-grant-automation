@@ -8,7 +8,7 @@
 | **담당 워크스페이스** | `QCWA` (`term_4f82f7f5-f531-4b73-8bd6-6c55e04948aa`) |
 | **검증 워크스페이스** | `QQAQC` (`term_5eeca898-bbb5-429a-98e8-c10e5133661e`) |
 | **우선순위** | `CRITICAL` (B2B SaaS 기업 기밀 유출 원천 방어) |
-| **상태** | `QUEUED` |
+| **상태** | `DONE` |
 
 ---
 
@@ -77,3 +77,30 @@
    - **보안 헤더 검증**: Web API 응답에 HSTS, X-Content-Type-Options, X-Frame-Options 헤더가 포함되어 있는지 검증.
 2. **QA Swarm 무결성 감사**:
    - `python tests/audit/audit_runner.py` 실행 시 140.0/140.0 만점 유지 확인.
+
+---
+
+## 4. 완료증 (2026-10-27 · GCWA/QCWA/QQAQC · GATE GREEN)
+
+> **결론**: Zero-File-Retention 무보관 + 테넌트 분리형 AES-256-GCM + HTTP 보안 헤더 구현 완료.
+> `pytest` 202 passed(기존 193 + 신규 9), QA Swarm 140.0/140.0 만점(APPROVED).
+
+### A. 구현 산출물 (파일/라인 기준)
+- **`src/security/encryption.py`**(신규): `VaultCryptoManager` — `master_key`(env `SSHAI_MASTER_ENCRYPTION_KEY` 또는 SHA-256 디폴트), `generate_tenant_salt()→secrets.token_hex(16)`, `derive_tenant_key(tenant_id, tenant_salt)→HKDF-SHA256 32B`, `encrypt_text→AESENC::`+base64(nonce12B + ct + GCM tag), `decrypt_text`는 센티넬 미포함 시 레거시 평문 통과 / 변조 또는 키 불일치 시 `InvalidTag`, `encrypt_json`/`decrypt_json`. 모듈 싱글턴 `get_crypto()` + `decrypt_asset_record(record, tenant_id, salt)`(content_text/parsed_metadata 자동 복호, 실패 시 유출 방지 위해 안전 비우기).
+- **`src/security/__init__.py`**(신규): 패키지.
+- **`src/common/db.py`**: `tenants` DDL `+ tenant_salt TEXT DEFAULT ''` + 멱등 `ALTER TABLE ... ADD COLUMN tenant_salt`; `upsert_tenant` 컬럼목록 `tenant_salt` 추가, **preserve-on-empty** `tenant_salt = COALESCE(NULLIF(excluded.tenant_salt,''), tenant_salt)`(기존 필드는 일반 overwrite 유지); `list_tenant_assets_raw`/`get_tenant_asset_raw`(parsed_metadata 미-parsing)추가.
+- **`src/tenant/tenant_service.py`**: `self.crypto=get_crypto()`; 신규 테넌트 로그인 브런치 `tenant_salt` 생성; `ingest_vault_file` step3 `tenant_salt` 조회 후 DB엔 암호문 저장 / 호출엔 평문 `asset_record` 반환; `list_decrypted_assets`/`get_decrypted_asset` 추가; `get_vault_summary`는 `list_decrypted_assets` 전환(개수 불변, 격리/E2E 유지).
+- **`src/matcher/vault_preflight.py`**: `import decrypt_asset_record`; `build_company_specs`는 raw 조회 + `decrypt_asset_record`로 transparent 복호화(레거시 평문 자동 통과).
+- **`src/web/app.py`**: `@app.middleware("http")` `SecurityHeadersMiddleware`(HSTS `max-age=31536000; includeSubDomains; preload`, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, `X-XSS-Protection: 1; mode=block`, `Referrer-Policy: strict-origin-when-cross-origin`); `/api/vault/assets` → `list_decrypted_assets`.
+- **`requirements.txt`**: `cryptography>=42.0` 명시(실제 venv 50.0.2).
+- **`tests/test_zero_retention_aes256.py`**(신규, 9test): text/json round-trip, 테넌트 격리(이름/키 다름→InvalidTag), 변조→InvalidTag, DB 침해 시 raw `AESENC::` 암호문·평문 유출 0, zero-retention(디스크 `.enc/.bin/.key` 0개), 보안 헤더 5종 주입, 레거시 평문/JSON 문자열 transparent 통과.
+
+### B. 검증 결과 (2026-10-27)
+- `pytest` : **202 passed**(193 baseline + 신규 9) — 0 fail.
+- `python -m tests.audit.audit_runner` : **TOTAL 100.0/100.0 · Raw 140.0/140.0 · GATE APPROVED (Deploy-Ready)**.
+- 회귀 영향: `test_tenant_asset_isolation`(개수/id만 assert)·`test_tenant_service_social_login_and_vault_ingestion`·E2E 전부 통과(암호화 후 복호화 무결성, 격리/개수 불변).
+
+### C. 보안 특이사항/운영 주의
+- **서비스 레이어 암호화**: `db.add/list/get_tenant_asset`는 평문 그대로 유지(격리 테스트 호환). 암호화/복호화만 서비스·matcher·web 라우터에서 처리.
+- **마이그레이션 호환**: `AESENC::` 센티넬로 암호문/레거시 평문 자동 구분; 복호 실패(변조/키 불일치) 시 평문 유출 방지 위해 해당 필드만 안전하게 비우기.
+- 상용 배포 시 `SSHAI_MASTER_ENCRYPTION_KEY` env 주입 권장(디폴트는 SHA-256 정적 키).

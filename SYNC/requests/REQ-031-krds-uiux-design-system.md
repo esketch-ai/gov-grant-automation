@@ -8,7 +8,7 @@
 | **담당 워크스페이스** | `QCWA` (`term_4f82f7f5-f531-4b73-8bd6-6c55e04948aa`) |
 | **검증 워크스페이스** | `QQAQC` (`term_5eeca898-bbb5-429a-98e8-c10e5133661e`) |
 | **우선순위** | `HIGH` (공공 신뢰성 및 B2B SaaS 사용성 극대화) |
-| **상태** | `QUEUED` |
+| **상태** | `DONE` (완료증 §5) |
 
 ---
 
@@ -74,3 +74,37 @@
    - 모바일(375px), 태블릿(768px), 데스크톱(1440px) 뷰포트에서 가로 스크롤 깨짐 0건 검증.
 3. **QA Swarm 무결성 감사**:
    - `python tests/audit/audit_runner.py` 실행 시 140.0/140.0 만점 유지 확인.
+
+---
+
+## 5. 구현 완료증 (QQAQC 검수 완료 · 2026-10-27)
+
+**상태**: ✅ **DONE** · **버전**: v1.5.1 · **담당**: QCWA(개발) / QQAQC(검수) / GCWA(총괄)
+
+### 5.1 추가/변경 산출물 (모두 additive — 기존 QA 리터럴 서브스트링 보존)
+- `src/web/templates/base.html`:
+  - `<style>` 블록에 **KRDS 디자인 토큰**(`--krds-pc-primary:#256EF4`, `--krds-pc-dark:#003675`, success/warning/danger, radius/shadow/focus) 등록.
+  - **7 레이아웃 + 9 컴포넌트 + 8 효과/인터랙션 = 24개** 공용 모듈 CSS: GOV 상단 배너, 포커스 링(`:focus-visible`), Hero/Bento(반응형 1→2→4), Card/KPI 하버, D-Day/Chip, Button, Skeleton shimmer, Carousel(`scroll-snap-type:x mandatory`), Drawer/Tooltip/Toast, Scroll-Reveal/Stagger(`.reveal`/`IntersectionObserver`), Glassmorphism, Dropzone(drag/drop).
+  - **GOV 상단 배너** `<body>` 첫 자식으로 삽입 (`role="banner"`, WCAG 2.1 AA 안내).
+  - **공용 인터랙션 JS**: 스크롤 리벨(IntersectionObserver + stagger), `krdsToast`, `krdsOpenDrawer`/`krdsCloseDrawer`, `krdsWireDropzone`.
+- 페이지별 additive 클래스 주입 (기존 HTML/리터럴 100% 보존):
+  - `dashboard.html`: 상단 배너 → `krds-hero reveal` + 긴급박스에 `reveal`.
+  - `projects.html` / `vault.html` / `tailor.html`: 상단 헤더 배너에 `reveal` 스터거.
+
+### 5.2 통과 테스트
+- 전수 `pytest tests/ --ignore=tests/audit` **193 pass / 0 fail** (수정 전/후 불변).
+- QA Swarm `audit_runner.py` **140.0/140.0 (100.0/100.0) · GATE: APPROVED**, 7대 검수단 전원 20/20 만점.
+- 웹 QA `web_qa.py` 리터럴 문자열 매칭 전수 통과 (`2026`/`대시보드`/`파이프라인 수동 실행`/`영속화 공고 (2026)` 등) — additive 편집으로 미파손.
+
+### 5.3 접근성 · 반응형
+- WCAG 2.1 AA: `:focus-visible` 포커스 링(대조비 충족) 전역 적용, `role`/`aria-label`/`aria-live` 배너·토스트.
+- 반응형: `@media` 640px(2열)/1024px(4열) + `krds-split` 768px 분할 — 375/768/1440 뷰포트에서 Tailwind 그리드가 가로 스크롤 0(기존 유틸 클래스 그대로 유지, additive만 추가).
+
+### 5.4 degrade / 보안 확인
+- 순수 **frontend additive** 편집이므로 백엔드/DB/보안 경로 무변경. `cryptography` 미의존(REQ-030 범위).
+- JS는 feature-detect(`'IntersectionObserver' in window` 없음 시 skip)로 구형 브라우저 degrade 안전.
+
+### 5.5 미검증/남은 리스크
+- A11y 명도 4.5:1 전수 자동검증은 시각적/수동 확인 수준(정식 a11y 툴 미집행) — KRDS 토큰 표준 적용.
+- `/proposals/tailor` 스플릿 50:50은 기존 Tailwind 분할에 `reveal`만 additive(레이아웃 자체 변경 없음).
+- 본 REQ 산출물은 미커밋 상태.

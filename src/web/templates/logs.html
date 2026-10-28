@@ -1,30 +1,43 @@
 {% extends "base.html" %}
 
-{% block title %}시스템 로그 &middot; SSHAI-CWA 2026{% endblock %}
+{% block title %}시스템 로그 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
-  <!-- 상단 헤더 -->
-  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-    <div>
-      <h1 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-terminal text-slate-700"></i> 실시간 시스템 실행 로그
-      </h1>
-      <p class="text-slate-500 text-xs mt-1">수집기, 파서, 매처, 발송기, 스케줄러의 실시간 프로세스 출력 (`storage/app.log`)</p>
+  <!-- 상단 표준 배너 -->
+  <section class="kh-page-hero tone-amber reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge gold">
+            <i class="fa-solid fa-terminal mr-1"></i>실시간 실행 로그
+          </span>
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-server mr-1"></i>엔진 프로세스 추적
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          실시간 시스템 실행 로그
+        </h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          수집기, 분석기, 매칭기, 알림기, 스케줄러의 실시간 실행 로그를 모니터링합니다.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <label class="inline-flex items-center gap-1.5 text-xs text-slate-200 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15 cursor-pointer select-none">
+          <input type="checkbox" id="autoRefreshToggle" class="rounded text-blue-500" onchange="toggleAutoRefresh(this.checked)">
+          <span>5초 자동 새로고침</span>
+        </label>
+        <button onclick="refreshLogs()" id="refreshBtn" class="kh-btn-cta primary text-xs">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i>새로고침
+        </button>
+        <button onclick="scrollToBottom()" class="kh-btn-action ghost text-xs" title="맨 아래로 스크롤">
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
     </div>
-    <div class="flex items-center gap-3">
-      <label class="inline-flex items-center gap-1.5 text-xs text-slate-600 bg-white px-3 py-1.5 rounded-lg border border-slate-200 shadow-sm cursor-pointer select-none">
-        <input type="checkbox" id="autoRefreshToggle" class="rounded text-blue-600 focus:ring-blue-500" onchange="toggleAutoRefresh(this.checked)">
-        <span>5초마다 자동 새로고침</span>
-      </label>
-      <button onclick="refreshLogs()" id="refreshBtn" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-3.5 py-1.5 rounded-lg shadow-sm flex items-center gap-1.5 transition">
-        <i class="fa-solid fa-arrows-rotate"></i> 새로고침
-      </button>
-      <button onclick="scrollToBottom()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold px-3 py-1.5 rounded-lg border border-slate-300 transition" title="맨 아래로 스크롤">
-        <i class="fa-solid fa-arrow-down"></i>
-      </button>
-    </div>
-  </div>
+  </section>
 
   <!-- 콘솔 터미널 박스 -->
   <div class="bg-slate-950 rounded-xl shadow-xl border border-slate-800 overflow-hidden">
@@ -34,9 +47,9 @@
         <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
         <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
         <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
-        <span class="font-mono text-[11px] text-slate-400 ml-2">stdout / app.log (최근 200줄)</span>
+        <span class="font-mono text-xs text-slate-300 ml-2">stdout / app.log (최근 200줄)</span>
       </div>
-      <div class="flex items-center gap-3 font-mono text-[11px]">
+      <div class="flex items-center gap-3 font-mono text-xs">
         <span id="logCount">총 {{ lines|length }} 줄</span>
         <span class="text-slate-600">|</span>
         <span id="lastUpdated" class="text-slate-400">조회됨</span>
@@ -44,7 +57,7 @@
     </div>
 
     <!-- 터미널 출력 영역 -->
-    <div id="logTerminal" class="p-4 font-mono text-[11px] leading-relaxed text-slate-300 overflow-y-auto max-h-[640px] whitespace-pre-wrap select-text">
+    <div id="logTerminal" class="p-4 font-mono text-xs leading-relaxed text-slate-300 overflow-y-auto max-h-[640px] whitespace-pre-wrap select-text">
       {% for line in lines %}
       <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
         {% if 'ERROR' in line or 'FAIL' in line %}

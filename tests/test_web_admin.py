@@ -15,7 +15,7 @@ def client():
 def test_root_redirect(client):
     res = client.get("/", follow_redirects=False)
     assert res.status_code == 307
-    assert res.headers["location"] == "/dashboard"
+    assert res.headers["location"] == "/intro"
 
 
 def test_dashboard_view(client):
@@ -110,3 +110,67 @@ def test_scheduler_apis(client):
     res_toggle_back = client.post("/api/scheduler/toggle")
     assert res_toggle_back.status_code == 200
     assert res_toggle_back.json()["enabled"] is False
+
+
+def test_req041_template_dom_elements_healed(client):
+    """REQ-041 Round 1: announcements.html 및 audit_logs.html 복원 DOM ID 검증."""
+    # announcements.html 내 simNote, simChecks 검증
+    res_ann = client.get("/announcements")
+    assert res_ann.status_code == 200
+    assert 'id="simNote"' in res_ann.text
+    assert 'id="simChecks"' in res_ann.text
+    assert 'id="simResult"' in res_ann.text
+
+    # audit_logs.html 내 verify-result 검증
+    res_audit = client.get("/admin/audit-logs")
+    assert res_audit.status_code == 200
+    assert 'id="verify-result"' in res_audit.text
+
+
+def test_req041_fastapi_openapi_and_endpoints(client):
+    """REQ-041 Round 2: FastAPI OpenAPI schema 및 양방향 라우트 무결성 검증."""
+    import warnings
+    with warnings.catch_warnings(record=True) as recorded_warnings:
+        warnings.simplefilter("always")
+        schema = app.openapi()
+        user_warnings = [
+            w for w in recorded_warnings
+            if issubclass(w.category, UserWarning) and "Duplicate Operation ID" in str(w.message)
+        ]
+        assert len(user_warnings) == 0, f"Duplicate Operation ID warnings detected: {user_warnings}"
+
+    # Verify operation IDs exist in schema
+    paths = schema.get("paths", {})
+    assert "/api/export/hwpx" in paths
+    hwpx_path = paths["/api/export/hwpx"]
+    assert hwpx_path["get"]["operationId"] == "export_hwpx"
+    assert hwpx_path["post"]["operationId"] == "export_hwpx_post"
+
+    # Endpoints response integrity
+    # 1. HWPX export GET & POST
+    r_hwpx_get = client.get("/api/export/hwpx")
+    assert r_hwpx_get.status_code == 200
+    assert r_hwpx_get.json()["status"] == "success"
+
+    r_hwpx_post = client.post("/api/export/hwpx", json={"title": "test_req041"})
+    assert r_hwpx_post.status_code == 200
+    assert r_hwpx_post.json()["status"] == "success"
+
+    # 2. DOCX export GET & POST
+    r_docx_get = client.get("/api/export/docx")
+    assert r_docx_get.status_code == 200
+    assert r_docx_get.json()["status"] == "success"
+
+    r_docx_post = client.post("/api/export/docx", json={"title": "test_req041"})
+    assert r_docx_post.status_code == 200
+    assert r_docx_post.json()["status"] == "success"
+
+    # 3. Audit verify GET & POST
+    r_verify_get = client.get("/api/admin/audit/verify")
+    assert r_verify_get.status_code == 200
+    assert "ok" in r_verify_get.json()
+
+    r_verify_post = client.post("/api/admin/audit/verify")
+    assert r_verify_post.status_code == 200
+    assert "ok" in r_verify_post.json()
+

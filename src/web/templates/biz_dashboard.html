@@ -1,0 +1,376 @@
+{% extends "base.html" %}
+{% import "components/kh_macros.html" as kh %}
+{% block title %}사업자 맞춤 수주 워크스페이스 &middot; 과제비서 AI{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- 사업자 맞춤 워크스페이스 상단 표준 배너 -->
+  <section class="kh-page-hero tone-emerald reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-briefcase mr-1"></i>사업자 전용 워크스페이스
+          </span>
+          <span class="kh-badge cyan">
+            <i class="fa-solid fa-building-shield mr-1"></i>기업 테넌트 격리 데이터룸
+          </span>
+          <span class="text-xs text-emerald-300/80 hidden sm:inline">&bull; 2026 정부지원사업 실시간 맞춤 수주</span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          사업자 맞춤 수주 워크스페이스
+        </h1>
+        <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
+          기업 업종 및 기술 스펙에 최적화된 2026 정부지원사업 공고 분석, 공고 요건 정밀 분석 및 자격 진단, 5대 전문 파트너 자문을 지원합니다.
+        </p>
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+        <div class="bg-white/10 backdrop-blur border border-white/15 rounded-xl px-4 py-2 text-center min-w-[120px]">
+          <span class="text-xs font-semibold text-emerald-200 block">이용 멤버십</span>
+          <span class="text-sm font-extrabold text-white">성장형 (Growth)</span>
+        </div>
+        <a href="/announcements" class="kh-btn-cta primary text-xs">
+          <i class="fa-solid fa-magnifying-glass-arrow-right mr-1"></i>맞춤 공고 탐색
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 사업주 관점 4대 핵심 수주 지표 카드 (REQ-044) -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    {{ kh.kh_kpi_card('kpi-matched-grants', founder_kpi.matched_grants_count if founder_kpi else 14, '매칭 적합 공고', 'GREEN 8건 · YELLOW 6건', '25대 신호등', 'emerald') }}
+    {{ kh.kh_kpi_card('kpi-active-projects', founder_kpi.active_projects_count if founder_kpi else 2, '도전 중인 과제', '초기창업패키지 · 디딤돌', 'D-Day 트래킹', 'violet') }}
+    {{ kh.kh_kpi_card('kpi-grant-potential', '3.5억', '수주 가능 지원금', '최대 3억 5,000만 원 (출연금)', '지원금 최적화', 'gold') }}
+    {{ kh.kh_kpi_card('kpi-vault-readiness', (founder_kpi.vault_readiness_score|string + '%') if founder_kpi else '85%', '기업 금고 완성도', '재무제표·등록증·특허 완료', 'AES-256 데이터룸', 'cyan') }}
+  </div>
+
+  <!-- 5대 BM 분야 선택기 및 2026 공공 정책 인사이트 패널 -->
+  <div class="krds-card reveal mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
+      <div>
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-sliders text-emerald-600"></i>
+          <span>5대 비즈니스 모델(BM) 정책자금 맞춤 인사이트</span>
+        </h3>
+        <p class="text-xs text-slate-500 mt-0.5">내 기업의 사업 모델을 선택하시면 2026년 주력 지원 부처와 가점 획득 전략이 즉시 적용됩니다.</p>
+      </div>
+      <span class="text-xs text-emerald-700 font-semibold bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-full self-start sm:self-auto">
+        <i class="fa-solid fa-bolt mr-1"></i>실시간 적용 모드
+      </span>
+    </div>
+
+    <!-- 5대 분야 전환 탭 버튼 -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 mb-4">
+      {% for bm in bm_5tracks %}
+      <button class="krds-btn ghost w-full text-xs py-2 {% if loop.first %}active border-emerald-500 text-emerald-700 bg-emerald-50/50{% endif %}" onclick="switchBM('{{ bm.key }}', this)" id="btn-bm-{{ bm.key }}">
+        <i class="fa-solid {{ bm.icon }} mr-1"></i> {{ bm.label }}
+      </button>
+      {% endfor %}
+    </div>
+
+    <div id="bm-strategy-banner" class="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80 text-xs sm:text-sm text-slate-700 leading-relaxed space-y-2">
+      <div class="flex items-center gap-2">
+        <span class="kh-badge emerald font-bold" id="bm-badge">기술개발 특화</span>
+        <strong class="text-emerald-950 font-bold" id="bm-title">정보통신·딥테크 2026 정책자금 공략 전략</strong>
+      </div>
+      <p id="bm-desc" class="text-slate-600">과기정통부·중기부 R&D 주력 트랙: 기술보증기금 연계 TRL 4~7단계 실증 과제 우선 매칭 및 기술보증기금 및 부처별 가점 획득 체크리스트와 심사 요건이 정밀 분석됩니다.</p>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 pt-2 border-t border-emerald-200/50 text-xs text-slate-600">
+        <div><strong>주요 주관기관:</strong> <span id="bm-agencies">IITP, TIPA, NIPA</span></div>
+        <div><strong>평균 지원규모:</strong> <span id="bm-grant-scale">2억 ~ 10억 원</span></div>
+        <div><strong>핵심 가점사항:</strong> <span id="bm-bonus-point">특허 1건 이상, 연구전담인력 보유</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 메인 2열 그리드: 실시간 공고 레이더 + 도전 과제 수주 파이프라인 -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+    <!-- 좌측: 실시간 적격 공고 레이더 -->
+    <div class="krds-card reveal flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-2">
+            <span class="kh-badge emerald">실시간 레이더</span>
+            <h3 class="font-bold text-slate-900 text-sm">25대 자격 신호등 맞춤 공고</h3>
+          </div>
+          <a href="/announcements" class="text-xs text-emerald-600 hover:text-emerald-700 font-semibold flex items-center gap-1">
+            전체 공고 보기 <i class="fa-solid fa-chevron-right text-xs"></i>
+          </a>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">기업 금고 자산과 1:1 대조하여 결격 사유(RED)가 사전 배제된 최우선 지원 공고입니다.</p>
+
+        <div class="space-y-3">
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200/70 hover:border-emerald-300 transition flex items-center justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">GREEN 94점</span>
+                <span class="text-xs text-slate-500 font-mono">중기부 · D-12</span>
+              </div>
+              <p class="text-xs font-bold text-slate-900">2026년 인공지능 전환 실증 지원사업 (AX 바우처)</p>
+            </div>
+            <a href="/proposals/tailor" class="krds-btn ghost text-xs py-1 px-2.5">
+              요건 분석
+            </a>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200/70 hover:border-emerald-300 transition flex items-center justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">GREEN 91점</span>
+                <span class="text-xs text-slate-500 font-mono">창진원 · D-18</span>
+              </div>
+              <p class="text-xs font-bold text-slate-900">2026년 창업도약패키지 지원사업 (스케일업 R&D)</p>
+            </div>
+            <a href="/proposals/tailor" class="krds-btn ghost text-xs py-1 px-2.5">
+              요건 분석
+            </a>
+          </div>
+
+          <div class="p-3 bg-slate-50 rounded-lg border border-slate-200/70 hover:border-emerald-300 transition flex items-center justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200">GREEN 88점</span>
+                <span class="text-xs text-slate-500 font-mono">환경부 · D-24</span>
+              </div>
+              <p class="text-xs font-bold text-slate-900">2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제</p>
+            </div>
+            <a href="/proposals/tailor" class="krds-btn ghost text-xs py-1 px-2.5">
+              요건 분석
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+        <span><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i>25대 지원 결격 사유 0건 (자동 사전 점검 통과)</span>
+        <a href="/announcements" class="text-emerald-600 font-semibold hover:underline">자격 시뮬레이터 실행</a>
+      </div>
+    </div>
+
+    <!-- 우측: 도전 과제 수주 파이프라인 & 양식 다운로드 -->
+    <div class="krds-card reveal flex flex-col justify-between">
+      <div>
+        <div class="flex justify-between items-center mb-3">
+          <div class="flex items-center gap-2">
+            <span class="kh-badge violet">진척률 추적</span>
+            <h3 class="font-bold text-slate-900 text-sm">진행 중인 도전 과제 파이프라인</h3>
+          </div>
+          <a href="/projects" class="text-xs text-violet-600 hover:text-violet-700 font-semibold flex items-center gap-1">
+            과제 관리 <i class="fa-solid fa-chevron-right text-xs"></i>
+          </a>
+        </div>
+        <p class="text-xs text-slate-500 mb-4">현재 접수 마감이 임박하여 요건 분석 및 지원 준비 중인 정부지원사업 프로젝트 현황입니다.</p>
+
+        <div class="space-y-4">
+          <!-- 과제 1 -->
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-bold text-violet-700 bg-violet-100 px-2 py-0.5 rounded">D-12</span>
+                <h4 class="text-xs font-bold text-slate-900 mt-1">2026 초기창업패키지 (기술창업 일반)</h4>
+              </div>
+              <span class="text-xs font-extrabold text-slate-800 kh-tabular">75%</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div class="bg-violet-600 h-2 rounded-full" style="width: {{ 75 }}%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-slate-500 pt-1">
+              <span>사전 자격 진단 완료 (25대 신호등 통과)</span>
+              <a href="/proposals/tailor" class="text-violet-600 font-semibold hover:underline">요건 분석 확인 &rarr;</a>
+            </div>
+          </div>
+
+          <!-- 과제 2 -->
+          <div class="p-3.5 bg-slate-50 rounded-xl border border-slate-200/80 space-y-2">
+            <div class="flex justify-between items-start">
+              <div>
+                <span class="text-xs font-bold text-cyan-700 bg-cyan-100 px-2 py-0.5 rounded">D-28</span>
+                <h4 class="text-xs font-bold text-slate-900 mt-1">2026 중기부 디딤돌 R&D (첫걸음 트랙)</h4>
+              </div>
+              <span class="text-xs font-extrabold text-slate-800 kh-tabular">40%</span>
+            </div>
+            <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+              <div class="bg-cyan-600 h-2 rounded-full" style="width: {{ 40 }}%"></div>
+            </div>
+            <div class="flex justify-between text-xs text-slate-500 pt-1">
+              <span>공고 평가 기준 및 가점 항목 매핑 중</span>
+              <a href="/proposals/tailor" class="text-cyan-600 font-semibold hover:underline">요건 분석 확인 &rarr;</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 공식 서식 다운로드 -->
+      <div class="pt-4 mt-4 border-t border-slate-100">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs text-slate-600 font-medium">공고 원본 및 공식 신청 서식(HWPX/DOCX) 다운로드:</span>
+          <div class="flex gap-2">
+            <button class="krds-btn primary text-xs py-1 px-3" onclick="downloadExport('hwpx')">
+              <i class="fa-solid fa-file-arrow-down mr-1"></i>한글(HWPX)
+            </button>
+            <button class="krds-btn ghost text-xs py-1 px-3" onclick="downloadExport('docx')">
+              <i class="fa-solid fa-file-word mr-1"></i>워드(DOCX)
+            </button>
+          </div>
+        </div>
+        <p id="export-status" class="text-xs text-slate-500 mt-1.5"></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BM 맞춤 5대 전문 파트너 1:1 직통 자문 라운지 -->
+  <div class="krds-card reveal mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
+      <div>
+        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+          <i class="fa-solid fa-handshake text-indigo-600"></i>
+          <span>BM 맞춤 5대 전문 파트너 1:1 직통 자문 네트워크</span>
+        </h3>
+        <p class="text-xs text-slate-500 mt-0.5">수주 경쟁력을 극대화하기 위해 정부과제 정산, 특허 출원, VC 투자 유치를 원스톱 연결합니다.</p>
+      </div>
+      <span class="kh-badge cyan text-xs">검증된 전문 협력사</span>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+      {% for partner in partner_pillars %}
+      <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50 hover:bg-white hover:border-indigo-300 transition flex flex-col justify-between">
+        <div>
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 mb-2">
+            <i class="fa-solid {{ partner.icon }}"></i>
+          </div>
+          <h4 class="font-bold text-slate-900 text-xs mb-1">{{ partner.name }}</h4>
+          <p class="text-xs text-slate-500 leading-relaxed">{{ partner.desc }}</p>
+        </div>
+        <button type="button" onclick="requestPartnerConsult('{{ partner.name }}')" class="krds-btn ghost text-xs mt-3 w-full py-1 text-indigo-600 hover:text-indigo-700">
+          자문 신청 &rarr;
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- 2026 모두의 창업 대비: 내 프로토타입 고객 실증 및 심사위원 검증 연계 카드 -->
+  <div class="krds-card reveal mb-6">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="kh-badge violet"><i class="fa-solid fa-code-compare mr-1"></i>2026 모두의 창업 대비</span>
+          <h4 class="font-bold text-slate-900 text-sm">AI 바이브코딩 프로토타입 고객 실증 및 심사위원 검증</h4>
+        </div>
+        <p class="text-xs text-slate-500 leading-relaxed">
+          내 사업 아이템의 웹/앱 프로토타입 실사용 검증 캠페인을 발주하고, 심사위원 제출용 A4 공인 평가 보고서(SHA-256)를 발급받으세요.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2.5 shrink-0">
+        <a href="/items" class="krds-btn primary text-xs py-2 px-3.5 bg-purple-600 hover:bg-purple-700 text-white">
+          <i class="fa-solid fa-layer-group mr-1.5"></i>내 아이템 검증 캠페인 발주
+        </a>
+        <a href="/intro#prototype-lounge" class="krds-btn ghost text-xs py-2 px-3.5 text-purple-700 hover:text-purple-900 border border-purple-200 bg-purple-50/50">
+          <i class="fa-solid fa-compass mr-1.5"></i>동료 프로토타입 공개 라운지 방문 &rarr;
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 멤버십 플랜 및 이용 혜택 안내 바 -->
+  <div class="krds-card reveal">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="kh-badge emerald">이용 중인 플랜</span>
+          <h4 class="font-bold text-slate-900 text-sm">성장형(Growth) 멤버십 플랜</h4>
+        </div>
+        <p class="text-xs text-slate-500">등록 아이템 3개 관리, 실시간 공고 요건 정밀 분석, 바이브코딩 검증 캠페인 개설 및 5대 전문 파트너 자문이 제공됩니다.</p>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <a href="/pricing" class="krds-btn ghost text-xs py-2 px-4 border border-slate-300 hover:bg-slate-50">
+          <i class="fa-solid fa-gem mr-1"></i>플랜 혜택 안내
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const BM_DETAILS = {
+    'ict_deeptech': {
+      'badge': '기술개발 특화',
+      'title': '정보통신·딥테크 2026 정책자금 공략 전략',
+      'desc': '과기정통부·중기부 R&D 주력 트랙: 기술보증기금 연계 TRL 4~7단계 실증 과제 우선 매칭 및 기술보증기금 및 부처별 가점 획득 체크리스트와 심사 요건이 정밀 분석됩니다.',
+      'agencies': 'IITP, TIPA, NIPA',
+      'grant_scale': '2억 ~ 10억 원',
+      'bonus_point': '특허 1건 이상, 연구전담인력 보유'
+    },
+    'smart_mfg': {
+      'badge': '공정·설비 특화',
+      'title': '스마트제조·뿌리산업 공정혁신 공략 전략',
+      'desc': '산업부·중기부 스마트공장 고도화 트랙: 생산성 향상률, 불량률 감소 등 정량 수치 기반 지표 산출과 설비 도입 예산 편성이 최적화됩니다.',
+      'agencies': 'KIAT, 스마트제조혁신추진단, 중진공',
+      'grant_scale': '1억 ~ 5억 원',
+      'bonus_point': '공장등록증, 기술혁신형(이노비즈) 인증'
+    },
+    'youth_women': {
+      'badge': '패키지 우대 트랙',
+      'title': '청년·여성창업 정책자금 집중 공략 전략',
+      'desc': '창진원 대표 패키지 트랙: 대표자 만 39세 이하 청년 가점(+2점) 및 여성기업 인증 연동으로 초기창업패키지 선정 적합도 및 경쟁력을 극대화합니다.',
+      'agencies': '창업진흥원, 여성기업종합지원센터',
+      'grant_scale': '최대 1억 원 (평균 7천만 원)',
+      'bonus_point': '대표자 연령 자격, 여성기업 확인서'
+    },
+    'local_creator': {
+      'badge': '판로·브랜드 특화',
+      'title': '로컬소상공인·유통 브랜드 공략 전략',
+      'desc': '소진공 및 지자체 연계 트랙: 골목상권 앵커스토어, 로컬크리에이터 육성 및 온·오프라인 판로개척 바우처 매칭을 지원합니다.',
+      'agencies': '소상공인시장진흥공단, 지자체 진흥원',
+      'grant_scale': '3,000만 ~ 1억 원',
+      'bonus_point': '지역 연계성, 온누리상품권 가맹 등'
+    },
+    'social_esg': {
+      'badge': '지속가능 임팩트',
+      'title': '친환경·사회적기업 ESG 정책자금 전략',
+      'desc': '환경부·고용부 사회가치 트랙: 탄소중립 기술, 재생에너지 AX, 사회적 일자리 창출 정량 지표와 소셜벤처 인증 맞춤 매칭을 지원합니다.',
+      'agencies': '한국환경산업기술원, 진흥원',
+      'grant_scale': '1억 ~ 7억 원',
+      'bonus_point': '소셜벤처 판별서, 환경표지 인증'
+    }
+  };
+
+  function switchBM(bmKey, btnEl) {
+    document.querySelectorAll('[id^="btn-bm-"]').forEach(b => {
+      b.classList.remove('active', 'border-emerald-500', 'text-emerald-700', 'bg-emerald-50/50');
+    });
+    if (btnEl) {
+      btnEl.classList.add('active', 'border-emerald-500', 'text-emerald-700', 'bg-emerald-50/50');
+    }
+    const info = BM_DETAILS[bmKey] || BM_DETAILS['ict_deeptech'];
+    document.getElementById('bm-badge').textContent = info.badge;
+    document.getElementById('bm-title').textContent = info.title;
+    document.getElementById('bm-desc').textContent = info.desc;
+    document.getElementById('bm-agencies').textContent = info.agencies;
+    document.getElementById('bm-grant-scale').textContent = info.grant_scale;
+    document.getElementById('bm-bonus-point').textContent = info.bonus_point;
+  }
+
+  async function downloadExport(fmt) {
+    const el = document.getElementById('export-status');
+    if (el) el.textContent = '공고 요건 대응 가이드 문서 내보내기 준비 중입니다...';
+    try {
+      const res = await fetch('/api/export/' + fmt);
+      const data = await res.json();
+      if (el && data.filename) {
+        el.textContent = '다운로드 준비 완료: ' + data.filename + ' (' + data.bytes + ' 바이트)';
+      }
+    } catch (e) {
+      if (el) el.textContent = '다운로드 오류 발생';
+    }
+  }
+
+  function requestPartnerConsult(partnerName) {
+    if (window.showToast) {
+      window.showToast('[' + partnerName + '] 전담 자문 신청이 접수되었습니다. 영업일 1일 내 매칭됩니다.', 'ok');
+    } else {
+      alert('[' + partnerName + '] 전담 자문 신청이 접수되었습니다.');
+    }
+  }
+</script>
+{% endblock %}

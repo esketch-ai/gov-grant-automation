@@ -123,10 +123,10 @@ def test_web_tailor_view_and_apis(client):
     resp = client.get("/proposals/tailor")
     assert resp.status_code == 200
     html = resp.text
-    assert "사업계획서 맞춤 변환 & 코파일럿 스튜디오" in html
+    assert "공고 요건 정밀 분석" in html
     assert "DocuMorph AI" in html
     assert "양식 준비도" in html
-    assert "맞춤 초안 생성하기" in html
+    assert "심사 기준별 대응 가이드 도출" in html
 
     # 2. 템플릿 목록 조회 API
     resp_tpl = client.get("/api/proposals/templates")

@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% import "components/kh_macros.html" as kh %}
+{% block title %}감사로그 무결성 검증{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- 감사로그 무결성 검증 상단 표준 배너 -->
+  <section class="kh-page-hero tone-amber reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge gold">
+            <i class="fa-solid fa-link mr-1"></i>블록 암호 감사 체인
+          </span>
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-shield-halved mr-1"></i>위·변조 방지
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">감사로그 무결성 검증 콘솔</h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          모든 결제, 공고 요건 분석, 프로토타입 실증, 데이터 파기 기록의 위·변조 여부를 실시간으로 대조·검증합니다.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button class="kh-btn-cta amber text-xs" onclick="verifyChain()">
+          <i class="fa-solid fa-shield-halved mr-1"></i>전체 무결성 검증 실행
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 감사로그 무결성 검증 결과 배너 (REQ-041) -->
+  <div id="verify-result" class="hidden mb-4 p-4 rounded-xl border border-slate-200 bg-white shadow-sm"></div>
+
+  <!-- 감사로그 테이블 -->
+    <div class="krds-card reveal">
+      <h3 class="font-bold text-slate-900 mb-3">감사로그 목록 (총 <span id="audit-count" class="kh-tabular">{{ audit_logs|length if audit_logs is defined else 0 }}</span>건)</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left text-slate-500 text-xs uppercase border-b border-slate-200">
+              <th class="py-3">순번</th>
+              <th class="py-3">기록 번호</th>
+              <th class="py-3">기업 ID</th>
+              <th class="py-3">작업 구분</th>
+              <th class="py-3">내용</th>
+              <th class="py-3">이전 검증값</th>
+              <th class="py-3">현재 검증값</th>
+              <th class="py-3">기록 일시</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table">
+            {% for log in audit_logs %}
+            <tr class="border-b border-slate-100 text-sm">
+              <td class="py-2 kh-tabular">{{ loop.index }}</td>
+              <td class="py-2 kh-tabular">{{ log.id }}</td>
+              <td class="py-2">{{ log.tenant_id }}</td>
+              <td class="py-2"><span class="kh-badge cyan">{{ log.category }}</span></td>
+              <td class="py-2 font-medium">{{ log.action }}</td>
+              <td class="py-2 font-mono text-xs">{{ (log.prev_hash or '')[:12] }}</td>
+              <td class="py-2 font-mono text-xs">{{ (log.curr_hash or '')[:12] }}</td>
+              <td class="py-2 text-xs kh-tabular">{{ log.created_at }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="8" class="py-4 text-center text-slate-400">등록된 감사로그가 없습니다. 상단 '검증 실행'을 클릭하세요.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 상세 내역 -->
+    <div class="krds-card reveal mt-6 hidden" id="detail-panel">
+      <h3 class="font-bold text-slate-900 mb-3">감사로그 상세 내역</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+        <div><p class="text-slate-500">순번</p><p class="text-lg font-bold kh-tabular" id="detail-id">-</p></div>
+        <div><p class="text-slate-500">현재 검증값</p><p class="text-sm font-mono" id="detail-curr-hash">-</p></div>
+        <div><p class="text-slate-500">이전 검증값</p><p class="text-sm font-mono" id="detail-prev-hash">-</p></div>
+        <div><p class="text-slate-500">기업 식별자</p><p class="text-sm font-mono" id="detail-tenant">-</p></div>
+        <div><p class="text-slate-500">작업 구분</p><p class="text-sm font-mono" id="detail-category">-</p></div>
+        <div><p class="text-slate-500">처리 작업</p><p class="text-sm font-mono" id="detail-action">-</p></div>
+        <div><p class="text-slate-500">접속 IP</p><p class="text-sm font-mono" id="detail-ip">-</p></div>
+        <div><p class="text-slate-500">기록 일시</p><p class="text-sm font-mono" id="detail-created">-</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function verifyChain() {
+      const resultDiv = document.getElementById('verify-result');
+      const tableBody = document.getElementById('audit-table');
+      resultDiv.innerHTML = '<p class="text-slate-500 text-sm">검증을 진행하고 있습니다...</p>';
+      resultDiv.classList.remove('hidden');
+      try {
+        const res = await fetch('/api/admin/audit/verify');
+        const data = await res.json();
+        if (data.ok) {
+          resultDiv.innerHTML = `<p class="text-emerald-600 text-sm font-bold">✅ 감사 체인 전체가 위·변조 없이 유효합니다. (총 ${data.verified_count}건)</p>`;
+          const countEl = document.getElementById('audit-count');
+          if (countEl && data.verified_count !== undefined) countEl.textContent = data.verified_count;
+          if (Array.isArray(data.logs) && data.logs.length > 0 && tableBody) {
+            tableBody.innerHTML = data.logs.map((log, idx) => `
+              <tr class="border-b border-slate-100 text-sm">
+                <td class="py-2 kh-tabular">${idx + 1}</td>
+                <td class="py-2 kh-tabular">${log.id || ''}</td>
+                <td class="py-2">${log.tenant_id || ''}</td>
+                <td class="py-2"><span class="kh-badge cyan">${log.category || ''}</span></td>
+                <td class="py-2 font-medium">${log.action || ''}</td>
+                <td class="py-2 font-mono text-xs">${(log.prev_hash || '').slice(0, 12)}</td>
+                <td class="py-2 font-mono text-xs">${(log.curr_hash || '').slice(0, 12)}</td>
+                <td class="py-2 text-xs kh-tabular">${log.created_at || ''}</td>
+              </tr>
+            `).join('');
+          }
+        } else {
+          resultDiv.innerHTML = '<p class="text-rose-600 text-sm font-bold">❌ 데이터 위·변조가 감지되었습니다.</p>';
+        }
+      } catch (e) {
+        resultDiv.innerHTML = '<p class="text-rose-600 text-sm">검증 요청 중 오류가 발생했습니다.</p>';
+      }
+    }
+  </script>
+{% endblock %}

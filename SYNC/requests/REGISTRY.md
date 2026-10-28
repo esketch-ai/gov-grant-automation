@@ -33,15 +33,25 @@
 | **REQ-027** | DocuMorph AI - 사업계획서 맞춤 변환 스튜디오 및 반자동 코파일럿 | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-022 | PSST/R&D 8문항 템플릿, 3단계 갭 분석 엔진, 개조식/수치 본문 합성 코파일럿, `/proposals/tailor` 스플릿 뷰 웹 UI, `tests/test_proposal_tailor_generator.py` 4pass | 2026-10-27 |
 | **REQ-028** | 상용 B2B 멀티테넌트 SaaS 및 Company Vault (기업 지식 데이터 룸 & 소셜 로그인) | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-027 | `tenants`/`users`/`tenant_assets` DB 완전 격리, 카카오/구글 소셜 세션, 4대 자산(계획서/IR덱/재무/특허) 데이터룸 UI(`/vault`), `tests/test_tenant_vault.py` 4pass | 2026-10-27 |
 | **REQ-029** | Company Vault 자산 기반 초정밀 맞춤 매칭 & 도전 과제 프로젝트 관리 (/projects) | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-028 | `VaultPreflightMatcher`(`tenants`+`tenant_assets` 파싱 자산→가상 company_specs→`PreflightService` 25대 신호등), RED(사전탈락) 자동제거 + `final_score` 정렬 초정밀 추천, `/projects`·`grant_projects` 도전과제 생성/트래킹(D-Day/진행률), `tests/test_grant_projects_workspace.py` 6pass | 2026-10-27 |
-| **REQ-030** | Zero-File-Retention 무보관 원칙, 테넌트 분리형 AES-256-GCM 암호화 보관 및 TLS 1.2+ 전송 보안 | GCWA/QCWA/QQAQC | 🟡 **QUEUED** | CRITICAL | REQ-028 | 원본 파일 디스크 무보관(메모리 즉시 파싱/폐기), 테넌트 고유 키 AES-256-GCM 필드 암호화, TLS 1.2+ 보안 헤더 구축 | — |
-| **REQ-031** | 대한민국 디지털정부 표준 UI/UX(KRDS) 가이드라인 준수 및 24+ 디자인 시스템 전면 적용 | GCWA/QCWA/QQAQC | 🟡 **QUEUED** | HIGH | REQ-029,030 | 7 레이아웃, 9 UI 컴포넌트, 8 효과/인터랙션 및 KRDS 디자인 토큰/접근성(KWCAG 2.1 AA) 전면 구현 | — |
-
-
-> 위 REQ-002~006은 `STATUS.md §5` 후보다. Gemini가 어느 것을 다음 라운드에 **실행**할지
-> `INBOX`/`REQ-NNN.md`로 명시하면 실무가 `QUEUED`로 승격한다.
+| **REQ-030** | Zero-File-Retention 무보관 원칙, 테넌트 분리형 AES-256-GCM 암호화 보관 및 TLS 1.2+ 전송 보안 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-028 | `src/security/encryption.py` `VaultCryptoManager`(HKDF-SHA256 32B 테넌트키 + `AESENC::`센티넬 AES-GCM; 서비스레이어 인가/복호, raw 경로 추가), `tenants.tenant_salt`(COALESCE preserve)+보안헤더 미들웨어(HSTS/nosniff/DENY/XSS/Referrer) 5종, `tests/test_zero_retention_aes256.py` 9test; `202pass`+QA`140/140`(완료증 §4) | 2026-10-27 |
+| **REQ-031** | 대한민국 디지털정부 표준 UI/UX(KRDS) 가이드라인 준수 및 24+ 디자인 시스템 전면 적용 | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-029 | `base.html`에 KRDS 24개 공용 모듈(토큰/GOV배너/포커스링/Bento/Carousel/Dropzone/Toast 등)+공용JS, 4페이지 additive 클래스 주입, `193pass`+QA`140/140`(완료증 §5) | 2026-10-27 |
+| **REQ-032** | 실전 수익형 B2B SaaS 대개편 v2.0 (블러페이월, 크레딧원장/Top-up, HWPX/예산엔진, 일할/환불정산, 5대 BM 대시보드, 슈퍼어드민, 해시체인 감사로그) | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-030,031 | 먹튀방지 Blurred Paywall, 1사업자 Hard-Lock, 크레딧 원장, 정부과제 예산편성기, 일할계산/부분환불, 해시체인 불변 감사로그 | 2026-10-28 |
+| **REQ-033** | 60초 공감 인트로(`/intro`) v4.0 — 5막 대서사(1막 피로→2막 알림→3막 작성가이드→4막 선정→5막 성장길잡이·전문가네트워크·사업운) | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-031,032 | 프롤로그 `intro_showreel.mp4` + `story_act1~5.jpg`, 제5막 성장로2/3단+5대파트너(회계·마케팅·광고·투자사·법률)+클로징철학, `/static` 서빙, 블레어 페이월(REQ-032) | 2026-10-28 |
+| **REQ-037** | Google Stitch 기반 K-Horizon 2027 디자인 시스템 및 3대 권한 분리 | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-032,033 | 3대 권한 분리 GNB, 디자인 토큰 SSOT(`design_system.py`, `k_horizon_2027.css`), 16개 엔드포인트 200 OK | 2026-10-28 |
+| **REQ-038** | 상단 메뉴 분리 및 텍스트 군더더기 전면 정제, kh-page-hero 픽셀 칼정렬 및 운영도구 관리자 격리 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-037 | 군더더기 브랜딩/영문표식 제거, 350px 고정 제어박스, kh-page-hero 60px 일원화, 운영도구 격리, pytest 226pass, QA 140/140 APPROVED | 2026-10-28 |
+| **REQ-039** | 한국어 가독성 극대화 및 초소형 폰트(10~11px) 전면 퇴출·폰트 스케일 고도화 | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-038 | 초소형(10~11px) 폰트 209건 전수 퇴출(0건 검증), KRDS 기반 폰트 스케일 상향, 고대비 명도비 확보, pytest 234pass, QA 140/140 만점 | 2026-10-28 |
+| **REQ-040** | 방문자 포털 서브 메뉴 및 3대 탭 동작 무결성 고도화 (헤더 가림 방지·스크롤스파이·탭 상태 동기화) | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-039 | GNB 84px 오프셋 안착, ScrollSpy 연동, 3대 서브 탭 해시 동기화, 모바일 닫힘 처리, pytest 239pass, QA 140/140 만점 | 2026-10-28 |
+| **REQ-041** | 5회차 반복 전수 검수 프로토콜 및 자가 치유(Self-Healing) 결함 수정 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-040 | 5개 라운드 전원 검수, DOM ID 복원(simNote/simChecks/verify-result), FastAPI 중복경고 0건, pytest 241pass, QA 140/140 만점 | 2026-10-28 |
+| **REQ-042** | 10대 다각도 전문가별 전수 검사 및 교차 검증 프로토콜 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-041 | 기획·디자인·UIUX·백엔드·DB·BM·수집·QA 전원 10대 다각도 검수, 3대 페르소나 E2E, pytest 251pass, QA 140/140 만점 | 2026-10-28 |
+| **REQ-043** | 사업자 전용 워크스페이스 고객 중심 전면 개편 및 가치·정보 플랫폼 서비스 구축 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-042 | 운영자 통계 배제, 사업주 수주 KPI 4종, 5대 BM 맞춤 인사이트, 공고 레이더 & 도전과제 파이프라인 | 2026-10-28 |
+| **REQ-044** | 사업자 vs 관리자 역할 경계 완벽 분리 및 화면·메뉴 재정렬 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-043 | items 사업자 이관, MRR/ARR 관리자 격리, 6대 사업자 과제수주 메뉴 & 6대 관리자 관제 메뉴 재정렬, pytest 251pass, QA 140/140 | 2026-10-28 |
+| **REQ-045** | 게임 머니식 '크레딧·코인' 용어 전면 퇴출 및 '월간 플랜 생성 한도' 체계 개편 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-044 | 템플릿 fa-coins/크레딧 0건 퇴출, 이번 달 생성 한도/플랜 관리 정제, B2B 표준화, pytest 251pass, QA 140/140 | 2026-10-28 |
+| **REQ-046** | '사업계획서 대필·작성' 할루시네이션 전면 퇴출 및 '과제 요건 정밀 분석 & 매칭 진단' 본질 환원 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-045 | 새 계획서 작성 퇴출, 맞춤 공고 탐색 CTA 전환, 15분 대필 과장 광고 정제, 공고 요건 분석 일원화, pytest 251pass, QA 140/140 | 2026-10-28 |
+| **REQ-048** | 잔여 할루시네이션 발본색원 전수 정제 및 기획 체계 단일 정본(SSOT) 재정리 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-046 | 초안 작성/선정 확률/새 계획서 0건 발본색원, 요건 분석 가이드 SSOT 일원화, pytest 251pass, QA 140/140 | 2026-10-28 |
+| **REQ-047** | 바이브코딩 프로토타입 검증 엔진 및 7:3 피드백 리워드 경제 네이티브 구현 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-048 | SSHAI-BOOM 외부연동 아닌 자체 내장 구현, 7:3 리워드 정산, Page Visibility 60초 체류시간, 3단계 피드백, 심사위원 보고서 뷰 | 2026-10-28 |
 
 ## 상태 산(피보나치 추정)
-- DONE 21 · IN PROGRESS 0 · DRAFT 대기 1 (REQ-002) · BACKLOG 0
+- DONE 34 · IN PROGRESS 0 · DRAFT 대기 1 (REQ-002) · BACKLOG 0
 
 ## 의사결정(DEC) 현황 — STATUS §4 연동
 

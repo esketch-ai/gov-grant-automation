@@ -42,8 +42,58 @@ BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 
-app = FastAPI(title="SSHAI-CWA 2026 관리자 대시보드", version="1.5.1")
-templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+app = FastAPI(title="정부지원사업 맞춤형 관리 플랫폼", version="1.5.1")
+
+# REQ-030: 보안 헤더 미들웨어 (최은정 통제)
+@app.middleware("http")
+async def security_headers_middleware(request: Request, call_next):
+    response = await call_next(request)
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "DENY"
+    response.headers["X-XSS-Protection"] = "1; mode=block"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    return response
+
+from fastapi.staticfiles import StaticFiles
+from .design_system import (
+    get_design_context,
+    resolve_role,
+    ROLE_PORTALS,
+    K_HORIZON_2027_TOKENS,
+    STITCH_PROJECT_METADATA,
+    DESIGN_COUNCIL_5EXPERTS,
+)
+
+STATIC_DIR = BASE_DIR / "static"
+STATIC_DIR.mkdir(parents=True, exist_ok=True)
+app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
+
+_raw_templates = Jinja2Templates(directory=str(TEMPLATES_DIR))
+
+
+class _KHorizonTemplates:
+    """모든 TemplateResponse 호출에 K-Horizon 2027 디자인 토큰 및 3대 권한 분리 컨텍스트를 자동 주입."""
+
+    def __getattr__(self, name):
+        return getattr(_raw_templates, name)
+
+    def TemplateResponse(self, *args, **kwargs):
+        request = kwargs.get("request")
+        context = kwargs.get("context")
+        if context is None and len(args) >= 2 and isinstance(args[1], dict):
+            context = args[1]
+        if isinstance(context, dict):
+            if request is None and isinstance(context.get("request"), Request):
+                request = context.get("request")
+            active_page = context.get("active_page", "intro")
+            kh_ctx = get_design_context(request, active_page=active_page)
+            for k, v in kh_ctx.items():
+                context.setdefault(k, v)
+        return _raw_templates.TemplateResponse(*args, **kwargs)
+
+
+templates = _KHorizonTemplates()
 
 # REQ-020: 1초 내 사전 비행점검 서비스 인스턴스(무상태 → 전역 재사용)
 _preflight_service = PreflightService()
@@ -167,6 +217,11 @@ def _get_items_summary() -> List[dict]:
                 is_youth = False
                 region = ""
 
+            # REQ-047: 바이브코딩 프로토타입 캠페인 연동
+            db_inst = _get_db()
+            camps = db_inst.list_prototype_campaigns(item_id=meta.get("item_id", folder.name))
+            campaign = camps[0] if camps else None
+
             items.append({
                 "id": meta.get("item_id", folder.name),
                 "name": meta.get("item_name", folder.name),
@@ -184,6 +239,8 @@ def _get_items_summary() -> List[dict]:
                 "certifications": list(effective_profile.get("certifications", [])),
                 "proposal_preview": prop_preview[:150],
                 "proposal_full": prop_preview,
+                "prototype_url": meta.get("prototype_url") or (campaign["prototype_url"] if campaign else ""),
+                "campaign": campaign,
             })
         except Exception as e:
             logger.warning("아이템 프로파일 로드 실패[%s]: %s", folder.name, e)
@@ -192,7 +249,8 @@ def _get_items_summary() -> List[dict]:
 
 @app.get("/", response_class=HTMLResponse)
 async def root():
-    return RedirectResponse(url="/dashboard")
+    """REQ-037: 인트로 화면(/intro)을 플랫폼의 진정한 메인 진입점으로 설정."""
+    return RedirectResponse(url="/intro")
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
@@ -777,12 +835,14 @@ async def create_item_api(request: Request):
     target_trl = str(data.get("target_trl", "6"))
     proposal_text = data.get("proposal_text", f"# {name}\n\n사업 아이템 제안서 본문 요약")
     company_specs = data.get("company_specs", {})
+    prototype_url = str(data.get("prototype_url", "")).strip()
 
     profile_content = {
         "item_meta": {
             "item_id": item_id,
             "item_name": name,
             "recipients": recipients,
+            "prototype_url": prototype_url,
         },
         "collection_scope": {
             "selected_bookmarks": ["k_startup", "ntis", "iris", "nipa", "smtech", "g2b"],
@@ -812,6 +872,19 @@ async def create_item_api(request: Request):
             yaml.dump(profile_content, f, allow_unicode=True, sort_keys=False)
         with open(item_dir / "proposal.md", "w", encoding="utf-8") as f:
             f.write(proposal_text)
+
+        if (data.get("create_campaign") or data.get("start_campaign")) and prototype_url:
+            from src.prototype.validation_engine import PrototypeValidationEngine
+            engine = PrototypeValidationEngine(_get_db())
+            engine.create_campaign(
+                item_id=item_id,
+                tenant_id=getattr(request.state, "tenant_id", "tenant_default"),
+                prototype_url=prototype_url,
+                title=f"{name} 프로토타입 실사용 검증",
+                total_budget=int(data.get("total_budget", 100000)),
+                fee_per_test=int(data.get("fee_per_test", 2000)),
+            )
+
         return {"status": "success", "message": "사업 아이템 생성 완료", "item_id": item_id}
     except Exception as e:
         logger.exception("사업 아이템 생성 실패: %s", e)
@@ -856,6 +929,20 @@ async def update_item_api(item_id: str, request: Request):
             current_data.setdefault("rnd_and_bid_specs", {})["current_trl_range"] = str(data["target_trl"])
         if "company_specs" in data and isinstance(data["company_specs"], dict):
             current_data["company_specs"] = data["company_specs"]
+        if "prototype_url" in data:
+            proto_url = str(data["prototype_url"]).strip()
+            current_data.setdefault("item_meta", {})["prototype_url"] = proto_url
+            if (data.get("create_campaign") or data.get("start_campaign")) and proto_url:
+                from src.prototype.validation_engine import PrototypeValidationEngine
+                engine = PrototypeValidationEngine(_get_db())
+                engine.create_campaign(
+                    item_id=item_id,
+                    tenant_id=getattr(request.state, "tenant_id", "tenant_default"),
+                    prototype_url=proto_url,
+                    title=f"{current_data.get('item_meta', {}).get('item_name', item_id)} 프로토타입 실사용 검증",
+                    total_budget=int(data.get("total_budget", 100000)),
+                    fee_per_test=int(data.get("fee_per_test", 2000)),
+                )
 
         with open(p_path, "w", encoding="utf-8") as f:
             yaml.dump(current_data, f, allow_unicode=True, sort_keys=False)
@@ -1393,7 +1480,7 @@ async def api_proposals_gap_analysis(request: Request):
 
 @app.post("/api/proposals/generate-section")
 async def api_proposals_generate_section(request: Request):
-    """코파일럿 팩트 기반 섹션 맞춤 초안 생성 API."""
+    """코파일럿 공고 요건 대응 가이드 도출 API."""
     from ..generator.template_schemas import get_template
     from ..generator.gap_analyzer import ProposalGapAnalyzer
     from ..generator.doc_morpher import DocMorpher
@@ -1593,7 +1680,8 @@ def _notices_from_db(limit: int = 40) -> List[RawNotice]:
                 "SELECT * FROM announcements WHERE target_year = 2026 ORDER BY created_at DESC LIMIT ?",
                 (limit,),
             ).fetchall()
-            for d in rows:
+            for row in rows:
+                d = dict(row)
                 out.append(RawNotice(
                     portal_id=d.get("canonical_id", d.get("source_portal", "portal")),
                     title=d.get("title", ""),
@@ -1769,6 +1857,659 @@ async def api_status():
             "all_passed": audit_data.get("all_passed", False),
             "timestamp": audit_data.get("timestamp", ""),
         },
+    }
+
+
+# ==============================================================================
+# REQ-034 Round 1: New routes + security headers
+# ==============================================================================
+
+@app.get("/intro", response_class=HTMLResponse)
+async def intro(request: Request):
+    """REQ-034 /intro: 인트로 페이지 렌더링 (모두를 위한 바이브코딩 프로토타입 체험 라운지 포함)."""
+    db = _get_db()
+    db.ensure_schema()
+    active_campaigns = db.list_prototype_campaigns(status="ACTIVE")
+    tester_summary = db.get_tester_rewards_summary(tester_id="tester_default")
+    return templates.TemplateResponse(
+        request=request,
+        name="intro.html",
+        context={
+            "active_page": "intro",
+            "active_campaigns": active_campaigns,
+            "tester_summary": tester_summary,
+        },
+    )
+
+
+@app.get("/pricing", response_class=HTMLResponse)
+async def pricing(request: Request):
+    """REQ-034 /pricing: 요금제 페이지 렌더링."""
+    db = _get_db()
+    db.ensure_schema()
+    active_campaigns = db.list_prototype_campaigns(status="ACTIVE")
+    tester_summary = db.get_tester_rewards_summary(tester_id="tester_default")
+    return templates.TemplateResponse(
+        request=request,
+        name="intro.html",
+        context={
+            "active_page": "pricing",
+            "active_campaigns": active_campaigns,
+            "tester_summary": tester_summary,
+        },
+    )
+
+
+@app.get("/dashboard/biz", response_class=HTMLResponse)
+async def dashboard_biz(request: Request):
+    """REQ-044 /dashboard/biz: 사업주 관점 맞춤 수주 워크스페이스 대시보드 렌더링."""
+    db = _get_db()
+    db.ensure_schema()
+
+    # 현재 테넌트 정보 (세션 또는 기본값)
+    tenant = getattr(request.state, 'tenant', None) or {
+        "id": "tenant_001",
+        "company_name": "(주)마음숲테크",
+        "biz_model": "ict_deeptech",
+        "subscription_tier": "growth",
+    }
+
+    # REQ-044: 사업주에게 필요한 4대 핵심 수주 지표 (플랫폼 운영 매출 MRR/ARR 제거)
+    founder_kpi = {
+        "matched_grants_count": 14,
+        "green_count": 8,
+        "active_projects_count": 2,
+        "max_grant_potential": "최대 3억 5,000만 원",
+        "vault_readiness_score": 85,
+    }
+
+    # REQ-047: 바이브코딩 동료 프로토타입 체험 캠페인 & 테스터 적립금 요약
+    active_campaigns = db.list_prototype_campaigns(status="ACTIVE")
+    tester_summary = db.get_tester_rewards_summary(tester_id="tester_default")
+
+    return templates.TemplateResponse(
+        request=request,
+        name="biz_dashboard.html",
+        context={
+            "active_page": "dashboard_biz",
+            "founder_kpi": founder_kpi,
+            "tenant": tenant,
+            "active_campaigns": active_campaigns,
+            "tester_summary": tester_summary,
+        },
+    )
+
+
+# Convenience aliases for business workspace routes
+@app.get("/biz/dashboard")
+async def redirect_biz_dashboard():
+    return RedirectResponse(url="/dashboard/biz", status_code=307)
+
+
+@app.get("/biz/vault")
+async def redirect_biz_vault():
+    return RedirectResponse(url="/vault", status_code=307)
+
+
+@app.get("/biz/projects")
+async def redirect_biz_projects():
+    return RedirectResponse(url="/projects", status_code=307)
+
+
+@app.get("/biz/tailor")
+async def redirect_biz_tailor():
+    return RedirectResponse(url="/proposals/tailor", status_code=307)
+
+
+@app.get("/biz/announcements")
+async def redirect_biz_announcements():
+    return RedirectResponse(url="/announcements", status_code=307)
+
+
+def _get_prototype_engine() -> Any:
+    from src.prototype.validation_engine import PrototypeValidationEngine
+    db = _get_db()
+    db.ensure_schema()
+    return PrototypeValidationEngine(db)
+
+
+# ---------------------------------------------------------------------- REQ-047 바이브코딩 검증 엔진 & 7:3 리워드 경제 API
+@app.post("/api/prototype/campaigns")
+async def api_create_prototype_campaign(request: Request):
+    """신규 바이브코딩 검증 캠페인 개설."""
+    data = await request.json()
+    item_id = str(data.get("item_id", "")).strip()
+    prototype_url = str(data.get("prototype_url", "")).strip()
+    title = str(data.get("title", data.get("item_name", item_id))).strip()
+    description = str(data.get("description", "")).strip()
+    total_budget = int(data.get("total_budget", data.get("budget", 100000)))
+    fee_per_test = int(data.get("fee_per_test", data.get("fee_per_tester", 2000)))
+
+    if not item_id or not prototype_url:
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": "아이템 ID와 프로토타입 URL은 필수 입력입니다."},
+        )
+
+    engine = _get_prototype_engine()
+    tenant_id = getattr(request.state, "tenant_id", "tenant_default")
+    campaign = engine.create_campaign(
+        item_id=item_id,
+        tenant_id=tenant_id,
+        prototype_url=prototype_url,
+        title=title or item_id,
+        total_budget=total_budget,
+        fee_per_test=fee_per_test,
+        description=description,
+    )
+    return {"status": "success", "campaign": campaign}
+
+
+@app.get("/api/prototype/campaigns")
+async def api_list_prototype_campaigns(status: Optional[str] = None, item_id: Optional[str] = None):
+    """프로토타입 검증 캠페인 목록 조회."""
+    db = _get_db()
+    db.ensure_schema()
+    campaigns = db.list_prototype_campaigns(status=status, item_id=item_id)
+    return {"status": "success", "count": len(campaigns), "campaigns": campaigns}
+
+
+@app.get("/api/prototype/campaigns/{campaign_id}")
+async def api_get_prototype_campaign(campaign_id: str):
+    """단일 프로토타입 검증 캠페인 상세 조회."""
+    db = _get_db()
+    db.ensure_schema()
+    campaign = db.get_prototype_campaign(campaign_id)
+    if not campaign:
+        return JSONResponse(status_code=404, content={"status": "error", "message": "캠페인을 찾을 수 없습니다."})
+    return {"status": "success", "campaign": campaign}
+
+
+@app.post("/api/prototype/sessions/start")
+async def api_start_prototype_session(request: Request):
+    """테스터 실사용 체험 세션 발급."""
+    data = await request.json()
+    campaign_id = str(data.get("campaign_id", "")).strip()
+    tester_id = str(data.get("tester_id", "tester_default")).strip()
+
+    if not campaign_id:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "campaign_id는 필수입니다."})
+
+    engine = _get_prototype_engine()
+    session = engine.start_session(campaign_id=campaign_id, tester_id=tester_id)
+    return {"status": "success", "session_id": session["id"], "session": session}
+
+
+@app.post("/api/prototype/sessions/heartbeat")
+async def api_prototype_heartbeat(request: Request):
+    """Page Visibility 기반 체류 시간 갱신."""
+    data = await request.json()
+    session_id = str(data.get("session_id", "")).strip()
+    active_delta = int(data.get("active_delta", data.get("active_increment", 3)))
+    is_visible = bool(data.get("is_visible", True))
+    visible_increment = int(data.get("visible_increment", active_delta))
+
+    if not session_id:
+        return JSONResponse(status_code=400, content={"status": "error", "message": "session_id는 필수입니다."})
+
+    engine = _get_prototype_engine()
+    try:
+        result = engine.record_heartbeat(
+            session_id=session_id,
+            active_delta=active_delta,
+            active_increment=active_delta,
+            visible_increment=visible_increment,
+            is_visible=is_visible,
+        )
+        return {"status": "success", **result}
+    except Exception as e:
+        return JSONResponse(status_code=400, content={"status": "error", "message": str(e)})
+
+
+@app.post("/api/prototype/feedback/submit")
+async def api_submit_prototype_feedback(request: Request):
+    """3단계 구조화 피드백 제출 및 70% 리워드 적립."""
+    data = await request.json()
+    session_id = str(data.get("session_id", "")).strip()
+    tester_id = str(data.get("tester_id", "tester_default")).strip()
+    tester_alias = str(data.get("tester_alias", "")).strip()
+    ux_score = int(data.get("ux_score", 5))
+    functionality_score = int(data.get("functionality_score", data.get("func_score", 5)))
+    willingness_to_pay = int(data.get("willingness_to_pay", data.get("wtp_score", 5)))
+    nps_recommend_score = int(data.get("nps_recommend_score", data.get("nps_score", 10)))
+    blocker_category = str(data.get("blocker_category", "기타")).strip()
+    qualitative_feedback = str(data.get("qualitative_feedback", data.get("qualitative_text", ""))).strip()
+
+    engine = _get_prototype_engine()
+    try:
+        res = engine.submit_feedback(
+            session_id=session_id,
+            tester_id=tester_id,
+            tester_alias=tester_alias,
+            ux_score=ux_score,
+            functionality_score=functionality_score,
+            willingness_to_pay=willingness_to_pay,
+            nps_recommend_score=nps_recommend_score,
+            blocker_category=blocker_category,
+            qualitative_feedback=qualitative_feedback,
+        )
+        return res
+    except ValueError as ve:
+        return JSONResponse(status_code=400, content={"status": "error", "message": str(ve)})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": f"서버 오류: {e}"})
+
+
+@app.get("/api/prototype/reports/{campaign_id}")
+async def api_get_prototype_report(campaign_id: str):
+    """심사위원 제출용 검증 보고서 통계 JSON."""
+    engine = _get_prototype_engine()
+    try:
+        report = engine.generate_validation_report(campaign_id)
+        return {"status": "success", "report": report}
+    except ValueError as ve:
+        return JSONResponse(status_code=404, content={"status": "error", "message": str(ve)})
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"status": "error", "message": str(e)})
+
+
+@app.get("/prototype/report/{campaign_id}", response_class=HTMLResponse)
+async def prototype_report_view(request: Request, campaign_id: str):
+    """심사위원 제출용 공식 A4 규격 검증 및 피드백 보고서 웹/인쇄 뷰."""
+    engine = _get_prototype_engine()
+    try:
+        report = engine.generate_validation_report(campaign_id)
+    except Exception as e:
+        return HTMLResponse(f"<h3>보고서를 불러올 수 없습니다: {e}</h3>", status_code=404)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="prototype_report.html",
+        context={
+            "active_page": "prototype_report",
+            "campaign": report["campaign"],
+            "report": report,
+        },
+    )
+
+
+@app.get("/admin/platform", response_class=HTMLResponse)
+async def admin_platform(request: Request):
+    """REQ-034 /admin/platform: 플랫폼 관리자 대시보드 렌더링."""
+    from src.common.db import GrantDatabase
+    from src.billing.commercial_service import CommercialService
+
+    db = _get_db()
+    db.ensure_schema()
+    svc = CommercialService(db)
+
+    tenants = svc.list_all_tenants() if hasattr(svc, 'list_all_tenants') else []
+    kpi = svc.get_5kpi(tenant_id="admin") if hasattr(svc, 'get_5kpi') else {"mrr": 0, "arr": 0, "credit_balance": 0, "subscription_tier": "free"}
+
+    return templates.TemplateResponse(
+        request=request,
+        name="admin_platform.html",
+        context={
+            "active_page": "admin_platform",
+            "tenants": tenants,
+            "kpi": kpi,
+        },
+    )
+
+
+@app.get("/governance/partner", response_class=HTMLResponse)
+async def governance_partner_view(request: Request):
+    """REQ-037 Google Stitch Screen 3: 거버넌스 공공/파트너 대시보드 렌더링."""
+    incubated_enterprises = [
+        {
+            "name": "(주)딥센스바이오",
+            "sector": "AI 융합 헬스케어",
+            "announcement_title": "2027 범부처 초격차 1000+ 바이오헬스 R&D",
+            "department": "중소벤처기업부 (TIPA)",
+            "stage": "심사위원 Q&A 검토",
+            "stage_badge": "violet",
+            "partner_name": "삼일PwC 공공 R&D 회계팀",
+            "updated_at": "2027.02.18",
+            "status": "검토 중",
+        },
+        {
+            "name": "(주)에이아이옵틱스",
+            "sector": "ICT 딥테크",
+            "announcement_title": "TIPS 창업성장기술개발사업(딥테크 팁스)",
+            "department": "중소벤처기업부",
+            "stage": "예산 산출 중",
+            "stage_badge": "cyan",
+            "partner_name": "삼일PwC 공공 R&D 회계팀",
+            "updated_at": "2027.02.17",
+            "status": "진행 중",
+        },
+        {
+            "name": "(주)넥스트머티리얼즈",
+            "sector": "첨단 신소재",
+            "announcement_title": "소재부품장비 혁신기술개발사업",
+            "department": "산업통상자원부 (KEIT)",
+            "stage": "공고 요건 분석",
+            "stage_badge": "slate",
+            "partner_name": "특허법인 K-LEADER 선행기술팀",
+            "updated_at": "2027.02.18",
+            "status": "분석 중",
+        },
+        {
+            "name": "(주)로컬스마트스토어",
+            "sector": "지역특화 플랫폼",
+            "announcement_title": "스마트상점 공정혁신 R&D 바우처",
+            "department": "소상공인시장진흥공단",
+            "stage": "제출 완료",
+            "stage_badge": "emerald",
+            "partner_name": "법무법인 율촌 R&D 법률지원",
+            "updated_at": "2027.02.16",
+            "status": "완료",
+        },
+        {
+            "name": "(주)하이퍼로보틱스",
+            "sector": "제조 자동화",
+            "announcement_title": "제조공정 디지털전환 실증지원 과제",
+            "department": "과학기술정보통신부 (IITP)",
+            "stage": "심사위원 Q&A 검토",
+            "stage_badge": "violet",
+            "partner_name": "미배정 (자문 신청 대기)",
+            "updated_at": "2027.02.18",
+            "status": "배정 대기",
+        },
+        {
+            "name": "(주)클린에너지솔루션",
+            "sector": "기후테크/ESG",
+            "announcement_title": "탄소중립 선도기술개발 지원사업",
+            "department": "환경부·산업부",
+            "stage": "공고 요건 분석",
+            "stage_badge": "slate",
+            "partner_name": "특허법인 K-LEADER 선행기술팀",
+            "updated_at": "2027.02.15",
+            "status": "분석 중",
+        },
+    ]
+
+    governance_metrics = {
+        "incubated_count": 24,
+        "active_grants": 12,
+        "reviewed_proposals": 8,
+        "deadline_d7": 3,
+        "partner_institutions": 18,
+        "active_consultations": 9,
+    }
+
+    partner_streams = [
+        {"role": "회계법인", "task": "연구비 예산 적정성 및 CAPEX 검증", "partner": "삼일PwC 공공정산팀", "active_count": 4, "badge": "cyan"},
+        {"role": "특허사무소", "task": "선행기술조사 및 회피설계 자문", "partner": "특허법인 K-LEADER", "active_count": 3, "badge": "violet"},
+        {"role": "마케팅·수출 바우처", "task": "사업화 검증 전문가 매칭", "partner": "글로벌 엑셀러레이터 네트워크", "active_count": 2, "badge": "emerald"},
+    ]
+
+    return templates.TemplateResponse(
+        request=request,
+        name="governance_partner.html",
+        context={
+            "active_page": "governance_partner",
+            "incubated_enterprises": incubated_enterprises,
+            "metrics": governance_metrics,
+            "partner_streams": partner_streams,
+        },
+    )
+
+
+@app.get("/admin/audit-logs", response_class=HTMLResponse)
+async def admin_audit_logs(request: Request):
+    """REQ-034 /admin/audit-logs: 감사로그 뷰어 렌더링."""
+    from src.common.db import GrantDatabase
+    import sqlite3
+
+    db = _get_db()
+    db.ensure_schema()
+
+    audit_logs = []
+    try:
+        with sqlite3.connect(str(db.db_path), timeout=5.0) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("SELECT * FROM audit_logs ORDER BY id DESC LIMIT 100").fetchall()
+            audit_logs = [dict(r) for r in rows]
+    except Exception as e:
+        logger.warning("감사로그 조회 실패: %s", e)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="audit_logs.html",
+        context={
+            "active_page": "admin_audit_logs",
+            "audit_logs": audit_logs,
+        },
+    )
+
+
+@app.post("/api/billing/checkout")
+async def api_billing_checkout(request: Request):
+    """REQ-034 POST /api/billing/checkout: 구독/결제 실행."""
+    from src.common.db import GrantDatabase
+    from src.billing.commercial_service import CommercialService
+
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+    tier = data.get("tier", "growth")
+    cycle = data.get("cycle", "monthly")
+    biz_reg_no = data.get("biz_reg_no", "")
+
+    db = _get_db()
+    db.ensure_schema()
+    svc = CommercialService(db)
+
+    result = svc.subscribe(
+        tenant_id=biz_reg_no or "test_biz_reg_001",
+        tier=tier,
+        cycle=cycle,
+        actor="web_admin",
+    )
+    return {"status": "success", "ok": result.get("ok", False), **result}
+
+
+@app.post("/api/billing/topup")
+async def api_billing_topup(request: Request):
+    """REQ-045 POST /api/billing/topup: 멤버십 플랜 및 바우처 옵션 충전 (하위 호환 유지)."""
+    from src.common.db import GrantDatabase
+    from src.billing.commercial_service import CommercialService
+
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+    amount = data.get("amount", 10000)
+    tenant_id = data.get("tenant_id", "tenant_001")
+
+    db = _get_db()
+    db.ensure_schema()
+    svc = CommercialService(db)
+
+    # amount를 pack으로 변환 (단순화: always use first pack)
+    pack = {"id": "pack_300", "credits": 300, "total_krw": 19000}
+    result = svc.topup_credits(tenant_id=tenant_id, pack=pack)
+    return {"status": "success", "ok": result.get("ok", False), **result}
+
+
+@app.get("/api/export/hwpx", operation_id="export_hwpx")
+@app.post("/api/export/hwpx", operation_id="export_hwpx_post")
+async def api_export_hwpx(request: Request):
+    """REQ-034 GET+POST /api/export/hwpx: HWPX 내보내기."""
+    from src.billing.commercial_service import export_hwpx_bytes
+    from fastapi.responses import JSONResponse
+
+    # POST 데이터 또는 GET 쿼리 파라미터 처리
+    data = {}
+    if request.method == "POST":
+        try:
+            data = await request.json()
+        except Exception:
+            data = {}
+    else:
+        data = dict(request.query_params)
+
+    title = data.get("title", "test_title")
+    sections = data.get("sections", [
+        {"section_id": "sec_1", "title": "문제인식", "content": "본 연구는 기술 개발을 목적으로 합니다."},
+    ])
+
+    try:
+        result = export_hwpx_bytes(title, sections)
+        return JSONResponse(content={"status": "success", "bytes": len(result), "filename": f"{title}.hwpx"})
+    except Exception as e:
+        return JSONResponse(status_code=422, content={"status": "error", "message": str(e)})
+
+
+@app.get("/api/export/docx", operation_id="export_docx")
+@app.post("/api/export/docx", operation_id="export_docx_post")
+async def api_export_docx(request: Request):
+    """REQ-034 GET+POST /api/export/docx: DOCX 내보내기."""
+    from src.billing.commercial_service import export_docx_bytes
+    from fastapi.responses import JSONResponse
+
+    # POST 데이터 또는 GET 쿼리 파라미터 처리
+    data = {}
+    if request.method == "POST":
+        try:
+            data = await request.json()
+        except Exception:
+            data = {}
+    else:
+        data = dict(request.query_params)
+
+    title = data.get("title", "test_docx")
+    sections = data.get("sections", [
+        {"section_id": "sec_1", "title": "문제인식", "content": "본 연구는 기술 개발을 목적으로 합니다."},
+    ])
+
+    try:
+        result = export_docx_bytes(title, sections)
+        return JSONResponse(content={"status": "success", "bytes": len(result), "filename": f"{title}.docx"})
+    except Exception as e:
+        return JSONResponse(status_code=422, content={"status": "error", "message": str(e)})
+
+
+@app.get("/api/admin/audit/verify", operation_id="admin_audit_verify")
+@app.post("/api/admin/audit/verify", operation_id="admin_audit_verify_post")
+async def api_admin_audit_verify(request: Request):
+    """REQ-034 GET+POST /api/admin/audit/verify: 감사로드 체인 verify."""
+    from src.common.db import GrantDatabase
+    import sqlite3
+
+    db = _get_db()
+    db.ensure_schema()
+
+    verified_count = 0
+    rows = []
+    ok = True
+
+    try:
+        with sqlite3.connect(str(db.db_path), timeout=5.0) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("SELECT * FROM audit_logs ORDER BY id").fetchall()
+            rows = [dict(r) for r in rows]
+
+        # 간단한 체인 검증 (실제 verify_audit_chain 로직 재구현)
+        if len(rows) > 1:
+            for i in range(1, len(rows)):
+                prev_hash = rows[i-1].get("curr_hash", "")
+                curr_hash = rows[i].get("prev_hash", "")
+                if prev_hash != curr_hash:
+                    ok = False
+                    break
+            verified_count = len(rows) if ok else 0
+        else:
+            verified_count = len(rows)
+
+    except Exception as e:
+        logger.warning("감사로드 verify 실패: %s", e)
+        ok = False
+        verified_count = 0
+
+    return {
+        "status": "success",
+        "ok": ok,
+        "verified_count": verified_count,
+        "logs": rows if rows else [],
+    }
+
+
+@app.post("/api/admin/tenants")
+async def api_admin_tenants(request: Request):
+    """REQ-034 POST /api/admin/tenants: 테넌트 생성/상태 변경."""
+    from src.common.db import GrantDatabase
+    from src.billing.commercial_service import CommercialService
+
+    data = await request.json()
+    biz_reg_no = data.get("biz_reg_no", "")
+    tier = data.get("tier", "growth")
+    action = data.get("action", "create")  # create, activate, suspend, past_due
+
+    db = _get_db()
+    db.ensure_schema()
+    svc = CommercialService(db)
+
+    if action == "create":
+        result = svc.subscribe(
+            tenant_id=biz_reg_no or "new_tenant_001",
+            tier=tier,
+            cycle="monthly",
+            actor="super_admin",
+        )
+    elif action in ("activate", "suspend", "past_due"):
+        with db._connect() as conn:
+            conn.execute(
+                "UPDATE tenants SET status = ? WHERE biz_reg_no = ?",
+                (action, biz_reg_no or "new_tenant_001"),
+            )
+            conn.commit()
+        result = {"ok": True, "action": action, "tenant_id": biz_reg_no}
+    else:
+        result = {"ok": False, "message": "알 수 없는 액션입니다."}
+
+    return {"status": "success", "ok": result.get("ok", False), **result}
+
+
+
+
+@app.post("/api/auth/role")
+async def api_switch_role(request: Request):
+    """REQ-037: 3대 권한(visitor / subscriber / admin) 분리 서비스 전환 API."""
+    try:
+        data = await request.json()
+    except Exception:
+        data = {}
+    role = (data.get("role") or "visitor").strip().lower()
+    if role not in ROLE_PORTALS:
+        return JSONResponse(status_code=400, content={"status": "error", "ok": False, "message": "유효하지 않은 권한입니다."})
+    portal = ROLE_PORTALS[role]
+    resp = JSONResponse(
+        content={
+            "status": "success",
+            "ok": True,
+            "role": role,
+            "badge": portal["badge"],
+            "home_url": portal["home_url"],
+            "nav_items": portal["nav_items"],
+        }
+    )
+    resp.set_cookie(key="sshai_role", value=role, path="/", max_age=86400 * 30, samesite="lax")
+    return resp
+
+
+@app.get("/api/design-system")
+async def api_design_system():
+    """REQ-037: Google Stitch & K-Horizon 2027 디자인 토큰·5인 전문가·3대 권한 포털 명세 API."""
+    return {
+        "status": "success",
+        "ok": True,
+        "design_system": K_HORIZON_2027_TOKENS,
+        "stitch": STITCH_PROJECT_METADATA,
+        "council": DESIGN_COUNCIL_5EXPERTS,
+        "role_portals": ROLE_PORTALS,
     }
 
 

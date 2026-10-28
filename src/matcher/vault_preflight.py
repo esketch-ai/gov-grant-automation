@@ -18,6 +18,7 @@ from src.common.db import GrantDatabase
 from src.common.logging_config import get_logger
 from src.common.schemas import RawNotice
 from src.matcher.preflight import PreflightService
+from src.security.encryption import decrypt_asset_record
 
 logger = get_logger("vault_preflight")
 
@@ -49,9 +50,10 @@ class VaultPreflightMatcher:
                 "founder_gender": "unknown",
             })
 
-        # Vault 자산에서 우대/기술 신호를 취합
+        # Vault 자산에서 우대/기술 신호를 취합 (REQ-030: 원문 조회 + AESENC 복호화, 레거시 평문 자동 통과)
+        tenant_salt = (tenant or {}).get("tenant_salt", "")
         try:
-            assets = self.db.list_tenant_assets(tenant_id)
+            assets = self.db.list_tenant_assets_raw(tenant_id)
         except Exception as e:
             logger.debug("자산 조회 실패(degrade): %s", e)
             assets = []
@@ -61,7 +63,8 @@ class VaultPreflightMatcher:
         trl_levels: List[int] = []
         certifications: List[str] = []
         for a in assets:
-            meta = self._parse_meta(a.get("parsed_metadata"))
+            record = decrypt_asset_record(a, tenant_id, tenant_salt)
+            meta = self._parse_meta(record.get("parsed_metadata"))
             patents_count += int(meta.get("patents_count", 0) or 0)
             has_patents = has_patents or bool(meta.get("has_patents"))
             has_venture = has_venture or bool(meta.get("has_venture"))

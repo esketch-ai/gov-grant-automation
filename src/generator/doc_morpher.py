@@ -1,5 +1,5 @@
 """
-공고별 양식 맞춤 사업계획서 변환 및 초안 생성 엔진
+공고 심사 요건 분석 및 필수 대응 가이드 도출 엔진
 (src/generator/doc_morpher.py)
 """
 from __future__ import annotations
@@ -17,7 +17,7 @@ logger = get_logger("doc_morpher")
 
 
 class DocMorpher:
-    """마스터 계획서 원문과 사용자 입력 팩트를 결합하여 공고별 맞춤형 섹션 초안을 생성하는 코파일럿 엔진."""
+    """마스터 계획서 원문과 사용자 입력 팩트를 결합하여 공고 심사 요건 분석 및 필수 대응 가이드를 도출하는 어시스턴트 엔진."""
 
     def __init__(
         self,
@@ -37,7 +37,7 @@ class DocMorpher:
         user_facts: Dict[str, str],
         item_meta: Dict[str, Any],
     ) -> str:
-        """비동기 섹션 맞춤 초안 생성: LLM 호출 시도 ➔ 실패 시 고품질 규칙 기반 합성기 폴백."""
+        """비동기 섹션 대응 가이드 생성: LLM 호출 시도 ➔ 실패 시 고품질 규칙 기반 합성기 폴백."""
         # 1차: LLM 생성 시도
         llm_draft = await self._try_llm_generation(section, template, master_context, user_facts, item_meta)
         if llm_draft and len(llm_draft.strip()) >= 100:
@@ -65,35 +65,35 @@ class DocMorpher:
         user_facts: Dict[str, str],
         item_meta: Dict[str, Any],
     ) -> Optional[str]:
-        """로컬 Ollama LLM을 통한 맞춤형 섹션 초안 작성."""
+        """로컬 Ollama LLM을 통한 맞춤형 섹션 요건 대응 가이드 도출."""
         facts_formatted = "\n".join([f"- [사용자 보완 팩트] {k}: {v}" for k, v in user_facts.items() if v.strip()])
         item_name = item_meta.get("name", "과제 아이템")
         summary = item_meta.get("summary", "")
 
-        system_prompt = f"""당신은 대한민국 최고 수준의 공공지원사업 사업계획서 전문 작가이자 평가위원입니다.
+        system_prompt = f"""당신은 2026 대한민국 정부지원사업 공고 요건 정밀 분석 및 심사위원 대응 전략 수립 수석 컨설턴트입니다.
 적용 템플릿: {template.name} ({template.target_agency})
 톤앤매너 지침: {template.tone_directive}
 
-작성할 섹션: {section.title} ({section.category_name})
-작성 가이드: {section.description}
-평가 중점 사항: {section.evaluation_focus}
+분석 섹션: {section.title} ({section.category_name})
+공고 요건 가이드: {section.description}
+심사위원 평가 중점 사항: {section.evaluation_focus}
 
-위 요건에 맞추어 심사위원을 설득할 수 있는 고밀도의 완성형 사업계획서 본문 단락을 작성하세요.
-- 불필요한 서두("안녕하세요", "네 알겠습니다")나 메타 설명은 완전히 생략하고, 본문 텍스트만 출력하세요.
-- 번호가 매겨진 소제목(1), 2), ①, ②) 및 명확한 개조식과 서술형을 조화롭게 사용하세요.
-- 전문적인 비즈니스 및 엔지니어링 용어를 적극 활용하세요."""
+위 공고 요건에 부합하도록 창업자가 심사위원의 평가 기준을 완벽히 충족할 수 있는 '핵심 대응 전략 가이드 및 작성 착안점 메모'를 체계적으로 도출하세요.
+- 본 서비스는 대필을 제공하지 않으며, 창업자가 본인 사업의 강점을 드러낼 수 있는 전략적 작성 지침을 제공합니다.
+- 불필요한 서두("안녕하세요", "네 알겠습니다")나 메타 설명은 완전히 생략하고, 개조식 체크포인트와 대응 가이드만 출력하세요.
+- 번호가 매겨진 소제목(1), 2), ①, ②) 및 필수 증빙 지표를 명확히 제시하세요."""
 
         user_prompt = f"""[기본 정보]
 - 과제/아이템명: {item_name}
 - 핵심 요약: {summary}
 
-[마스터 계획서 발췌 내용]
+[기업 사업소개 발췌 내용]
 {master_context}
 
 [사업자가 입력한 추가 팩트/답변]
-{facts_formatted or "(추가 입력 없음 - 마스터 정보 기반 최적화)"}
+{facts_formatted or "(추가 입력 없음 - 기본 정보 기반 분석)"}
 
-위 정보를 바탕으로 '{section.title}' 항목의 본문 초안을 3~4개 단락(약 500~800자)으로 작성해 주세요."""
+위 정보를 바탕으로 '{section.title}' 항목의 심사위원 채점 기준별 핵심 대응 전략 가이드 및 필수 착안점 메모를 3~4개 항목으로 명확히 도출해 주세요."""
 
         payload = {
             "model": self.model_name,
@@ -123,7 +123,7 @@ class DocMorpher:
         user_facts: Dict[str, str],
         item_meta: Dict[str, Any],
     ) -> str:
-        """LLM 부재 시에도 심사위원 기준에 부합하는 정형화된 공공 계획서 초안 합성."""
+        """LLM 부재 시에도 심사위원 기준에 부합하는 공고 요건별 전략 메모 및 대응 가이드 합성."""
         item_name = item_meta.get("name", "본 사업 아이템")
         summary = item_meta.get("summary", "혁신 기술 기반 솔루션")
         sec_id = section.section_id
@@ -253,7 +253,7 @@ class DocMorpher:
         template: ProposalTemplate,
         section_drafts: Dict[str, str],
     ) -> str:
-        """전체 완성된 섹션 초안들을 취합하여 공식 마크다운 문서로 조립."""
+        """전체 완성된 섹션별 공고 대응 가이드 및 전략 노트를 취합하여 공식 마크다운 문서로 조립."""
         item_name = item_meta.get("name", "과제 아이템")
         specs = item_meta.get("company_specs", {})
         company_name = specs.get("company_name", "(주)자사명")
@@ -285,7 +285,7 @@ class DocMorpher:
 
             draft = section_drafts.get(sec.section_id, "").strip()
             if not draft:
-                draft = "(작성 대기 중 - 코파일럿을 통해 초안을 생성해 주세요.)"
+                draft = "(분석 대기 중 - [심사 기준별 대응 가이드 도출]을 실행해 주세요.)"
 
             doc_lines.append(f"### {sec.title}")
             doc_lines.append(f"*{sec.description}*")

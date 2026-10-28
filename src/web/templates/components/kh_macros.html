@@ -1,0 +1,59 @@
+{# 공통 Jinja2 UI 매크로 라이브러리 #}
+
+{% macro kh_section_header(badge_text, title, subtitle='', badge_tone='cyan') %}
+<div class="mb-6">
+  {% if badge_text %}
+  <div class="flex items-center gap-2 mb-2">
+    <span class="kh-badge {{ badge_tone }}">{{ badge_text }}</span>
+  </div>
+  {% endif %}
+  <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{{ title }}</h3>
+  {% if subtitle %}
+  <p class="text-sm text-slate-600 mt-1 leading-relaxed">{{ subtitle }}</p>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro kh_kpi_card(elem_id, value, label, unit_label, badge_text='', tone='cyan') %}
+<div class="krds-card krds-hover reveal">
+  <div class="flex items-center justify-between mb-1.5">
+    <span class="lbl text-xs font-semibold text-slate-500">{{ label }}</span>
+    {% if badge_text %}
+    <span class="kh-badge {{ tone }}">{{ badge_text }}</span>
+    {% endif %}
+  </div>
+  <div class="krds-kpi">
+    <span class="num kh-tabular" id="{{ elem_id }}">{{ value }}</span>
+  </div>
+  <small class="text-xs text-slate-400 mt-1 block">{{ unit_label }}</small>
+</div>
+{% endmacro %}
+
+{% macro kh_story_act_card(act, idx=1) %}
+<div class="krds-card krds-hover reveal reveal-delay-{{ idx }} flex flex-col justify-between">
+  <div>
+    <div class="relative h-56 w-full rounded-lg overflow-hidden bg-slate-900 mb-3">
+      <img src="{{ act.img }}" alt="{{ act.alt }}" class="w-full h-full object-cover" />
+      <span class="absolute top-2.5 left-2.5 kh-badge {{ act.accent }}">{{ act.badge }}</span>
+    </div>
+    <div class="px-1">
+      <h3 class="font-bold text-slate-900 text-sm mb-1">{{ act.act_no }} · {{ act.title }}</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">{{ act.quote }}</p>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro kh_pricing_card(plan) %}
+<div class="krds-card krds-hover p-6 text-center flex flex-col justify-between {% if plan.featured %}ring-2 ring-blue-600{% endif %}">
+  <div>
+    <div class="flex justify-center mb-2">
+      <span class="kh-badge {% if plan.featured %}cyan{% else %}emerald{% endif %}">{{ plan.badge }}</span>
+    </div>
+    <h4 class="font-bold text-slate-900 text-lg mb-2">{{ plan.name }}</h4>
+    <p class="text-2xl font-extrabold text-slate-900 kh-tabular" id="{{ plan.price_id }}">{{ plan.monthly_label }}</p>
+    <p class="text-slate-500 text-xs mt-1">{{ plan.credits_label }}</p>
+  </div>
+  <button class="krds-btn primary mt-5 w-full" onclick="subscribePlan('{{ plan.key }}')">{{ plan.cta }}</button>
+</div>
+{% endmacro %}

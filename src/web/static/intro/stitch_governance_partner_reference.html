@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SSHAI-CWA K-Horizon 2027 | 거버넌스 공공/파트너 대시보드</title>
+<!-- Google Fonts: Plus Jakarta Sans, Public Sans, Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@500;600;700;800&amp;family=Public+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-low": "#151b2b",
+            "tertiary": "#d2bbff",
+            "on-tertiary-fixed": "#25005a",
+            "surface-container": "#191f2f",
+            "primary-fixed-dim": "#b1c5ff",
+            "on-tertiary": "#3f008e",
+            "on-primary-fixed": "#001847",
+            "surface-dim": "#0d1322",
+            "on-secondary-fixed": "#002113",
+            "on-primary-fixed-variant": "#0040a0",
+            "on-primary": "#002c72",
+            "on-primary-container": "#ffffff",
+            "secondary-fixed": "#6ffbbe",
+            "secondary": "#4edea3",
+            "background": "#0d1322",
+            "surface-container-high": "#242a3a",
+            "on-error": "#690005",
+            "secondary-container": "#00a572",
+            "outline-variant": "#424655",
+            "primary": "#b1c5ff",
+            "on-secondary": "#003824",
+            "on-tertiary-fixed-variant": "#5a00c6",
+            "inverse-surface": "#dde2f8",
+            "inverse-on-surface": "#2a3040",
+            "surface-bright": "#33394a",
+            "outline": "#8c90a0",
+            "secondary-fixed-dim": "#4edea3",
+            "surface-container-highest": "#2f3445",
+            "on-surface": "#dde2f8",
+            "tertiary-fixed-dim": "#d2bbff",
+            "on-surface-variant": "#c2c6d7",
+            "tertiary-container": "#8c4dfd",
+            "on-secondary-fixed-variant": "#005236",
+            "surface-variant": "#2f3445",
+            "primary-fixed": "#dae2ff",
+            "on-background": "#dde2f8",
+            "surface-container-lowest": "#080e1d",
+            "on-secondary-container": "#00311f",
+            "inverse-primary": "#0056d0",
+            "surface-tint": "#b1c5ff",
+            "error-container": "#93000a",
+            "error": "#ffb4ab",
+            "tertiary-fixed": "#eaddff",
+            "on-error-container": "#ffdad6",
+            "surface": "#0d1322",
+            "on-tertiary-container": "#ffffff",
+            "primary-container": "#256ef4"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-sm": "0.5rem",
+            "gutter": "1.5rem",
+            "margin-sm": "1rem",
+            "space-lg": "1.5rem",
+            "space-2xl": "4rem",
+            "gutter-sm": "0.75rem",
+            "gutter-lg": "2rem",
+            "space-xl": "2.5rem",
+            "margin": "2rem",
+            "space-xs": "0.25rem",
+            "space-md": "1rem",
+            "margin-lg": "3rem"
+          },
+          "fontFamily": {
+            "headline-sm": ["Plus Jakarta Sans"],
+            "label-lg": ["Public Sans"],
+            "body-lg": ["Inter"],
+            "label-md": ["Public Sans"],
+            "body-md": ["Inter"],
+            "headline-lg-mobile": ["Plus Jakarta Sans"],
+            "display-lg": ["Plus Jakarta Sans"],
+            "headline-lg": ["Plus Jakarta Sans"],
+            "tabular-data": ["Public Sans"],
+            "display-xl": ["Plus Jakarta Sans"],
+            "headline-md": ["Plus Jakarta Sans"],
+            "body-sm": ["Inter"],
+            "code-sm": ["Public Sans"]
+          },
+          "fontSize": {
+            "headline-sm": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-lg": ["14px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "26px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "body-md": ["14px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "700" }],
+            "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700" }],
+            "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "tabular-data": ["13px", { "lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-xl": ["56px", { "lineHeight": "68px", "letterSpacing": "-0.03em", "fontWeight": "800" }],
+            "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "400" }],
+            "code-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0em", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      height: 6px;
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #0d1322;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #242a3a;
+      border-radius: 3px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #424655;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container min-h-screen flex flex-col font-body-md text-body-md">
+<!-- ========================================================================= -->
+<!-- 1. GNB (Global Navigation Bar - Shared Component: TopNavBar)             -->
+<!-- ========================================================================= -->
+<header class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-surface/80 backdrop-blur-xl border-b border-outline-variant/30 shadow-2xl shadow-surface-container-lowest/80">
+<div class="w-full px-margin-sm md:px-margin lg:px-margin-lg max-w-7xl mx-auto flex items-center justify-between h-16">
+<!-- Brand & Sector Indicator -->
+<div class="flex items-center gap-space-md">
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-8 h-8 rounded bg-gradient-to-tr from-primary-container to-secondary-container flex items-center justify-center text-on-primary-container shadow-md shadow-primary-container/20">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">assured_workload</span>
+</div>
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-on-surface tracking-tight">
+            SSHAI-CWA K-Horizon 2027
+          </span>
+</a>
+<!-- Institutional Segmented Marker -->
+<span class="hidden lg:inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-high/80 border border-outline-variant/40 text-on-surface-variant font-label-md text-label-md">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span>
+          공공 거버넌스 콘솔
+        </span>
+</div>
+<!-- Navigation Links from JSON: ["초기 유입자", "유료 사업자", "플랫폼 관리자"] -->
+<!-- Active state determined semantically: Dashboard represents '플랫폼 관리자' -->
+<nav class="hidden md:flex items-center space-x-6">
+<a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface dark:hover:text-on-surface transition-colors hover:bg-surface-container-high/60 dark:hover:bg-surface-container-high/60 px-2 py-1 rounded" href="#">
+          초기 유입자
+        </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant font-label-lg text-label-lg hover:text-on-surface dark:hover:text-on-surface transition-colors hover:bg-surface-container-high/60 dark:hover:bg-surface-container-high/60 px-2 py-1 rounded" href="#">
+          유료 사업자
+        </a>
+<a class="text-primary dark:text-primary font-label-lg text-label-lg border-b-2 border-primary pb-1 font-semibold flex items-center gap-1" href="#">
+<span>플랫폼 관리자</span>
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+</a>
+</nav>
+<!-- Trailing Controls: Search, Icons, Actions, Profile -->
+<div class="flex items-center gap-space-sm">
+<!-- Search Field (JSON search_bar: on_right) -->
+<div class="hidden xl:flex items-center relative">
+<span class="material-symbols-outlined absolute left-2.5 text-[18px] text-outline">search</span>
+<input class="bg-surface-container-low border border-outline-variant/40 rounded pl-8 pr-3 py-1.5 text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container focus:ring-1 focus:ring-primary-container w-52 transition-all" placeholder="공고명, 기업명, 식별코드 검색" type="text"/>
+</div>
+<!-- Trailing Icon Actions from JSON: notifications, search, shield_with_heart -->
+<button aria-label="Notifications" class="p-2 rounded hover:bg-surface-container-high/60 dark:hover:bg-surface-container-high/60 hover:text-primary text-on-surface-variant transition-all duration-150 active:scale-[0.98] relative" type="button">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface"></span>
+</button>
+<button aria-label="Search" class="xl:hidden p-2 rounded hover:bg-surface-container-high/60 dark:hover:bg-surface-container-high/60 hover:text-primary text-on-surface-variant transition-all duration-150 active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</button>
+<button aria-label="Trust &amp; Compliance" class="p-2 rounded hover:bg-surface-container-high/60 dark:hover:bg-surface-container-high/60 hover:text-primary text-secondary transition-all duration-150 active:scale-[0.98]" title="ISMS-P 인증 규격 연동 중" type="button">
+<span class="material-symbols-outlined text-[20px]">shield_with_heart</span>
+</button>
+<!-- Divider -->
+<div class="h-5 w-px bg-outline-variant/30 hidden sm:block"></div>
+<!-- Actions from JSON: 무료 체험 시작, 인증 로그인 -->
+<button class="hidden sm:inline-flex text-on-surface-variant font-label-md text-label-md px-3 py-1.5 rounded hover:bg-surface-container-high/60 transition-colors" type="button">
+          인증 로그인
+        </button>
+<button class="bg-gradient-to-r from-primary-container to-tertiary-container hover:brightness-110 text-on-primary-container font-label-md text-label-md px-3.5 py-1.5 rounded transition-all duration-150 active:scale-[0.98] shadow-md shadow-primary-container/20 border border-white/10" type="button">
+          무료 체험 시작
+        </button>
+<!-- Admin Profile Avatar -->
+<div class="flex items-center gap-2 pl-2">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline-variant/60 flex items-center justify-center overflow-hidden">
+<span class="material-symbols-outlined text-[20px] text-primary" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+</div>
+</div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- MAIN CANVASES: Institutional Enterprise Dashboard                         -->
+<!-- ========================================================================= -->
+<main class="flex-1 w-full max-w-7xl mx-auto px-margin-sm md:px-margin lg:px-margin-lg py-space-lg space-y-space-lg">
+<!-- 1. Institutional Hero & Header Section -->
+<section class="bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md lg:p-space-lg shadow-xl shadow-surface-container-lowest/70 relative overflow-hidden">
+<!-- Ambient Aurora Accent -->
+<div class="absolute -right-24 -top-24 w-96 h-96 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+<div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="space-y-2">
+<!-- Institutional Partner Badge -->
+<div class="flex flex-wrap items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-high text-primary font-label-md text-label-md border border-primary/20">
+<span class="material-symbols-outlined text-[14px]">lock</span>
+              공공기관 및 전문 파트너 전용 관제
+            </span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-lowest text-secondary font-code-sm text-code-sm border border-secondary/20">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              기관 계정: 서울창조경제혁신센터 · 파트너십 유효
+            </span>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-surface-container-lowest text-on-surface-variant font-code-sm text-code-sm border border-outline-variant/30">
+<span class="material-symbols-outlined text-[13px] text-outline">enhanced_encryption</span>
+              데이터 보호: 로컬 암호화 저장 및 AI 학습 미활용
+            </span>
+</div>
+<!-- Main Title & Context -->
+<div>
+<h1 class="text-headline-lg font-headline-lg text-on-surface tracking-tight">
+              과제비서 AI · 거버넌스 공공/파트너 포털
+            </h1>
+<p class="text-body-md font-body-md text-on-surface-variant mt-0.5">
+              보육·투자 기업 R&amp;D 과제 준비 현황 통합 관리 및 전문가 협업 콘솔
+            </p>
+</div>
+</div>
+<!-- Quick Institutional Action Buttons -->
+<div class="flex flex-wrap items-center gap-2.5 pt-2 lg:pt-0">
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded bg-surface-container-high text-on-surface hover:bg-surface-bright border border-outline-variant/40 font-label-md text-label-md transition-all active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[16px] text-primary">download</span>
+            과제 진행 현황 다운로드 (Excel)
+          </button>
+<button class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded bg-surface-container-high text-on-surface hover:bg-surface-bright border border-outline-variant/40 font-label-md text-label-md transition-all active:scale-[0.98]" type="button">
+<span class="material-symbols-outlined text-[16px] text-tertiary">assignment_ind</span>
+            전문가 1:1 자문 배정
+          </button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-gradient-to-r from-primary-container to-tertiary-container hover:brightness-110 text-on-primary-container font-label-md text-label-md transition-all active:scale-[0.98] shadow-md shadow-primary-container/20 border border-white/10 font-semibold" type="button">
+<span class="material-symbols-outlined text-[16px]">add_circle</span>
+            + 신규 보육기업 등록
+          </button>
+</div>
+</div>
+</section>
+<!-- 2. Governance Key Metrics Strip (4-Column Bento KPI Cards) -->
+<section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter-sm lg:gap-gutter">
+<!-- Card 1: 총 관리 보육기업 -->
+<div class="bg-surface-container-low/80 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md shadow-lg shadow-surface-container-lowest/60 hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">domain</span>
+            총 관리 보육기업
+          </span>
+<span class="px-2 py-0.5 rounded text-code-sm font-code-sm bg-secondary-container/20 text-secondary border border-secondary/30">
+            정상 관리군
+          </span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-on-surface tracking-tight font-tabular-data">24</span>
+<span class="text-headline-sm font-headline-sm text-on-surface-variant">개사</span>
+</div>
+<div class="mt-2 text-body-sm font-body-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">trending_up</span>
+          전월 대비 <span class="text-secondary font-medium">+2개사 등록</span> (유효 관리군)
+        </div>
+</div>
+<!-- Card 2: 현재 지원 준비 중인 과제 -->
+<div class="bg-surface-container-low/80 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md shadow-lg shadow-surface-container-lowest/60 hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-primary">edit_document</span>
+            현재 지원 준비 중인 과제
+          </span>
+<span class="px-2 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-on-surface-variant border border-outline-variant/30">
+            3대 부처 매칭
+          </span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-primary tracking-tight font-tabular-data">12</span>
+<span class="text-headline-sm font-headline-sm text-on-surface-variant">건</span>
+</div>
+<div class="mt-2 text-body-sm font-body-sm text-outline">
+          중기부 7건 · 과기정통부 3건 · 산업부 2건
+        </div>
+</div>
+<!-- Card 3: 사업계획서 검토 완료 -->
+<div class="bg-surface-container-low/80 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md shadow-lg shadow-surface-container-lowest/60 hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">fact_check</span>
+            사업계획서 검토 완료
+          </span>
+<span class="px-2 py-0.5 rounded text-code-sm font-code-sm bg-secondary/10 text-secondary border border-secondary/20">
+            AI 심사 통과군
+          </span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-on-surface tracking-tight font-tabular-data">8</span>
+<span class="text-headline-sm font-headline-sm text-on-surface-variant">건</span>
+</div>
+<div class="mt-2 text-body-sm font-body-sm text-outline flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">check_circle</span>
+          가상 질의 검증 완료 6건 포함
+        </div>
+</div>
+<!-- Card 4: 서류 제출 마감 임박 (D-7 이내) -->
+<div class="bg-surface-container-low/80 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md shadow-lg shadow-surface-container-lowest/60 hover:border-error/40 transition-colors">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-error">alarm</span>
+            서류 제출 마감 임박
+          </span>
+<span class="px-2 py-0.5 rounded text-code-sm font-code-sm bg-error-container/30 text-error border border-error/30 font-semibold">
+            D-7 이내
+          </span>
+</div>
+<div class="mt-space-sm flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-error tracking-tight font-tabular-data">3</span>
+<span class="text-headline-sm font-headline-sm text-on-surface-variant">건</span>
+</div>
+<div class="mt-2 text-body-sm font-body-sm text-outline truncate" title="TIPS 일반형 D-3, 팁스 딥테크 D-5, 디딤돌 D-6">
+          TIPS 일반 D-3 · 딥테크 D-5 · 디딤돌 D-6
+        </div>
+</div>
+</section>
+<!-- 3. Filter & Portfolio Status Management Table -->
+<section class="bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 rounded-xl overflow-hidden shadow-xl shadow-surface-container-lowest/70">
+<!-- Table Header & Controls Bar -->
+<div class="p-space-md border-b border-outline-variant/20 flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<!-- Title & Count -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">dataset</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">보육기업 R&amp;D 과제 추진 현황</h2>
+</div>
+<span class="px-2.5 py-0.5 rounded-full bg-surface-container text-primary font-code-sm text-code-sm border border-outline-variant/40">
+            총 24개사 중 6건 표시
+          </span>
+</div>
+<!-- Filter Controls Strip -->
+<div class="flex flex-wrap items-center gap-2">
+<!-- Enterprise Search -->
+<div class="relative min-w-[200px]">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-outline">search</span>
+<input class="w-full bg-surface-container border border-outline-variant/40 rounded pl-8 pr-3 py-1.5 text-body-sm font-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container" placeholder="기업명 검색..." type="text"/>
+</div>
+<!-- Department Filter -->
+<select class="bg-surface-container border border-outline-variant/40 rounded px-3 py-1.5 text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-primary-container">
+<option>전체 부처</option>
+<option>중소벤처기업부</option>
+<option>과학기술정보통신부</option>
+<option>산업통상자원부</option>
+</select>
+<!-- Stage Filter -->
+<select class="bg-surface-container border border-outline-variant/40 rounded px-3 py-1.5 text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-primary-container">
+<option>전체 단계</option>
+<option>요건 분석</option>
+<option>예산 산출</option>
+<option>심사 Q&amp;A 검토</option>
+<option>제출 완료</option>
+</select>
+<!-- Partner Assignment Status -->
+<select class="bg-surface-container border border-outline-variant/40 rounded px-3 py-1.5 text-body-sm font-body-sm text-on-surface focus:outline-none focus:border-primary-container">
+<option>파트너 배정: 전체</option>
+<option>회계 검토 연계</option>
+<option>특허 자문 연계</option>
+<option>법률 지원 연계</option>
+<option>미배정 상태</option>
+</select>
+<!-- Reset Filter Button -->
+<button class="p-1.5 rounded hover:bg-surface-container text-outline hover:text-on-surface transition-colors" title="필터 초기화" type="button">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+</button>
+</div>
+</div>
+<!-- High-Contrast Enterprise Data Table -->
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-lowest/80 border-b border-outline-variant/30 text-on-surface-variant font-label-md text-label-md">
+<th class="py-3 px-4 font-semibold tracking-wider" scope="col">보육기업명</th>
+<th class="py-3 px-4 font-semibold tracking-wider" scope="col">대상 지원사업 공고명</th>
+<th class="py-3 px-4 font-semibold tracking-wider" scope="col">소관 부처 / 전담기관</th>
+<th class="py-3 px-4 font-semibold tracking-wider" scope="col">작성 및 검토 단계</th>
+<th class="py-3 px-4 font-semibold tracking-wider" scope="col">연계 전문 파트너</th>
+<th class="py-3 px-4 font-semibold tracking-wider" scope="col">최근 갱신일</th>
+<th class="py-3 px-4 text-right font-semibold tracking-wider" scope="col">거버넌스 액션</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/15 text-body-md font-body-md">
+<!-- Row 1: (주)딥센스바이오 -->
+<tr class="hover:bg-primary-container/[0.04] transition-colors">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                  (주)딥센스바이오
+                  <span class="px-1.5 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-primary border border-outline-variant/40">
+                    AI 융합 헬스케어
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-on-surface font-medium truncate max-w-xs" title="2027 범부처 초격차 1000+ 바이오헬스 R&amp;D">
+                  2027 범부처 초격차 1000+ 바이오헬스 R&amp;D
+                </div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-on-surface-variant font-tabular-data">
+                중소벤처기업부 (TIPA)
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-code-sm font-code-sm bg-tertiary-container/20 text-tertiary border border-tertiary-container/30">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse"></span>
+                  심사위원 Q&amp;A 검토
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-body-sm font-body-sm text-on-surface">
+                삼일PwC 공공 R&amp;D 회계팀
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-outline font-tabular-data text-body-sm">
+                2027.02.18
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-right">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary border border-primary/20 text-label-md font-label-md transition-all active:scale-[0.98]" type="button">
+                  관리
+                </button>
+</td>
+</tr>
+<!-- Row 2: (주)에이아이옵틱스 -->
+<tr class="hover:bg-primary-container/[0.04] transition-colors">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                  (주)에이아이옵틱스
+                  <span class="px-1.5 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-secondary border border-outline-variant/40">
+                    ICT 딥테크
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-on-surface font-medium truncate max-w-xs" title="TIPS 창업성장기술개발사업(딥테크 팁스)">
+                  TIPS 창업성장기술개발사업(딥테크 팁스)
+                </div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-on-surface-variant font-tabular-data">
+                중소벤처기업부
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-code-sm font-code-sm bg-primary-container/20 text-primary border border-primary-container/40">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                  예산 산출 중
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-body-sm font-body-sm text-on-surface">
+                삼일PwC 공공 R&amp;D 회계팀
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-outline font-tabular-data text-body-sm">
+                2027.02.17
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-right">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary border border-primary/20 text-label-md font-label-md transition-all active:scale-[0.98]" type="button">
+                  관리
+                </button>
+</td>
+</tr>
+<!-- Row 3: (주)넥스트머티리얼즈 -->
+<tr class="hover:bg-primary-container/[0.04] transition-colors">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                  (주)넥스트머티리얼즈
+                  <span class="px-1.5 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-on-surface-variant border border-outline-variant/40">
+                    첨단 신소재
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-on-surface font-medium truncate max-w-xs" title="소재부품장비 혁신기술개발사업">
+                  소재부품장비 혁신기술개발사업
+                </div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-on-surface-variant font-tabular-data">
+                산업통상자원부 (KEIT)
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-code-sm font-code-sm bg-surface-container text-on-surface-variant border border-outline-variant/40">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  요건 분석
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-body-sm font-body-sm text-on-surface">
+                특허법인 K-LEADER 선행기술팀
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-outline font-tabular-data text-body-sm">
+                2027.02.18
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-right">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary border border-primary/20 text-label-md font-label-md transition-all active:scale-[0.98]" type="button">
+                  관리
+                </button>
+</td>
+</tr>
+<!-- Row 4: (주)로컬스마트스토어 -->
+<tr class="hover:bg-primary-container/[0.04] transition-colors">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                  (주)로컬스마트스토어
+                  <span class="px-1.5 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-on-surface-variant border border-outline-variant/40">
+                    지역특화 플랫폼
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-on-surface font-medium truncate max-w-xs" title="스마트상점 공정혁신 R&amp;D 바우처">
+                  스마트상점 공정혁신 R&amp;D 바우처
+                </div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-on-surface-variant font-tabular-data">
+                소상공인시장진흥공단
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-code-sm font-code-sm bg-secondary-container/20 text-secondary border border-secondary/30">
+<span class="material-symbols-outlined text-[13px]">check</span>
+                  제출 완료
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-body-sm font-body-sm text-on-surface">
+                법무법인 율촌 R&amp;D 법률지원
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-outline font-tabular-data text-body-sm">
+                2027.02.16
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-right">
+<button class="px-3 py-1 rounded bg-surface-container text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high border border-outline-variant/30 text-label-md font-label-md transition-all active:scale-[0.98]" type="button">
+                  상세보기
+                </button>
+</td>
+</tr>
+<!-- Row 5: (주)하이퍼로보틱스 (Pending Allocation) -->
+<tr class="hover:bg-primary-container/[0.04] transition-colors bg-surface-container-lowest/30">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                  (주)하이퍼로보틱스
+                  <span class="px-1.5 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-primary border border-outline-variant/40">
+                    제조 자동화
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-on-surface font-medium truncate max-w-xs" title="제조공정 디지털전환 실증지원 과제">
+                  제조공정 디지털전환 실증지원 과제
+                </div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-on-surface-variant font-tabular-data">
+                과학기술정보통신부 (IITP)
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-code-sm font-code-sm bg-tertiary-container/20 text-tertiary border border-tertiary-container/30">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>
+                  심사위원 Q&amp;A 검토
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-body-sm font-body-sm text-error flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+                미배정 (자문 신청 대기)
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-outline font-tabular-data text-body-sm">
+                2027.02.18
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-right">
+<button class="px-3 py-1 rounded bg-tertiary-container/20 hover:bg-tertiary-container/30 text-tertiary border border-tertiary-container/40 text-label-md font-label-md transition-all active:scale-[0.98] font-semibold" type="button">
+                  전문가 배정
+                </button>
+</td>
+</tr>
+<!-- Row 6: (주)클린에너지솔루션 -->
+<tr class="hover:bg-primary-container/[0.04] transition-colors">
+<td class="py-3.5 px-4 whitespace-nowrap">
+<div class="font-semibold text-on-surface flex items-center gap-1.5">
+                  (주)클린에너지솔루션
+                  <span class="px-1.5 py-0.5 rounded text-code-sm font-code-sm bg-surface-container-high text-secondary border border-outline-variant/40">
+                    기후테크/ESG
+                  </span>
+</div>
+</td>
+<td class="py-3.5 px-4">
+<div class="text-on-surface font-medium truncate max-w-xs" title="탄소중립 선도기술개발 지원사업">
+                  탄소중립 선도기술개발 지원사업
+                </div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-on-surface-variant font-tabular-data">
+                환경부·산업부
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-code-sm font-code-sm bg-surface-container text-on-surface-variant border border-outline-variant/40">
+<span class="w-1.5 h-1.5 rounded-full bg-outline"></span>
+                  요건 분석
+                </span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap text-body-sm font-body-sm text-on-surface">
+                특허법인 K-LEADER 선행기술팀
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-outline font-tabular-data text-body-sm">
+                2027.02.15
+              </td>
+<td class="py-3.5 px-4 whitespace-nowrap text-right">
+<button class="px-3 py-1 rounded bg-surface-container-high hover:bg-surface-bright text-primary border border-primary/20 text-label-md font-label-md transition-all active:scale-[0.98]" type="button">
+                  관리
+                </button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Table Pagination & Ledger Meta -->
+<div class="p-space-sm px-space-md border-t border-outline-variant/20 bg-surface-container-lowest/60 flex flex-col sm:flex-row items-center justify-between gap-2 text-body-sm font-body-sm text-outline">
+<div class="flex items-center gap-2">
+<span>인증된 감사 로그 ID: <span class="font-tabular-data text-on-surface">#GOV-2027-0218-8834</span></span>
+<span class="text-outline-variant">•</span>
+<span class="flex items-center gap-1 text-secondary">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+            실시간 연동 중
+          </span>
+</div>
+<div class="flex items-center gap-1">
+<button class="p-1 rounded hover:bg-surface-container text-outline hover:text-on-surface disabled:opacity-30" disabled="" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<span class="px-2.5 py-0.5 rounded bg-primary-container text-on-primary-container text-code-sm font-code-sm">1</span>
+<span class="px-2.5 py-0.5 rounded hover:bg-surface-container text-on-surface-variant text-code-sm font-code-sm cursor-pointer">2</span>
+<span class="px-2.5 py-0.5 rounded hover:bg-surface-container text-on-surface-variant text-code-sm font-code-sm cursor-pointer">3</span>
+<span class="px-2.5 py-0.5 rounded hover:bg-surface-container text-on-surface-variant text-code-sm font-code-sm cursor-pointer">4</span>
+<button class="p-1 rounded hover:bg-surface-container text-outline hover:text-on-surface" type="button">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 4. Partner Advisory Collaboration Panel & Institutional Compliance Section (2-Column Grid) -->
+<section class="grid grid-cols-1 lg:grid-cols-12 gap-gutter">
+<!-- Left Panel: 5대 전문 파트너 연계 현황 및 자문 진척도 (7 Cols) -->
+<div class="lg:col-span-7 bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md lg:p-space-lg shadow-xl shadow-surface-container-lowest/70 flex flex-col justify-between">
+<div>
+<!-- Header -->
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">handshake</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">5대 전문 파트너 연계 현황 및 자문 진척도</h3>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-code-sm text-code-sm border border-outline-variant/30">
+              협약 기관 풀: 18개
+            </span>
+</div>
+<!-- Partner Stream Rows -->
+<div class="mt-space-md space-y-3">
+<!-- Item 1: 회계법인 -->
+<div class="p-3 rounded-lg bg-surface-container/60 border border-outline-variant/25 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface text-body-md font-body-md">회계법인</span>
+<span class="text-code-sm font-code-sm text-on-surface-variant">연구비 예산 적정성 및 CAPEX 검증</span>
+</div>
+<div class="text-body-sm font-body-sm text-outline">
+                  주관사: 삼일PwC 공공정산팀
+                </div>
+</div>
+<div class="flex items-center gap-3 sm:justify-end">
+<span class="px-2.5 py-1 rounded bg-primary-container/20 text-primary border border-primary/30 text-code-sm font-code-sm font-semibold">
+                  4건 검토 중
+                </span>
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+</div>
+</div>
+<!-- Item 2: 특허사무소 -->
+<div class="p-3 rounded-lg bg-surface-container/60 border border-outline-variant/25 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface text-body-md font-body-md">특허사무소</span>
+<span class="text-code-sm font-code-sm text-on-surface-variant">선행기술조사 및 회피설계 자문</span>
+</div>
+<div class="text-body-sm font-body-sm text-outline">
+                  주관사: 특허법인 K-LEADER
+                </div>
+</div>
+<div class="flex items-center gap-3 sm:justify-end">
+<span class="px-2.5 py-1 rounded bg-tertiary-container/20 text-tertiary border border-tertiary/30 text-code-sm font-code-sm font-semibold">
+                  3건 검토 중
+                </span>
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+</div>
+</div>
+<!-- Item 3: 판로/마케팅 바우처 -->
+<div class="p-3 rounded-lg bg-surface-container/60 border border-outline-variant/25 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="space-y-0.5">
+<div class="flex items-center gap-2">
+<span class="font-semibold text-on-surface text-body-md font-body-md">마케팅·판로·수출 바우처</span>
+<span class="text-code-sm font-code-sm text-on-surface-variant">사업화 검증 전문가 매칭</span>
+</div>
+<div class="text-body-sm font-body-sm text-outline">
+                  주관사: 글로벌 엑셀러레이터 네트워크
+                </div>
+</div>
+<div class="flex items-center gap-3 sm:justify-end">
+<span class="px-2.5 py-1 rounded bg-secondary-container/20 text-secondary border border-secondary/30 text-code-sm font-code-sm font-semibold">
+                  2건 진행 중
+                </span>
+<span class="material-symbols-outlined text-outline text-[18px]">verified</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Action -->
+<div class="pt-space-md mt-space-sm border-t border-outline-variant/20 flex flex-wrap items-center justify-between gap-2">
+<span class="text-body-sm font-body-sm text-outline">
+            총 9건의 외부 전문 검토가 일정 지연 없이 순항 중입니다.
+          </span>
+<div class="flex items-center gap-2">
+<button class="px-3.5 py-1.5 rounded bg-surface-container-high hover:bg-surface-bright text-on-surface border border-outline-variant/40 text-label-md font-label-md transition-all active:scale-[0.98]" type="button">
+              파트너 추가 요청 / 자문 배정 현황 관리
+            </button>
+</div>
+</div>
+</div>
+<!-- Right Panel: 보육기업 데이터 거버넌스 및 보안 준수 현황 (5 Cols) -->
+<div class="lg:col-span-5 bg-surface-container-low/90 backdrop-blur-md border border-outline-variant/30 rounded-xl p-space-md lg:p-space-lg shadow-xl shadow-surface-container-lowest/70 flex flex-col justify-between">
+<div>
+<!-- Header -->
+<div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/20">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]" style="font-variation-settings: 'FILL' 1;">security</span>
+<h3 class="text-headline-sm font-headline-sm text-on-surface">데이터 거버넌스 및 보안 준수 현황</h3>
+</div>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary-container/20 text-secondary text-code-sm font-code-sm border border-secondary/30">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+              99.98% 정상
+            </span>
+</div>
+<!-- Compliance Items -->
+<div class="mt-space-md space-y-3.5">
+<!-- Metric 1: CSAP Guideline -->
+<div class="p-3 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/20">
+<div class="flex items-center gap-2 text-on-surface font-semibold text-body-md font-body-md">
+<span class="material-symbols-outlined text-primary text-[18px]">gite</span>
+                CSAP 공공 클라우드 표준 보안 격리 가이드라인 준수
+              </div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                공공기관 연계 세션 및 보육기업별 가상 테넌트는 물리적·논리적 격리 인프라를 통해 완벽히 분리 운영됩니다.
+              </p>
+</div>
+<!-- Metric 2: Zero-Trust & Encryption Notice -->
+<div class="p-3 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/20">
+<div class="flex items-center gap-2 text-on-surface font-semibold text-body-md font-body-md">
+<span class="material-symbols-outlined text-secondary text-[18px]">lock_clock</span>
+                기업 비밀 데이터 보장 (Zero-Data Retention)
+              </div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-1">
+                기업 사업계획서 및 R&amp;D 원천기술 내용은 제로-트러스트 기반 <span class="text-primary font-mono font-medium">AES-256</span> 로컬 암호화 보관되며, AI 공용 학습 모델에 일절 사용되지 않습니다.
+              </p>
+</div>
+<!-- Metric 3: K-ISMS-P & Gov Standards -->
+<div class="p-3 rounded-lg bg-surface-container-lowest/80 border border-outline-variant/20">
+<div class="flex items-center gap-2 text-on-surface font-semibold text-body-md font-body-md">
+<span class="material-symbols-outlined text-tertiary text-[18px]">rule</span>
+                K-ISMS-P 인증 규격 및 공공데이터 표준 동기화
+              </div>
+<div class="flex items-center justify-between text-body-sm font-body-sm mt-1">
+<span class="text-outline">행정안전부 디지털정부 연계표준 준수율</span>
+<span class="font-tabular-data text-secondary font-semibold">99.98% (정상 가동)</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Verification Stamp -->
+<div class="pt-space-md mt-space-sm border-t border-outline-variant/20 flex items-center justify-between text-code-sm font-code-sm text-outline">
+<span>최종 거버넌스 감사 시각: 2027.02.18 14:00 KST</span>
+<span class="text-primary font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">check_circle</span>
+            무결성 서명 확인
+          </span>
+</div>
+</div>
+</section>
+</main>
+<!-- ========================================================================= -->
+<!-- 5. FOOTER (Shared Component: Footer)                                     -->
+<!-- ========================================================================= -->
+<footer class="docked full-width bottom bg-surface-container-lowest dark:bg-surface-container-lowest border-t border-outline-variant/20 flat no shadows mt-space-2xl">
+<div class="w-full px-margin-sm md:px-margin lg:px-margin-lg max-w-7xl mx-auto py-space-xl">
+<!-- Top Grid: Brand & Institutional Meta -->
+<div class="flex flex-col lg:flex-row items-start justify-between gap-space-lg mb-space-lg">
+<div class="space-y-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded bg-primary-container flex items-center justify-center text-on-primary-container text-[14px]">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<span class="text-headline-sm font-headline-sm font-bold text-on-surface dark:text-on-surface">
+              SSHAI-CWA K-Horizon 2027
+            </span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant max-w-2xl leading-relaxed">
+            공공 R&amp;D 과제 매칭 지원 플랫폼 및 액셀러레이터·기관 거버넌스 관제 콘솔.
+            국가 R&amp;D 혁신법 및 범부처 공공 연구비 관리 표준 규격을 철저히 준수하여 투명하고 안전한 기술창업 생태계를 지원합니다.
+          </p>
+</div>
+<!-- Regulatory Badges Minimal -->
+<div class="flex flex-wrap items-center gap-2 text-code-sm font-code-sm text-outline">
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified</span>
+            K-ISMS-P 인증기관
+          </span>
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30 flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-primary">cloud_done</span>
+            CSAP 클라우드 인프라
+          </span>
+<span class="px-2.5 py-1 rounded bg-surface-container border border-outline-variant/30">
+            KRDS 표준 준수
+          </span>
+</div>
+</div>
+<!-- Links Row (Shared Components JSON links exactly translated) -->
+<nav class="flex flex-wrap items-center gap-x-6 gap-y-2 py-space-sm border-t border-b border-outline-variant/15 text-label-md font-label-md">
+<a class="text-on-surface dark:text-on-surface font-semibold hover:text-primary dark:hover:text-primary transition-colors duration-150 active:opacity-80" href="#">
+          전자서명 인증체계
+        </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-150 active:opacity-80" href="#">
+          KISA 정보보호 관리체계(ISMS-P)
+        </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-150 active:opacity-80" href="#">
+          공공데이터 연계지침
+        </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-150 active:opacity-80" href="#">
+          이용약관
+        </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-150 active:opacity-80 font-semibold text-primary" href="#">
+          개인정보처리방침
+        </a>
+<a class="text-on-surface-variant dark:text-on-surface-variant hover:text-primary dark:hover:text-primary transition-colors duration-150 active:opacity-80" href="#">
+          고객센터
+        </a>
+</nav>
+<!-- Copyright Notice (Exact string from JSON) -->
+<div class="pt-space-md flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-body-sm font-body-sm text-on-surface-variant">
+<div>
+          © 2026-2027 SSHAI-CWA K-Horizon. All rights reserved. 대한민국 디지털정부 표준 프레임워크 및 KRDS 규격 준수.
+        </div>
+<div class="font-tabular-data text-outline text-code-sm">
+          서버 상태: Seoul-Central-1 (Latency: 14ms)
+        </div>
+</div>
+</div>
+</footer>
+</body></html>

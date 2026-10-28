@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}도전 과제 워크스페이스 · SSHAI-CWA B2B SaaS{% endblock %}
+{% block title %}도전 과제 워크스페이스 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
@@ -8,60 +8,57 @@
   <!-- ========================================================================= -->
   <!-- 1. 상단 KPI & Vault 매칭 배너 -->
   <!-- ========================================================================= -->
-  <div class="bg-gradient-to-r from-slate-900 via-rose-950 to-slate-900 text-white rounded-2xl p-6 shadow-xl border border-rose-800/40">
+  <section class="kh-page-hero tone-indigo reveal mb-6">
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
       <div class="space-y-2">
         <div class="flex items-center gap-2 flex-wrap">
-          <span class="bg-rose-500/20 text-rose-300 border border-rose-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-            <i class="fa-solid fa-bullseye text-rose-400"></i> Vault 자산 기반 초정밀 매칭
+          <span class="kh-badge cyan">
+            <i class="fa-solid fa-bullseye mr-1"></i>기업 데이터 기반 맞춤 매칭
           </span>
-          <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-[11px] font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
-            <i class="fa-solid fa-building-shield text-emerald-400"></i> 테넌트 격리
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-building-shield mr-1"></i>테넌트 격리
           </span>
         </div>
-        <h1 class="text-2xl font-bold tracking-tight">도전 과제 워크스페이스</h1>
-        <p class="text-slate-300 text-sm">
-          <span class="text-rose-200 font-semibold">{{ current_tenant.company_name }}</span> ·
-          Company Vault 자산으로 25대 사전지원조건 신호등 실행,
-          RED는 자동제거 후 Match Score 역순으로 권장 공고 추천.
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">도전 과제 워크스페이스</h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          <span class="text-cyan-200 font-semibold">{{ current_tenant.company_name }}</span> ·
+          등록된 기업 자산으로 사전 지원 적격성을 분석하고 맞춤 공고를 추천합니다.
         </p>
       </div>
-      <div class="flex gap-4 text-center">
-        <div class="bg-white/5 backdrop-blur border border-white/10 rounded-xl px-5 py-3 min-w-[110px]">
-          <div class="text-3xl font-extrabold text-rose-300">{{ kpi.count }}</div>
-          <div class="text-[11px] uppercase tracking-wider text-slate-400 mt-1">진행 과제</div>
+      <div class="flex gap-3 text-center">
+        <div class="bg-white/10 backdrop-blur border border-white/15 rounded-xl px-4 py-2.5 min-w-[100px]">
+          <div class="text-2xl font-extrabold text-rose-300 kh-tabular">{{ kpi.count }}</div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-200 mt-0.5">진행 과제</div>
         </div>
-        <div class="bg-white/5 backdrop-blur border border-white/10 rounded-xl px-5 py-3 min-w-[110px]">
-          <div class="text-3xl font-extrabold text-blue-300">{{ kpi.avg_progress }}%</div>
-          <div class="text-[11px] uppercase tracking-wider text-slate-400 mt-1">평균 진전율</div>
+        <div class="bg-white/10 backdrop-blur border border-white/15 rounded-xl px-4 py-2.5 min-w-[100px]">
+          <div class="text-2xl font-extrabold text-cyan-300 kh-tabular">{{ kpi.avg_progress }}%</div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-200 mt-0.5">평균 진전율</div>
         </div>
-        <div class="bg-white/5 backdrop-blur border border-white/10 rounded-xl px-5 py-3 min-w-[110px]">
-          <div class="text-3xl font-extrabold text-amber-300">{{ kpi.urgent }}</div>
-          <div class="text-[11px] uppercase tracking-wider text-slate-400 mt-1">임박(D-7)</div>
+        <div class="bg-white/10 backdrop-blur border border-white/15 rounded-xl px-4 py-2.5 min-w-[100px]">
+          <div class="text-2xl font-extrabold text-amber-300 kh-tabular">{{ kpi.urgent }}</div>
+          <div class="text-xs font-semibold uppercase tracking-wider text-slate-200 mt-0.5">임박(D-7)</div>
         </div>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- ========================================================================= -->
-  <!-- 2. Vault 매칭 권장 공고 (RED 자동제거, Match Score 역순) -->
+  <!-- 2. 맞춤 권장 공고 (RED 자동제거, Match Score 역순) -->
   <!-- ========================================================================= -->
   <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
     <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
       <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-        <i class="fa-solid fa-wand-magic-sparkles text-rose-500"></i> Vault 매칭 권장 공고
-        <span class="text-xs font-normal text-slate-400">RED 자동 제외 · {{ recommendations|length }}건</span>
+        <i class="fa-solid fa-wand-magic-sparkles text-rose-500"></i> 기업 맞춤 권장 공고
+        <span class="text-xs font-normal text-slate-400">부적격 과제 자동 제외 · {{ recommendations|length }}건</span>
       </h2>
     </div>
     <div class="p-6">
       {% if recommendations %}
       <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4" id="recGrid">
         {% for r in recommendations %}
-        <div class="border rounded-xl p-4 shadow-sm bg-slate-50/50 flex flex-col" data-cid="{{ r.canonical_id }}"
-             style="border-color: {% if r.signal_light == 'green' %}#34d399{% elif r.signal_light == 'yellow' %}#fbbf24{% else %}#f87171{% endif %}; border-left-width: 4px;">
+        <div class="border rounded-xl p-4 shadow-sm bg-slate-50/50 flex flex-col {% if r.signal_light == 'green' %}kh-signal-border-green{% elif r.signal_light == 'yellow' %}kh-signal-border-yellow{% else %}kh-signal-border-red{% endif %}" data-cid="{{ r.canonical_id }}">
           <div class="flex items-start justify-between gap-2">
-            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full"
-                  style="background: {% if r.signal_light == 'green' %}#d1fae5;color:#065f46{% elif r.signal_light == 'yellow' %}#fef3c7;color:#92400e{% else %}#fee2e2;color:#991b1b{% endif %};">
+            <span class="text-xs font-bold px-2 py-0.5 rounded-full {% if r.signal_light == 'green' %}kh-signal-badge-green{% elif r.signal_light == 'yellow' %}kh-signal-badge-yellow{% else %}kh-signal-badge-red{% endif %}">
               {{ r.signal_light|upper }}
             </span>
             <span class="text-xs font-mono text-slate-500">Score {{ r.match_score }}</span>
@@ -70,11 +67,11 @@
             <h3 class="text-sm font-semibold text-slate-800 line-clamp-2">{{ r.title or '(제목없음)' }}</h3>
             <p class="text-xs text-slate-500 mt-1">{{ r.organization or '' }}{% if r.ministry %} · {{ r.ministry }}{% endif %}</p>
             <div class="flex flex-wrap gap-1 my-2">
-              {% for tag in (r.tags or [])|slice(0, 4) %}
-              <span class="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded">{{ tag }}</span>
+              {% for tag in (r.tags or [])[:4] %}
+              <span class="text-xs font-semibold bg-blue-100 text-blue-700 px-2 py-0.5 rounded">{{ tag }}</span>
               {% endfor %}
             </div>
-            <div class="text-[11px] text-slate-500">
+            <div class="text-xs text-slate-600">
               <i class="fa-solid fa-plus"></i> UDA 점수 <b class="text-emerald-600">+{{ r.bonus_points }}</b>
               {% if r.matched_track %}<i class="fa-solid fa-route ml-1"></i>{{ r.matched_track }}{% endif %}
             </div>
@@ -113,16 +110,16 @@
             <div class="min-w-0 flex-1">
               <div class="flex items-center gap-2 flex-wrap">
                 <span class="text-sm font-bold text-slate-800 truncate">{{ p.announcement_title or p.announcement_id }}</span>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-700">{{ p.status or 'INIT' }}</span>
-                {% if p.template_id %}<span class="text-[10px] font-mono bg-slate-100 text-slate-600 px-1.5 py-0.5 rounded">{{ p.template_id }}</span>{% endif %}
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-rose-100 text-rose-700">{{ p.status or 'INIT' }}</span>
+                {% if p.template_id %}<span class="text-xs font-mono bg-slate-100 text-slate-700 px-2 py-0.5 rounded">{{ p.template_id }}</span>{% endif %}
               </div>
-              <p class="text-[11px] text-slate-400 mt-1 font-mono">{{ p.announcement_id }}</p>
+              <p class="text-xs text-slate-600 mt-1 font-mono">{{ p.announcement_id }}</p>
             </div>
             <span class="text-xs font-bold px-2.5 py-1 rounded-lg {{ p.dday.badge_class }}">{{ p.dday.badge_text }}</span>
           </div>
 
           <div class="mt-3">
-            <div class="flex justify-between text-[11px] text-slate-500 mb-1">
+            <div class="flex justify-between text-xs text-slate-600 mb-1">
               <span>진행률</span><span class="font-mono font-bold text-slate-700">{{ p.progress_pct or 0 }}%</span>
             </div>
             <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
@@ -161,7 +158,7 @@
 
 {% block scripts %}
 <script>
-const STATUS_TEXT = { INIT: '초기화', DRAFTING: '안건 작성', SUBMITTED: '제출 완료', COMPLETED: '완료', ARCHIVED: '아카이브' };
+const STATUS_TEXT = { INIT: '초기화', DRAFTING: '과제 준비', SUBMITTED: '제출 완료', COMPLETED: '완료', ARCHIVED: '아카이브' };
 
 async function api(method, url, body) {
   const opt = { method, headers: { 'Content-Type': 'application/json' }, credentials: 'same-origin' };

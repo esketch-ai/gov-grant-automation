@@ -3,9 +3,18 @@ from __future__ import annotations
 
 import pytest
 
-from _fakes import sample_notice
+from fastapi.testclient import TestClient
+
+from src.web.app import app as _fastapi_app
 
 
 @pytest.fixture
-def sample_notice_fixture():
-    return sample_notice()
+def app():
+    """FastAPI 앱 인스턴스 제공."""
+    return _fastapi_app
+
+
+@pytest.fixture
+def client():
+    """TestClient 인스턴스 제공."""
+    return TestClient(_fastapi_app)

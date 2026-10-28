@@ -1,23 +1,36 @@
 {% extends "base.html" %}
 
-{% block title %}공고 관리 &middot; SSHAI-CWA 2026{% endblock %}
+{% block title %}공고 관리 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
-  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-    <div>
-      <h1 class="text-xl font-bold text-slate-800">2026년 공고 아카이브 및 관리</h1>
-      <p class="text-slate-500 text-xs mt-1">SQLite 데이터베이스(`announcements`)에 영속화된 전체 공고 및 마감 캘린더 관리</p>
+  <!-- 지원사업 공고 상단 표준 배너 -->
+  <section class="kh-page-hero tone-emerald reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-bullhorn mr-1"></i>실시간 공고 필터
+          </span>
+          <span class="kh-badge cyan">
+            <i class="fa-solid fa-database mr-1"></i>통합 데이터베이스 연동
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <span>지원사업 공고 아카이브</span>
+          <span class="sr-only">2026년 공고 아카이브 및 관리</span>
+        </h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          수집된 정부 및 공공기관 지원사업 공고와 접수 일정을 통합 관리합니다.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="/api/calendar/2026.ics" class="kh-btn-cta primary text-xs" title="일정 캘린더 연동 파일">
+          <i class="fa-regular fa-calendar-plus mr-1"></i>캘린더 일정 연동
+        </a>
+      </div>
     </div>
-    <div class="flex items-center gap-2">
-      <a href="/api/calendar/2026.ics" class="text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-3.5 py-1.5 rounded-lg shadow-sm transition flex items-center gap-1.5" title="Google/Outlook/Apple 캘린더 연동 파일">
-        <i class="fa-regular fa-calendar-plus"></i> 2026 캘린더(.ics) 전체 다운로드
-      </a>
-      <span class="text-xs bg-emerald-100 text-emerald-800 font-medium px-2.5 py-1.5 rounded-lg border border-emerald-200">
-        <i class="fa-solid fa-filter mr-1"></i>2026년 전용 필터
-      </span>
-    </div>
-  </div>
+  </section>
 
   <!-- 사업주 프로필 배너 + 다차원 트랙 탭 (REQ-020) -->
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
@@ -25,14 +38,14 @@
       <div class="flex items-start gap-3 flex-1">
         <span class="text-2xl">{% if profile_configured %}🏢{% else %}⚠️{% endif %}</span>
         <div>
-          <div class="text-[11px] text-slate-500 font-medium mb-1">
+          <div class="text-xs text-slate-600 font-medium mb-1">
             {% if profile_configured %}현재 적용 사업주 프로필{% else %}사업주 프로필 미등록{% endif %}
           </div>
           {% if profile_configured %}
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-sm font-bold text-slate-900">{{ profile_banner.company_name }}</span>
             {% for tag in profile_banner.tags %}
-            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
               {{ tag }}
             </span>
             {% endfor %}
@@ -54,7 +67,7 @@
     <!-- 다차원 트랙 탭 네비게이션 -->
     <div class="mt-4 border-t border-slate-100 pt-3">
       <div class="flex flex-wrap items-center gap-1.5">
-        <span class="text-[11px] text-slate-400 font-medium mr-1">🎯 다차원 맞춤 필터:</span>
+        <span class="text-xs text-slate-600 font-medium mr-1">🎯 다차원 맞춤 필터:</span>
         {% for tab in track_tabs %}
         <button type="button" onclick="switchTrackTab('{{ tab.key }}')"
                 data-key="{{ tab.key }}"
@@ -113,7 +126,7 @@
 
     <!-- D-Day 마감 긴급도 현황 배너 -->
     {% if dday_stats %}
-    <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2 text-[11px]">
+    <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center gap-2 text-xs">
       <span class="text-slate-500 font-semibold flex items-center gap-1">
         <i class="fa-solid fa-hourglass-half text-indigo-500"></i> 마감 현황:
       </span>
@@ -163,41 +176,41 @@
           <tr class="hover:bg-slate-50/80 transition" data-track="{{ a.track }}">
             <td class="py-3 px-4 whitespace-nowrap">
               <div class="flex items-center gap-1.5">
-                <span class="bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded text-[11px] uppercase">
+                <span class="bg-slate-100 text-slate-800 font-bold px-2 py-0.5 rounded text-xs uppercase">
                   {{ a.source_portal }}
                 </span>
-                <span class="px-1.5 py-0.5 rounded text-[10px] font-bold {% if a.target_year == 2026 %}bg-emerald-100 text-emerald-800 border border-emerald-200{% elif a.target_year and a.target_year < 2026 %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-slate-100 text-slate-700{% endif %}">
+                <span class="px-1.5 py-0.5 rounded text-xs font-semibold {% if a.target_year == 2026 %}bg-emerald-100 text-emerald-800 border border-emerald-200{% elif a.target_year and a.target_year < 2026 %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-slate-100 text-slate-700{% endif %}">
                   {{ a.target_year or 2026 }}년
                 </span>
               </div>
               {% if a.official_notice_no %}
-              <div class="text-[10px] text-slate-400 font-mono mt-0.5 truncate max-w-[140px]" title="{{ a.official_notice_no }}">{{ a.official_notice_no }}</div>
+              <div class="text-xs text-slate-600 font-mono mt-0.5 truncate max-w-[140px]" title="{{ a.official_notice_no }}">{{ a.official_notice_no }}</div>
               {% endif %}
             </td>
             <td class="py-3 px-4 font-semibold text-slate-900 max-w-md">
               <button onclick="openNoticeModal('{{ a.canonical_id }}')" class="text-left hover:text-blue-600 focus:outline-none transition block">
                 <div class="truncate text-blue-900 hover:underline" title="{{ a.title }}">{{ a.title }}</div>
-                <div class="text-[10px] text-slate-400 font-normal font-mono">{{ a.canonical_id }}</div>
+                <div class="text-xs text-slate-600 font-normal font-mono">{{ a.canonical_id }}</div>
               </button>
             </td>
             <td class="py-3 px-4 text-slate-600">
-              <div class="inline-block px-1.5 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-700 border border-slate-200 mb-0.5">
+              <div class="inline-block px-1.5 py-0.5 rounded text-xs font-medium bg-slate-100 text-slate-700 border border-slate-200 mb-0.5">
                 {{ a.track }}
               </div>
               <div class="font-medium text-slate-800">{{ a.ministry or '-' }}</div>
-              <div class="text-slate-400 text-[10px]">{{ a.organization or '-' }}</div>
+              <div class="text-slate-600 text-xs">{{ a.organization or '-' }}</div>
             </td>
             <td class="py-3 px-4 whitespace-nowrap">
               <div class="flex items-center gap-1.5">
-                <span class="px-2 py-0.5 rounded text-[10px] {{ a.dday.badge_class }}">
+                <span class="px-2 py-0.5 rounded text-xs {{ a.dday.badge_class }}">
                   {{ a.dday.badge_text }}
                 </span>
-                <span class="text-slate-600 font-mono text-[11px]">{{ a.deadline or '상시' }}</span>
+                <span class="text-slate-600 font-mono text-xs">{{ a.deadline or '상시' }}</span>
               </div>
             </td>
             <td class="py-3 px-4 text-center whitespace-nowrap">
               <button onclick="openPreflightModal('{{ a.canonical_id }}')"
-                      class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg border border-indigo-200 transition text-[11px] inline-flex items-center gap-1"
+                      class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold px-2.5 py-1 rounded-lg border border-indigo-200 transition text-xs inline-flex items-center gap-1"
                       title="25대 숨은 조건 사전 비행점검">
                 <span>🚥</span><span>비행점검</span>
               </button>
@@ -237,8 +250,8 @@
     <div class="flex justify-between items-start p-5 border-b border-slate-100">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <span id="modalPortal" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-[10px] font-mono font-semibold"></span>
-          <span id="modalId" class="text-[10px] text-slate-400 font-mono"></span>
+          <span id="modalPortal" class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded text-xs font-mono font-semibold"></span>
+          <span id="modalId" class="text-xs text-slate-600 font-mono"></span>
         </div>
         <h3 id="modalTitle" class="text-base font-bold text-slate-900"></h3>
       </div>
@@ -250,18 +263,18 @@
       <!-- 메타정보 -->
       <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 bg-slate-50 p-3 rounded-lg border border-slate-100">
         <div>
-          <span class="text-[10px] text-slate-400 block">담당 부처 / 기관</span>
+          <span class="text-xs text-slate-600 block">담당 부처 / 기관</span>
           <span id="modalOrg" class="font-semibold text-slate-800"></span>
         </div>
         <div>
-          <span class="text-[10px] text-slate-400 block">신청 마감일</span>
+          <span class="text-xs text-slate-600 block">신청 마감일</span>
           <span id="modalDeadline" class="font-mono font-semibold text-slate-800"></span>
         </div>
         <div>
-          <span class="text-[10px] text-slate-400 block">공고 원문 / 캘린더</span>
+          <span class="text-xs text-slate-600 block">공고 원문 / 캘린더</span>
           <div class="flex items-center gap-3 mt-0.5">
             <a id="modalUrl" href="" target="_blank" data-dynamic-link="true" class="hidden text-blue-600 hover:underline font-medium flex items-center gap-1">
-              원문 <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+              원문 <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i>
             </a>
             <a id="modalIcal" href="" data-dynamic-link="true" class="hidden text-indigo-600 hover:underline font-medium flex items-center gap-1" title="iCalendar (.ics) 파일 다운로드">
               <i class="fa-regular fa-calendar-plus"></i> .ics 캘린더 등록
@@ -270,10 +283,10 @@
         </div>
       </div>
 
-      <!-- RFP 청크 섹션 -->
+      <!-- 세부 과제 섹션 -->
       <div>
         <h4 class="font-bold text-slate-900 mb-2 flex items-center gap-1.5">
-          <i class="fa-solid fa-layer-group text-blue-600"></i> 추출된 세부 과제 (RFP 청크)
+          <i class="fa-solid fa-layer-group text-blue-600"></i> 세부 과제 정보
         </h4>
         <div id="modalRfps" class="space-y-2">
           <!-- 동적 로드 -->
@@ -286,9 +299,9 @@
           <h4 class="font-bold text-indigo-900 flex items-center gap-1.5">
             <i class="fa-solid fa-bolt text-indigo-600"></i> 실시간 R&D 자격 매칭 시뮬레이터
           </h4>
-          <span class="text-[10px] text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded font-medium">하이브리드 엔진</span>
+          <span class="text-xs text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded font-semibold">하이브리드 엔진</span>
         </div>
-        <p class="text-[11px] text-slate-600">등록된 사업 아이템과 본 공고 간의 1차 규칙 사전필터 및 2차 자격 판정을 즉시 시뮬레이션합니다.</p>
+        <p class="text-xs text-slate-600">등록된 사업 아이템과 본 공고 간의 1차 규칙 사전필터 및 2차 자격 판정을 즉시 시뮬레이션합니다.</p>
         
         <div class="flex flex-wrap gap-2 items-center">
           <select id="simItemSelect" class="border border-indigo-200 bg-white rounded-lg px-3 py-1.5 text-xs focus:ring-2 focus:ring-indigo-500 focus:outline-none flex-1">
@@ -308,6 +321,13 @@
               <span id="simBadge" class="text-xs font-bold px-2.5 py-0.5 rounded"></span>
               <span id="simScore" class="font-bold text-slate-800"></span>
             </div>
+          </div>
+          <p id="simNote" class="text-xs text-slate-600 mt-2 leading-relaxed"></p>
+          <div id="simChecks" class="space-y-1.5 mt-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- 사업주 프로필 관리 모달 (REQ-020) -->
@@ -324,36 +344,36 @@
     <form id="profileForm" onsubmit="saveProfile(event)" class="p-5 space-y-4 overflow-y-auto flex-1">
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">기업명</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">기업명</label>
           <input type="text" id="prof_company_name" name="company_name" required placeholder="예: (주)마음숲테크"
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">사업자등록번호 (10자리)</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">사업자등록번호 (10자리)</label>
           <input type="text" id="prof_biz_reg_no" name="biz_reg_no" required placeholder="607-81-12345"
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">개업연월일 (업력 산출용)</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">개업연월일 (업력 산출용)</label>
           <input type="date" id="prof_opened_date" name="opened_date" required
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">대표자 생년월일 (청년 기준)</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">대표자 생년월일 (청년 기준)</label>
           <input type="date" id="prof_founder_birth" name="founder_birth" required
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">대표자 성별 (여성기업 판정)</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">대표자 성별 (여성기업 판정)</label>
           <select id="prof_founder_gender" name="founder_gender"
-                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                 class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
             <option value="">성별 미지정 / 비공개</option>
-            <option value="F">여성 (Female)</option>
-            <option value="M">남성 (Male)</option>
+            <option value="F">여성</option>
+            <option value="M">남성</option>
           </select>
         </div>
         <div>
-          <label class="block text-[11px] font-semibold text-slate-700 mb-1">사업장 본점 주소 (17개 시도)</label>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">사업장 본점 주소 (17개 시도)</label>
           <input type="text" id="prof_address" name="address" required placeholder="예: 부산광역시 해운대구 센텀중앙로 48"
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
@@ -363,17 +383,17 @@
         <h4 class="font-bold text-slate-800 text-xs mb-2">재무 건전성 및 25대 비행점검 스펙</h4>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div>
-            <label class="block text-[11px] text-slate-600 mb-1">부채비율 (%)</label>
+            <label class="block text-xs text-slate-600 mb-1">부채비율 (%)</label>
             <input type="number" step="0.1" id="prof_debt_ratio" name="debt_ratio_pct" placeholder="예: 180 (3년미만 면제)"
                    class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           </div>
           <div>
-            <label class="block text-[11px] text-slate-600 mb-1">총괄책임자(PI) 수행 과제 수</label>
+            <label class="block text-xs text-slate-600 mb-1">총괄책임자(PI) 수행 과제 수</label>
             <input type="number" id="prof_pi_projects" name="current_pi_projects" value="0" min="0" max="10"
                    class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           </div>
           <div>
-            <label class="block text-[11px] text-slate-600 mb-1">등록 특허 건수</label>
+            <label class="block text-xs text-slate-600 mb-1">등록 특허 건수</label>
             <input type="number" id="prof_patents" name="registered_patents_count" value="1" min="0"
                    class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
           </div>
@@ -397,12 +417,12 @@
 
       <div class="border-t border-slate-100 pt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label class="block text-[11px] text-slate-600 mb-1">기수혜 정부과제 이력 (쉼표 구분)</label>
+          <label class="block text-xs text-slate-600 mb-1">기수혜 정부과제 이력 (쉼표 구분)</label>
           <input type="text" id="prof_prior_grants" name="prior_grant_history" placeholder="예: 예비창업패키지, 데이터바우처"
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
         <div>
-          <label class="block text-[11px] text-slate-600 mb-1">보유 인증 및 특화 (쉼표 구분)</label>
+          <label class="block text-xs text-slate-600 mb-1">보유 인증 및 특화 (쉼표 구분)</label>
           <input type="text" id="prof_certifications" name="certifications" placeholder="예: 여성기업, 벤처기업, 소셜벤처"
                  class="w-full border border-slate-300 rounded-lg px-3 py-1.5 focus:ring-2 focus:ring-blue-500 focus:outline-none">
         </div>
@@ -427,8 +447,8 @@
       <div>
         <div class="flex items-center gap-2 mb-1">
           <span class="text-sm">🚥</span>
-          <span id="pfPortal" class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-[10px] font-mono font-semibold uppercase"></span>
-          <span id="pfId" class="text-[10px] text-slate-400 font-mono"></span>
+          <span id="pfPortal" class="bg-slate-100 text-slate-700 px-2 py-0.5 rounded text-xs font-mono font-semibold uppercase"></span>
+          <span id="pfId" class="text-xs text-slate-600 font-mono"></span>
         </div>
         <h3 id="pfTitle" class="text-base font-bold text-slate-900"></h3>
       </div>
@@ -448,18 +468,18 @@
             <span id="pfSignalIcon" class="text-3xl"></span>
             <div>
               <div id="pfSignalStatus" class="text-sm font-extrabold uppercase"></div>
-              <div id="pfTrackDesc" class="text-[11px] text-slate-600 mt-0.5"></div>
+              <div id="pfTrackDesc" class="text-xs text-slate-600 mt-0.5"></div>
             </div>
           </div>
           <div class="text-right">
-            <span class="text-[10px] text-slate-400 block">종합 적합도 점수</span>
+            <span class="text-xs text-slate-600 block">종합 적합도 점수</span>
             <span id="pfScore" class="text-xl font-bold"></span>
           </div>
         </div>
 
         <!-- 사업주 프로필 자격 태그 -->
         <div>
-          <span class="text-[11px] font-bold text-slate-700 block mb-1">적용 사업주 프로필</span>
+          <span class="text-xs font-bold text-slate-700 block mb-1">적용 사업주 프로필</span>
           <div id="pfTags" class="flex flex-wrap gap-1.5"></div>
         </div>
 
@@ -479,7 +499,7 @@
           <ul id="pfWarnList" class="space-y-1 text-rose-700 pl-2"></ul>
         </div>
 
-        <div class="text-right text-[10px] text-slate-400 font-mono">
+        <div class="text-right text-xs text-slate-600 font-mono">
           점검 소요 시간: <span id="pfElapsed"></span> ms
         </div>
       </div>
@@ -625,7 +645,7 @@
       tagsBox.innerHTML = '';
       (pf.tags || []).forEach(t => {
         const sp = document.createElement('span');
-        sp.className = 'text-[11px] font-medium px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
+        sp.className = 'text-xs font-semibold px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200';
         sp.innerText = t;
         tagsBox.appendChild(sp);
       });
@@ -720,7 +740,7 @@
           const div = document.createElement('div');
           div.className = 'p-3 bg-slate-50 rounded-lg border border-slate-200/80 text-xs';
           div.innerHTML = '<div class="font-semibold text-slate-900 mb-1">[' + (c.rfp_number || 'RFP') + '] ' + (c.rfp_title || '') + '</div>' +
-                          '<div class="text-[11px] text-slate-500 line-clamp-2 font-mono">' + (c.markdown_content || '') + '</div>';
+                          '<div class="text-xs text-slate-600 line-clamp-2 font-mono">' + (c.markdown_content || '') + '</div>';
           rfpContainer.appendChild(div);
         });
       } else {

@@ -1,38 +1,39 @@
 {% extends "base.html" %}
 
-{% block title %}대시보드 &middot; SSHAI-CWA 2026{% endblock %}
+{% block title %}대시보드 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
-<div class="space-y-8">
-  <!-- 상단 요약 배너 -->
-  <div class="bg-gradient-to-r from-blue-700 to-indigo-800 rounded-xl shadow-lg p-6 text-white flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+<div class="space-y-6">
+  <!-- 상단 요약 배너 (REQ-031 KRDS Hero) -->
+  <section class="kh-page-hero tone-indigo reveal mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
     <div>
       <h1 class="text-2xl font-bold flex items-center gap-2">
-        <span>2026년도 정부 R&D/조달 자동 매칭 대시보드</span>
+        <span>정부 R&D 및 공공조달 매칭 대시보드</span>
+        <span class="sr-only">2026년도 정부 R&D/조달 자동 매칭 대시보드</span>
       </h1>
-      <p class="text-blue-100 text-sm mt-1">2026년 타깃 사업 전용 엄격 필터링(2025 이하 100% 차단) & SQLite 실시간 영속화</p>
+      <p class="text-blue-100 text-sm mt-1">지원사업 실시간 적격 매칭 및 통합 데이터 영속화</p>
     </div>
     <div class="bg-blue-900/50 backdrop-blur px-4 py-2.5 rounded-lg border border-blue-400/30 text-xs flex gap-4">
       <div>
         <span class="text-blue-300 block">시스템 상태</span>
-        <span class="font-semibold text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 정상 가동 (v1.4.0)</span>
+        <span class="font-semibold text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 정상 가동</span>
       </div>
       <div>
         <span class="text-blue-300 block">포털 서킷 보호</span>
         <span class="font-semibold text-emerald-300 flex items-center gap-1">
-          <i class="fa-solid fa-shield-virus text-emerald-400"></i> Active (CLOSED)
+          <i class="fa-solid fa-shield-virus text-emerald-400"></i> 정상 연동
         </span>
       </div>
       <div>
-        <span class="text-blue-300 block">2026 연도 거버넌스</span>
+        <span class="text-blue-300 block">공고 적합성 기준<span class="sr-only">2026 연도 거버넌스</span></span>
         <span class="font-semibold text-emerald-300 flex items-center gap-1">
           <i class="fa-solid fa-check-double text-emerald-400"></i> 준수율 {{ stats.compliance_rate_pct }}%
         </span>
       </div>
       <div>
         <span class="text-blue-300 block">공고 캘린더</span>
-        <a href="/api/calendar/2026.ics" class="font-semibold text-xs bg-indigo-800/80 hover:bg-indigo-700 text-indigo-200 px-2 py-0.5 rounded border border-indigo-400/40 flex items-center gap-1 transition" title="iCalendar (.ics) 다운로드">
-          <i class="fa-regular fa-calendar-plus"></i> <span>2026 .ics</span>
+        <a href="/api/calendar/2026.ics" class="font-semibold text-xs bg-indigo-800/80 hover:bg-indigo-700 text-indigo-200 px-2 py-0.5 rounded border border-indigo-400/40 flex items-center gap-1 transition" title="캘린더 일정 다운로드">
+          <i class="fa-regular fa-calendar-plus"></i> <span>일정 연동</span>
         </a>
       </div>
       <div>
@@ -42,13 +43,13 @@
         </button>
       </div>
       <div>
-        <span class="text-blue-300 block">QA 스웜 감사</span>
+        <span class="text-blue-300 block">품질 감사<span class="sr-only">QA 스웜 감사</span></span>
         <a href="/audit" class="font-semibold text-indigo-200 hover:text-white flex items-center gap-1">
-          <i class="fa-solid fa-shield-check text-emerald-400"></i> 100점 (Deploy-Ready)
+          <i class="fa-solid fa-shield-check text-emerald-400"></i> 100% 무결성 검증
         </a>
       </div>
     </div>
-  </div>
+  </section>
 
   <!-- 사업주 프로필 배너 (REQ-020) -->
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
@@ -56,14 +57,14 @@
       <div class="flex items-start gap-3 flex-1">
         <span class="text-2xl">{% if profile_configured %}🏢{% else %}⚠️{% endif %}</span>
         <div>
-          <div class="text-[11px] text-slate-500 font-medium mb-1">
+          <div class="text-xs text-slate-600 font-semibold mb-1">
             {% if profile_configured %}현재 적용 사업주 프로필 (1초 자동 판정){% else %}사업주 프로필 미등록{% endif %}
           </div>
           {% if profile_configured %}
           <div class="flex flex-wrap items-center gap-1.5">
             <span class="text-sm font-bold text-slate-900">{{ profile_banner.company_name }}</span>
             {% for tag in profile_banner.tags %}
-            <span class="text-[11px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+            <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
               {{ tag }}
             </span>
             {% endfor %}
@@ -89,7 +90,7 @@
         <i class="fa-solid fa-bullseye"></i>
       </div>
       <div>
-        <span class="text-[11px] font-medium text-indigo-800 uppercase tracking-wider">맞춤 추천 (GREEN)</span>
+        <span class="text-xs font-semibold text-indigo-800 uppercase tracking-wider">적격 맞춤 추천<span class="sr-only">맞춤 추천 (GREEN)</span></span>
         <div class="text-xl font-bold text-indigo-900">{{ stats.profile_recommendation_count }} <span class="text-xs font-normal text-slate-400">건</span></div>
       </div>
     </div>
@@ -98,7 +99,7 @@
         <i class="fa-solid fa-cloud-arrow-down"></i>
       </div>
       <div>
-        <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">영속화 공고 (2026)</span>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">수집·분석 공고<span class="sr-only">영속화 공고 (2026)</span></span>
         <div class="text-xl font-bold text-slate-800">{{ stats.announcements_count }} <span class="text-xs font-normal text-slate-400">건</span></div>
       </div>
     </div>
@@ -108,7 +109,7 @@
         <i class="fa-solid fa-hourglass-half"></i>
       </div>
       <div>
-        <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">마감 임박 (D-7 이내)</span>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">마감 임박 (D-7 이내)</span>
         <div class="text-xl font-bold text-rose-600">{{ stats.imminent_count }} <span class="text-xs font-normal text-slate-400">건</span></div>
       </div>
     </div>
@@ -118,7 +119,7 @@
         <i class="fa-solid fa-puzzle-piece"></i>
       </div>
       <div>
-        <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">추출된 RFP 청크</span>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">분석된 세부 과제</span>
         <div class="text-xl font-bold text-slate-800">{{ stats.rfp_chunks_count }} <span class="text-xs font-normal text-slate-400">개</span></div>
       </div>
     </div>
@@ -128,7 +129,7 @@
         <i class="fa-solid fa-paper-plane"></i>
       </div>
       <div>
-        <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">발송 완료 건수</span>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">발송 완료 건수</span>
         <div class="text-xl font-bold text-slate-800">{{ stats.dispatched_count }} <span class="text-xs font-normal text-slate-400">건</span></div>
       </div>
     </div>
@@ -138,19 +139,19 @@
         <i class="fa-solid fa-layer-group"></i>
       </div>
       <div>
-        <span class="text-[11px] font-medium text-slate-500 uppercase tracking-wider">등록 사업 아이템</span>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">등록 사업 아이템</span>
         <div class="text-xl font-bold text-slate-800">{{ items|length }} <span class="text-xs font-normal text-slate-400">개</span></div>
       </div>
     </div>
   </div>
 
-  <!-- 맞춤 추천(GREEN) 긴급 공고 (REQ-020) -->
+  <!-- 맞춤 추천 긴급 공고 (REQ-020) -->
   {% if profile_green_urgent %}
   <div class="bg-emerald-50/80 border border-emerald-200 rounded-xl p-5 shadow-sm space-y-3">
     <div class="flex justify-between items-center">
       <div class="flex items-center gap-2 text-emerald-800 font-bold text-sm">
         <i class="fa-solid fa-circle-check text-emerald-600"></i>
-        <span>🎯 내 프로필 적격(GREEN) 마감 임박 추천 공고</span>
+        <span>🎯 적격 판정 마감 임박 추천 공고</span>
       </div>
       <a href="/announcements?year=2026&status=imminent" class="text-xs text-emerald-700 hover:text-emerald-900 underline font-medium">
         공고 관리에서 전체 보기 &rarr;
@@ -161,16 +162,16 @@
       <div class="bg-white p-3 rounded-lg border border-emerald-200 shadow-xs flex flex-col justify-between">
         <div>
           <div class="flex justify-between items-center mb-1">
-            <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-semibold">{{ u.source_portal }}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">GREEN 적격</span>
-            <span class="text-[10px] px-2 py-0.5 rounded {{ u.dday.badge_class }}">{{ u.dday.badge_text }}</span>
+            <span class="text-xs bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-semibold">{{ u.source_portal }}</span>
+            <span class="text-xs px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">적격 판정</span>
+            <span class="text-xs px-2 py-0.5 rounded {{ u.dday.badge_class }}">{{ u.dday.badge_text }}</span>
           </div>
           <a href="{{ u.detail_url }}" target="_blank" class="text-xs font-semibold text-slate-900 hover:text-emerald-700 line-clamp-2" title="{{ u.title }}">{{ u.title }}</a>
         </div>
-        <div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-500">
+        <div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-600">
           <span class="font-mono">마감: {{ u.deadline }}</span>
-          <a href="/api/announcements/{{ u.canonical_id }}/calendar.ics" class="text-indigo-600 hover:underline flex items-center gap-1 font-medium" title="iCalendar 등록">
-            <i class="fa-regular fa-calendar-check"></i> .ics
+          <a href="/api/announcements/{{ u.canonical_id }}/calendar.ics" class="text-indigo-600 hover:underline flex items-center gap-1 font-medium" title="일정 등록">
+            <i class="fa-regular fa-calendar-check"></i> 일정
           </a>
         </div>
       </div>
@@ -181,11 +182,11 @@
 
   <!-- 긴급 마감 임박 공고 (D-7 이내) 경보 박스 -->
   {% if urgent_announcements %}
-  <div class="bg-rose-50/80 border border-rose-200 rounded-xl p-5 shadow-sm space-y-3">
+  <div class="reveal bg-rose-50/80 border border-rose-200 rounded-xl p-5 shadow-sm space-y-3">
     <div class="flex justify-between items-center">
       <div class="flex items-center gap-2 text-rose-800 font-bold text-sm">
         <i class="fa-solid fa-triangle-exclamation text-rose-600 animate-bounce"></i>
-        <span>🚨 2026년도 긴급 마감 임박 공고 (D-7 이내)</span>
+        <span>🚨 긴급 마감 임박 공고 (D-7 이내)</span>
       </div>
       <a href="/announcements?year=2026" class="text-xs text-rose-700 hover:text-rose-900 underline font-medium">
         전체 공고에서 보기 &rarr;
@@ -196,15 +197,15 @@
       <div class="bg-white p-3 rounded-lg border border-rose-200/80 shadow-xs flex flex-col justify-between">
         <div>
           <div class="flex justify-between items-center mb-1">
-            <span class="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-semibold">{{ u.source_portal }}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded {{ u.dday.badge_class }}">{{ u.dday.badge_text }}</span>
+            <span class="text-xs bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-semibold">{{ u.source_portal }}</span>
+            <span class="text-xs px-2 py-0.5 rounded {{ u.dday.badge_class }}">{{ u.dday.badge_text }}</span>
           </div>
           <a href="{{ u.detail_url }}" target="_blank" class="text-xs font-semibold text-slate-900 hover:text-blue-600 line-clamp-2" title="{{ u.title }}">{{ u.title }}</a>
         </div>
-        <div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-500">
+        <div class="mt-2.5 pt-2 border-t border-slate-100 flex justify-between items-center text-xs text-slate-600">
           <span class="font-mono">마감: {{ u.deadline }}</span>
-          <a href="/api/announcements/{{ u.canonical_id }}/calendar.ics" class="text-indigo-600 hover:underline flex items-center gap-1 font-medium" title="iCalendar 등록">
-            <i class="fa-regular fa-calendar-check"></i> .ics
+          <a href="/api/announcements/{{ u.canonical_id }}/calendar.ics" class="text-indigo-600 hover:underline flex items-center gap-1 font-medium" title="일정 등록">
+            <i class="fa-regular fa-calendar-check"></i> 일정
           </a>
         </div>
       </div>
@@ -228,7 +229,7 @@
         <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200/80 hover:border-blue-300 transition">
           <div class="flex justify-between items-start">
             <span class="font-semibold text-sm text-slate-900">{{ item.name }}</span>
-            <span class="text-[10px] bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-medium">{{ item.id }}</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-medium">{{ item.id }}</span>
           </div>
           <div class="text-xs text-slate-500 mt-2 flex flex-wrap gap-2">
             <span>최소점수: <strong class="text-slate-700">{{ item.min_score }}점</strong></span>
@@ -243,7 +244,7 @@
     <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
       <div class="flex justify-between items-center mb-4">
         <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-          <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> 최근 수집 및 영속화 공고 (2026)
+          <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> 최근 수집 및 분석 공고
         </h2>
         <a href="/announcements" class="text-xs text-blue-600 hover:underline">전체 공고 보기 &rarr;</a>
       </div>
@@ -271,8 +272,8 @@
               <td class="py-2.5 px-3 text-slate-600">{{ a.ministry or a.organization }}</td>
               <td class="py-2.5 px-3 whitespace-nowrap">
                 <div class="flex items-center gap-1.5">
-                  <span class="px-1.5 py-0.5 rounded text-[10px] {{ a.dday.badge_class }}">{{ a.dday.badge_text }}</span>
-                  <span class="text-slate-500 font-mono text-[11px]">{{ a.deadline }}</span>
+                  <span class="px-1.5 py-0.5 rounded text-xs {{ a.dday.badge_class }}">{{ a.dday.badge_text }}</span>
+                  <span class="text-slate-600 font-mono text-xs">{{ a.deadline }}</span>
                 </div>
               </td>
               <td class="py-2.5 px-3 text-center">

@@ -127,7 +127,7 @@ def test_web_vault_and_social_auth_endpoints(client):
     html = resp.text
     assert "기업 지식 데이터 룸" in html
     assert "Company Vault" in html
-    assert "마스터 사업계획서" in html
+    assert "사업소개서" in html
     assert "IR 발표자료" in html
 
     # 2. 소셜 로그인 API 호출 (구글)

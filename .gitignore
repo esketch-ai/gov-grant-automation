@@ -24,5 +24,8 @@ storage/*.log
 storage/audit_report.*
 storage/qqaqc_*_report.*
 
+# Local agent tooling (machine-specific symlink, not committed)
+.agents/
+
 # OS
 .DS_Store

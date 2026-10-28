@@ -110,7 +110,7 @@ def run_multi_agency_matrix_audit(output_dir: str | None = None) -> dict:
         "",
         "## 📊 8대 BM별 매칭 결과 요약 (신호등 분포)",
         "",
-        "| BM ID | 비즈니스 모델 명칭 | 검증 과제 수 | 🟢 GREEN | 🟡 YELLOW | 🔴 RED | 적합 과제 수주율 |",
+        "| BM ID | 비즈니스 모델 명칭 | 검증 과제 수 | 🟢 GREEN | 🟡 YELLOW | 🔴 RED | 적합 공고 매칭률 |",
         "|---|---|---|---|---|---|---|",
     ])
     for bm_id, st in data["bm_stats"].items():

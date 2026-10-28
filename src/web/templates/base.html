@@ -3,60 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{% block title %}SSHAI-CWA 2026 관리자{% endblock %}</title>
+  <title>{% block title %}정부지원사업 맞춤형 AI 코파일럿{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;500;600;700&display=swap');
-    body { font-family: 'Pretendard', sans-serif; }
-  </style>
+  <link rel="stylesheet" href="/static/css/k_horizon_2027.css">
 </head>
-<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
-  <!-- 상단 네비게이션 헤더 -->
-  <header class="bg-slate-900 text-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-      <div class="flex items-center space-x-3">
-        <span class="bg-blue-600 text-white text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">2026 전용</span>
-        <a href="/dashboard" class="text-xl font-bold tracking-tight text-white hover:text-blue-400 flex items-center gap-2">
-          <i class="fa-solid fa-file-shield text-blue-500"></i> SSHAI-CWA <span class="text-xs text-slate-400 font-normal">v1.1.0</span>
+<body class="min-h-screen flex flex-col" data-role="{{ current_role|default('visitor') }}">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge {% if current_role == 'visitor' %}visitor{% elif current_role == 'subscriber' %}subscriber{% else %}admin{% endif %}">
+          <i class="fa-solid {{ role_portal.icon if role_portal else 'fa-compass' }}"></i>
+          <span>{{ role_portal.badge if role_portal else '초기 방문자 포털' }}</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">{{ role_portal.subtitle if role_portal else '' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 160px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="{{ role_portal.home_url if role_portal else '/intro' }}" class="kh-brand-link group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-150">
+            <i class="fa-solid fa-file-shield text-base text-cyan-200"></i>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">과제비서</span>
+            <span class="text-xs font-extrabold uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">AI</span>
+          </div>
         </a>
       </div>
-      <nav class="flex space-x-1 sm:space-x-4 text-sm font-medium">
-        <a href="/dashboard" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'dashboard' %}bg-slate-800 text-blue-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-chart-pie mr-1.5"></i>대시보드
-        </a>
-        <a href="/vault" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'vault' %}bg-slate-800 text-indigo-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-vault mr-1.5 text-indigo-400"></i>기업 데이터룸
-        </a>
-        <a href="/projects" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'projects' %}bg-slate-800 text-rose-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-bullseye mr-1.5 text-rose-400"></i>도전 과제
-        </a>
-        <a href="/announcements" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'announcements' %}bg-slate-800 text-blue-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-bullhorn mr-1.5"></i>공고 관리
-        </a>
-        <a href="/items" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'items' %}bg-slate-800 text-blue-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-folder-tree mr-1.5"></i>사업 아이템
-        </a>
-        <a href="/proposals/tailor" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'tailor' %}bg-slate-800 text-purple-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-wand-magic-sparkles mr-1.5 text-purple-400"></i>계획서 코파일럿
-        </a>
-        <a href="/matches" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'matches' %}bg-slate-800 text-blue-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-paper-plane mr-1.5"></i>발송 이력
-        </a>
-        <a href="/portals" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'portals' %}bg-slate-800 text-indigo-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-server mr-1.5"></i>포털 관리
-        </a>
-        <a href="/audit" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'audit' %}bg-slate-800 text-indigo-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-shield-halved mr-1.5"></i>품질 검수
-        </a>
-        <a href="/logs" class="px-3 py-2 rounded-md hover:bg-slate-800 transition {% if active_page == 'logs' %}bg-slate-800 text-amber-400 font-semibold{% else %}text-slate-300{% endif %}">
-          <i class="fa-solid fa-terminal mr-1.5"></i>시스템 로그
-        </a>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-6에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-1 shrink-0 ml-6" aria-label="메인 내비게이션">
+        {% if role_portal and role_portal.nav_items %}
+          {% for item in role_portal.nav_items %}
+          <a
+            href="{{ item.href }}"
+            class="kh-nav-item {% if active_page == item.page %}active{% endif %}"
+            {% if active_page == item.page %}aria-current="page"{% endif %}
+            data-nav-role="{{ current_role }}"
+            data-nav-page="{{ item.page }}"
+            data-nav-href="{{ item.href }}"
+          >
+            <i class="fa-solid {{ item.icon }} text-xs opacity-75"></i>
+            <span>{{ item.label }}</span>
+          </a>
+          {% endfor %}
+        {% endif %}
       </nav>
-      <div class="flex items-center space-x-3">
-        <button id="runBtn" onclick="triggerPipeline()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-3 py-2 rounded-md shadow flex items-center gap-1.5 transition">
-          <i class="fa-solid fa-play"></i> 파이프라인 수동 실행
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          {% for r_key, r_info in (all_portals or {}).items() %}
+          <button
+            type="button"
+            role="tab"
+            aria-selected="{{ 'true' if current_role == r_key else 'false' }}"
+            onclick="switchServiceRole('{{ r_key }}', '{{ r_info.home_url }}')"
+            class="kh-role-pill {{ r_info.accent_class }} {% if current_role == r_key %}active{% endif %}"
+            data-role-btn="{{ r_key }}"
+            title="{{ r_info.label }}"
+          >
+            <i class="fa-solid {{ r_info.icon }} text-xs"></i>
+            <span>{{ r_info.short_label }}</span>
+          </button>
+          {% endfor %}
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="/dashboard">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        {% if role_portal %}
+        <a
+          href="{{ role_portal.cta_href }}"
+          class="kh-btn-cta {% if current_role == 'visitor' %}primary{% elif current_role == 'subscriber' %}emerald{% else %}amber{% endif %} hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>{{ role_portal.cta_label }}</span>
+        </a>
+        {% endif %}
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
         </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge {% if current_role == 'visitor' %}visitor{% elif current_role == 'subscriber' %}subscriber{% else %}admin{% endif %}">
+          {{ role_portal.badge if role_portal else '초기 방문자 포털' }}
+        </span>
+      </div>
+      {% if role_portal and role_portal.nav_items %}
+        {% for item in role_portal.nav_items %}
+        <a
+          href="{{ item.href }}"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition {% if active_page == item.page %}bg-blue-600/20 text-cyan-300 font-semibold border border-cyan-400/30{% else %}text-slate-300 hover:bg-slate-800 hover:text-white{% endif %}"
+          data-mobile-nav-role="{{ current_role }}"
+          data-mobile-nav-page="{{ item.page }}"
+          data-mobile-nav-href="{{ item.href }}"
+        >
+          <i class="fa-solid {{ item.icon }} text-xs w-4 text-center"></i>
+          <span>{{ item.label }}</span>
+        </a>
+        {% endfor %}
+      {% endif %}
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        {% if role_portal %}
+        <a href="{{ role_portal.cta_href }}" onclick="toggleMobileNav()" class="kh-btn-cta {% if current_role == 'visitor' %}primary{% elif current_role == 'subscriber' %}emerald{% else %}amber{% endif %} w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>{{ role_portal.cta_label }}</span>
+        </a>
+        {% endif %}
       </div>
     </div>
   </header>
@@ -80,32 +168,26 @@
       </div>
 
       <div class="p-6 overflow-y-auto space-y-4">
-        <!-- 요약 지표 카드 -->
         <div class="grid grid-cols-3 gap-3 text-center">
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
-            <span id="pipeResItems" class="text-xl font-bold text-blue-900">0</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
           </div>
           <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
             <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
-            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800">0</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
           </div>
           <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
             <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
-            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700">0</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
           </div>
         </div>
-
         <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
-
-        <!-- 아이템별 매칭 상세 내역 -->
         <div>
           <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
             <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
           </h4>
-          <div id="pipeResDetails" class="space-y-2 text-xs">
-            <!-- JS 동적 주입 -->
-          </div>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
         </div>
       </div>
 
@@ -126,75 +208,93 @@
   </div>
 
   <!-- 푸터 -->
-  <footer class="bg-white border-t border-slate-200 py-4 mt-auto text-center text-xs text-slate-500">
-    <p>SSHAI-CWA Carbon Work Agent &middot; 2026 정부지원사업/R&D 자동 매칭 거버넌스 시스템</p>
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
   </footer>
 
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
   <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
     function closePipelineModal() {
       document.getElementById('pipelineResultModal').classList.add('hidden');
     }
 
     async function triggerPipeline() {
       const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
       btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 분석 및 매칭 중...';
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
       try {
         const res = await fetch('/api/pipeline/run', { method: 'POST' });
         const data = await res.json();
-        if (data.status === 'success') {
-          document.getElementById('pipeResItems').innerText = data.total_items ?? 0;
-          document.getElementById('pipeResEvaluated').innerText = (data.total_evaluated ?? 0) + '건';
-          document.getElementById('pipeResMatched').innerText = (data.total_matched ?? 0) + '건';
-          document.getElementById('pipeResMessage').innerText = data.message || '파이프라인 실행이 완료되었습니다.';
-
-          const detailsDiv = document.getElementById('pipeResDetails');
-          detailsDiv.innerHTML = '';
-
-          const items = data.detail_items || [];
-          if (items.length === 0) {
-            detailsDiv.innerHTML = '<p class="text-slate-400 py-2">등록된 사업 아이템이 없습니다.</p>';
-          } else {
-            items.forEach(it => {
-              const card = document.createElement('div');
-              card.className = 'border border-slate-200 rounded p-2.5 bg-white';
-              
-              let matchesHtml = '';
-              if (it.matches && it.matches.length > 0) {
-                matchesHtml = '<ul class="mt-1.5 space-y-1 pl-2 border-l-2 border-emerald-400">';
-                it.matches.forEach(m => {
-                  matchesHtml += `<li class="flex items-center justify-between text-slate-700">
-                    <span class="truncate max-w-[360px]" title="${m.title}">• ${m.title}</span>
-                    <span class="font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded text-[10px] border border-emerald-200">${m.score}점</span>
-                  </li>`;
-                });
-                matchesHtml += '</ul>';
-              } else {
-                matchesHtml = '<p class="text-slate-400 mt-1 italic">부합 공고 없음 (임계점수 미달 또는 지원자격 불일치)</p>';
-              }
-
-              card.innerHTML = `
-                <div class="flex items-center justify-between font-semibold text-slate-800">
-                  <span class="font-mono text-blue-600">${it.item_id}</span>
-                  <span class="text-[11px] text-slate-500">평가 ${it.evaluated}건 &middot; <strong class="text-emerald-600">${it.matched}건 매칭</strong></span>
-                </div>
-                ${matchesHtml}
-              `;
-              detailsDiv.appendChild(card);
-            });
-          }
-
-          document.getElementById('pipelineResultModal').classList.remove('hidden');
-        } else {
-          alert('파이프라인 오류: ' + (data.message || '실패'));
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
         }
-      } catch (err) {
-        alert('실행 요청 오류: ' + err);
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<i class="fa-solid fa-play"></i> 파이프라인 수동 실행';
+        btn.innerHTML = origHtml;
       }
     }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
   </script>
   {% block scripts %}{% endblock %}
 </body>

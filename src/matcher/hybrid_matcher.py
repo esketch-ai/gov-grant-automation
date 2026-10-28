@@ -101,7 +101,7 @@ class HybridMatcher:
             result.match_score = fallback_score
             result.note = f"Tier 1 사전규칙 자격 통과 & 시맨틱 벡터 평가 반영({fallback_score}점, LLM 폴백)"
             result.proposal_alignment_strategy = (
-                f"핵심 공유 용어({shared_terms_str})를 중심으로 지원서 작성 권장 (오프라인 폴백)"
+                f"핵심 공유 용어({shared_terms_str})를 중심으로 공고 요건 분석 및 지원 대응 권장 (오프라인 폴백)"
             )
         elif result.match_score == 0 and result.is_eligible and sem_score > 0:
             result.match_score = int(sem_score)

@@ -17,6 +17,7 @@ from src.common.db import GrantDatabase
 from src.common.logging_config import get_logger
 from src.parser.proposal_parser import ProposalParser
 from src.parser.proposal_extractor import ProposalExtractor
+from src.security.encryption import decrypt_asset_record, get_crypto
 
 logger = get_logger("tenant_service")
 
@@ -32,6 +33,8 @@ class TenantService:
         self.db = db or GrantDatabase(Path(__file__).resolve().parent.parent.parent / "storage" / "grant_master.db")
         self.db.ensure_schema()
         self.extractor = ProposalExtractor()
+        # REQ-030: Zero-Retention Vault 암호화 매니저(마스터키 env 또는 SHA-256 디폴트)
+        self.crypto = get_crypto()
 
     def get_current_session(self, request: Request) -> Tuple[Dict[str, Any], Dict[str, Any]]:
         """
@@ -123,6 +126,8 @@ class TenantService:
                 "rep_name": name,
                 "region": "서울",
                 "plan_tier": "PRO",
+                # REQ-030: 신규 테넌트 salt 1회 생성(HKDF 키 파생에 사용)
+                "tenant_salt": self.crypto.generate_tenant_salt(),
             }
             self.db.upsert_tenant(tenant)
 
@@ -176,7 +181,9 @@ class TenantService:
                 "trl": 4,
             }
 
-        # 3. DB 적재
+        # 3. Zero-Retention 암호화 적재 (DB엔 암호문, 호출엔 평문 반환)
+        tenant_row = self.db.get_tenant(tenant_id) or {}
+        tenant_salt = tenant_row.get("tenant_salt", "")
         asset_record = {
             "id": asset_id,
             "tenant_id": tenant_id,
@@ -186,7 +193,10 @@ class TenantService:
             "content_text": extracted_text,
             "parsed_metadata": parsed_meta,
         }
-        self.db.add_tenant_asset(asset_record)
+        stored = dict(asset_record)
+        stored["content_text"] = self.crypto.encrypt_text(extracted_text, tenant_id, tenant_salt)
+        stored["parsed_metadata"] = self.crypto.encrypt_json(parsed_meta, tenant_id, tenant_salt)
+        self.db.add_tenant_asset(stored)
 
         # 4. 마스터 기업 스펙에 유효 정보가 있으면 테넌트 기본 정보 자동 보강
         comp_specs = parsed_meta.get("company_specs", {})
@@ -208,9 +218,25 @@ class TenantService:
 
         return asset_record
 
+    def list_decrypted_assets(self, tenant_id: str, category: Optional[str] = None) -> List[dict]:
+        """자산을 저장 원문(raw)으로 조회 후 AESENC 센티넬 자동 복호화(레거시 평문은 그대로 통과)."""
+        salt = (self.db.get_tenant(tenant_id) or {}).get("tenant_salt", "")
+        return [
+            decrypt_asset_record(a, tenant_id, salt)
+            for a in self.db.list_tenant_assets_raw(tenant_id, category)
+        ]
+
+    def get_decrypted_asset(self, asset_id: str, tenant_id: str) -> Optional[dict]:
+        """단일 자산 원문 조회 후 AESENC 센티넬 자동 복호화(레거시 평문은 그대로 통과)."""
+        raw = self.db.get_tenant_asset_raw(asset_id, tenant_id)
+        if not raw:
+            return None
+        salt = (self.db.get_tenant(tenant_id) or {}).get("tenant_salt", "")
+        return decrypt_asset_record(raw, tenant_id, salt)
+
     def get_vault_summary(self, tenant_id: str) -> Dict[str, Any]:
         """테넌트의 지식 데이터 룸 적재 현황 및 준비도 집계."""
-        assets = self.db.list_tenant_assets(tenant_id)
+        assets = self.list_decrypted_assets(tenant_id)
         categories = {
             "PROPOSAL": [],
             "PITCH_DECK": [],

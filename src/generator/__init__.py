@@ -4,6 +4,7 @@
 from .template_schemas import ProposalTemplate, SectionRequirement, get_template, get_all_templates, detect_template_for_announcement
 from .gap_analyzer import ProposalGapAnalyzer, SectionGapAnalysis
 from .doc_morpher import DocMorpher
+from .budget_engine import BudgetRuleEngine
 
 __all__ = [
     "ProposalTemplate",
@@ -14,4 +15,5 @@ __all__ = [
     "ProposalGapAnalyzer",
     "SectionGapAnalysis",
     "DocMorpher",
+    "BudgetRuleEngine",
 ]

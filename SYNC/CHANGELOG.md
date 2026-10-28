@@ -4,6 +4,44 @@
 
 ---
 
+## [2026-10-28] 세션 `sprint11-v2.0-commercial` — 실전 수익형 B2B SaaS 전면 개편 & K-Horizon 2027 (REQ-032 ~ REQ-048 연착륙)
+
+> v1.6.0 (REQ-029/030/031)에서 v2.0 상용화 궤도로의 전환. `SYNC/requests/REGISTRY.md`가 본 세션의 완료 근거 보드이며, 신규 요청문 `REQ-032`~`REQ-048` 17건이 `SYNC/requests/`에 영속됨. `docs/MASTER_PLAN_SSOT.md`로 기획 단일 정본(SSOT) 재정립.
+
+### Done — 상용 뼈대 (REQ-032 ~ REQ-036)
+- **REQ-032 [실전 수익형 B2B SaaS 대개편 v2.0]**: 먹튀방지 Blurred Paywall(블러/잠금), 1사업자 Hard-Lock(단일 사업자 계정에 1 계정), 크레딧 원장 & Top-up, 정부과제 `budget_engine.py` 예산편성기, 일할계산/부분환불 정산, 5대 BM(매칭·자산·예산·채용·법무) 대시보드, 슈퍼어드민, 해시체인 불변 감사로그.
+  - 신규 모듈 `src/billing/`, `src/security/`, `src/generator/budget_engine.py`, `src/tenant/commercial_service.py`.
+- **REQ-033 [60초 공감 인트로 `/intro` v4.0]**: 5막 대서사(1막 피로→2막 알림→3막 작성가이드→4막 선정확률→5막 성장길잡이·5대파트너), 프롤로그 `showreel.mp4`+`story_act1~5.jpg` 서빙(`src/web/static/`), 블러 페이월(REQ-032) 연동.
+- **REQ-034/035/036 [3회차 검수 리듬]**: 1차 페르소나 UX·버튼 무결성 → 2차 페르소나 E2E·템플릿 완성도 → 3차 상용 마감·Zero-Defect. 3회차 전수 교차 검증 후 결함 0건 마감.
+- **REQ-037 [K-Horizon 2027 디자인 시스템 & 3대 권한 분리]**: `src/web/design_system.py`(디자인 토큰 SSOT) + `k_horizon_2027.css` + `kh_macros.html`, 3대 권한(사업자/슈퍼어드민/운영) GNB 분리, 16개 엔드포인트 200 OK.
+  - 신규 템플릿 `admin_platform.html`, `biz_dashboard.html`, `audit_logs.html`, `components/kh_macros.html`; 루트 리다이렉트 `/` → `/intro`.
+
+### Done — UI/UX 품질 & 역할 경계 (REQ-038 ~ REQ-046)
+- **REQ-038**: 상단 메뉴 군더더리(브랜딩/영문표식) 전면 퇴출, 350px 고정 제어박스, `kh-page-hero` 60px 일원화, 운영도구 관리자 격리.
+- **REQ-039**: 한국어 가독성 극대화 — 초소형 폰트(10~11px) 209건 전수 퇴출(잔여 0건 검증), KRDS 기반 폰트 스케일 상향 및 고대비 명도비 확보.
+- **REQ-040**: 방문자 포털 GNB 84px 오프셋 가림 방지, ScrollSpy 연동, 3대 서브 탭 해시 상태 동기화, 모바일 닫힘 처리.
+- **REQ-041/042 [5회차 + 10대 전문가 전수 검수]**: 5개 라운드 자가치유(Self-Healing, DOM ID 복원·FastAPI 중복경고 0) + 기획·디자인·UIUX·백엔드·DB·BM·수집·QA 10대 다각도 교차 검수, 3대 페르소나 E2E.
+- **REQ-043/044 [사업자 vs 관리자 역할 완전 분리]**: 운영자 통계 배제, 사업주 수주 KPI 4종 + 5대 BM 맞춤 인사이트, 공고 레이더 & 도전과제 파이프라인; `items` 사업자 이관, MRR/ARR 관리자 격리, 6대 사업자 과제수주 / 6대 관리자 관제 메뉴 재정렬.
+- **REQ-045 [게임머니 용어 퇴출]**: '크레딧·코인'(`fa-coins` 등) 0건 퇴출 → '이번 달 생성 한도 / 월간 플랜' B2B 표준 체계.
+- **REQ-046 [할루시네이션 본질 환원]**: '사업계획서 대필·작성' 영혼빼기 전수 퇴출, 본질을 '과제 요건 정밀 분석 & 매칭 진단'으로 환원, 15분 대필 과장 광고 정제.
+
+### Done — 네이티브 엔진 & SSOT (REQ-047 ~ REQ-048)
+- **REQ-047 [바이브코딩 프로토타입 검증 엔진]**: 외부 연동 아닌 `src/prototype/` 자체 내장 구현, 7:3 피드백 리워드 정산, Page Visibility 60초 체류시간, 3단계 피드백, 심사위원 보고서 뷰(`prototype_report.html`, `governance_partner.html`).
+- **REQ-048 [할루시네이션 발본색원 & SSOT]**: 초안 작성/선정확률/새 계획서 영문구 0건 잔여 제로 검증, 요건 분석 가이드를 `docs/MASTER_PLAN_SSOT.md`로 단일 정본 재정립.
+
+### 완료증 (완료된 파일 & 통과 결과)
+- **신규 소스**: `src/billing/`, `src/security/`, `src/prototype/`, `src/generator/budget_engine.py`, `src/tenant/commercial_service.py`, `src/web/design_system.py`, `src/web/static/`, 템플릿 `intro/admin_platform/biz_dashboard/audit_logs/governance_partner/prototype_report.html` + `components/`.
+- **신규/확장 테스트**: `tests/test_commercial_saas_v2.py`, `test_multi_specialist_10rounds.py`, `test_prototype_validation_engine.py`, `test_visitor_portal.py`, `test_zero_retention_aes256.py`, `test_web_admin.py`(루트 `/`→`/intro` 수정).
+- **거버넌스 동기화**: `SYNC/requests/REGISTRY.md`(DONE 34 → 보드 갱신), 신규 요청문 REQ-032~048 17건, `docs/MASTER_PLAN_SSOT.md`.
+- **보안/제어**: `.agents/`(머신 고유 스킬 symlink) `.gitignore`로 격리, `src/` 평문 시크릿 스캔 0건.
+
+### 검증
+- `pytest tests/ --ignore=tests/audit -q` → **262 passed / 0 failed (100%)**.
+- `python -m tests.audit.audit_runner` → **TOTAL AUDIT SCORE 100.0/100.0 (Raw 140.0/140.0), GATE STATUS: 🟢 APPROVED (Deploy-Ready)**.
+- degrade/보안: 평문 키 0 누출, `NoneType.generate_structured`(매칭), `RuntimeError("의도된 외부 연동 단절")`(정밀도) 정상 safe-degrade 확인.
+
+---
+
 ## [2026-10-27] 세션 `sprint10-v1.6.1` — 조달청 나라장터 BidPublicInfoService 기술가이드 반영 & 마스터 총람 연동
 
 ### Done

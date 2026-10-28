@@ -1,13 +1,31 @@
 {% extends "base.html" %}
 
-{% block title %}발송 이력 및 매칭 결과 &middot; SSHAI-CWA 2026{% endblock %}
+{% block title %}발송 이력 및 매칭 결과 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
-  <div>
-    <h1 class="text-xl font-bold text-slate-800">알림 발송 이력 (`dispatch_history`)</h1>
-    <p class="text-slate-500 text-xs mt-1">사업주 이메일로 발송 완료되어 중복 발송 방지(`UNIQUE` 제약)가 적용된 매칭 내역</p>
-  </div>
+  <!-- 알림 발송 이력 상단 표준 배너 -->
+  <section class="kh-page-hero tone-cyan reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge cyan">
+            <i class="fa-solid fa-paper-plane mr-1"></i>발송 이력 추적
+          </span>
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-shield-halved mr-1"></i>중복 방지 검증
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          <span>알림 발송 이력 관리</span>
+          <span class="sr-only">dispatch_history</span>
+        </h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          담당자 이메일로 발송 완료되어 중복 발송 방지가 적용된 매칭 내역입니다.
+        </p>
+      </div>
+    </div>
+  </section>
 
   <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
@@ -16,11 +34,11 @@
           <tr>
             <th class="py-3 px-4">발송 ID</th>
             <th class="py-3 px-4">대상 아이템</th>
-            <th class="py-3 px-4">공고 식별자 (Canonical ID)</th>
-            <th class="py-3 px-4">RFP ID</th>
+            <th class="py-3 px-4">공고 식별 번호</th>
+            <th class="py-3 px-4">과제 ID</th>
             <th class="py-3 px-4 text-center">매칭 점수</th>
             <th class="py-3 px-4">발송 시각</th>
-            <th class="py-3 px-4 text-center">맞춤 계획서</th>
+            <th class="py-3 px-4 text-center">공고 요건 분석</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
@@ -29,17 +47,17 @@
             <td class="py-3 px-4 font-mono font-medium text-slate-600">#{{ d.id }}</td>
             <td class="py-3 px-4 font-semibold text-slate-900">{{ d.item_id }}</td>
             <td class="py-3 px-4 font-mono text-slate-700">{{ d.canonical_id }}</td>
-            <td class="py-3 px-4 font-mono text-slate-500 text-[11px]">{{ d.rfp_id }}</td>
+            <td class="py-3 px-4 font-mono text-slate-600 text-xs">{{ d.rfp_id }}</td>
             <td class="py-3 px-4 text-center">
-              <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-[11px]">
+              <span class="bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded text-xs">
                 {{ d.match_score }}점
               </span>
             </td>
-            <td class="py-3 px-4 text-slate-500 font-mono">{{ d.sent_at }}</td>
+            <td class="py-3 px-4 text-slate-600 font-mono">{{ d.sent_at }}</td>
             <td class="py-3 px-4 text-center">
               <a href="/proposals/tailor?item_id={{ d.item_id }}&announcement_id={{ d.canonical_id }}"
-                 class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-2.5 py-1 rounded text-[11px] shadow-sm transition inline-flex items-center gap-1">
-                <i class="fa-solid fa-wand-magic-sparkles text-[10px]"></i> 맞춤 변환
+                 class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-2.5 py-1 rounded text-xs shadow-sm transition inline-flex items-center gap-1">
+                <i class="fa-solid fa-clipboard-check text-xs"></i> 요건 분석
               </a>
             </td>
           </tr>

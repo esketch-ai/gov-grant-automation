@@ -112,6 +112,7 @@ class GrantDatabase:
                     rep_name TEXT,
                     region TEXT,
                     plan_tier TEXT DEFAULT 'PRO',
+                    tenant_salt TEXT DEFAULT '',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
                 CREATE TABLE IF NOT EXISTS users (
@@ -147,6 +148,108 @@ class GrantDatabase:
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                     FOREIGN KEY(tenant_id) REFERENCES tenants(id)
                 );
+                -- REQ-032 · 실전 유료화 B2B SaaS 스키마
+                CREATE TABLE IF NOT EXISTS subscriptions (
+                    id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    plan_code TEXT NOT NULL,
+                    billing_cycle TEXT DEFAULT 'monthly',
+                    supply_price INTEGER DEFAULT 0,
+                    vat_amount INTEGER DEFAULT 0,
+                    status TEXT DEFAULT 'ACTIVE',
+                    current_period_start TEXT,
+                    current_period_end TEXT,
+                    dunning_retry_count INTEGER DEFAULT 0,
+                    billing_key_enc TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS payments (
+                    id TEXT PRIMARY KEY,
+                    tenant_id TEXT NOT NULL,
+                    subscription_id TEXT,
+                    payment_type TEXT DEFAULT 'SUBSCRIPTION',
+                    supply_amount INTEGER DEFAULT 0,
+                    vat_amount INTEGER DEFAULT 0,
+                    total_amount INTEGER DEFAULT 0,
+                    refunded_amount INTEGER DEFAULT 0,
+                    status TEXT DEFAULT 'PAID',
+                    tax_invoice_status TEXT DEFAULT 'ISSUED',
+                    receipt_url TEXT,
+                    paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS credit_ledger (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    tenant_id TEXT NOT NULL,
+                    delta INTEGER NOT NULL,
+                    balance_after INTEGER NOT NULL,
+                    reason TEXT,
+                    project_id TEXT DEFAULT '',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS proposal_snapshots (
+                    id TEXT PRIMARY KEY,
+                    project_id TEXT,
+                    tenant_id TEXT NOT NULL,
+                    version_no INTEGER DEFAULT 1,
+                    encrypted_sections_blob TEXT,
+                    encrypted_budget_blob TEXT,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS audit_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    tenant_id TEXT,
+                    actor_user_id TEXT,
+                    category TEXT,
+                    action TEXT,
+                    ip_address TEXT DEFAULT '',
+                    prev_hash TEXT NOT NULL,
+                    curr_hash TEXT NOT NULL,
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                -- REQ-047 · 바이브코딩 프로토타입 검증 엔진 & 7:3 피드백 리워드 경제
+                CREATE TABLE IF NOT EXISTS prototype_campaigns (
+                    id TEXT PRIMARY KEY,
+                    item_id TEXT NOT NULL,
+                    tenant_id TEXT NOT NULL,
+                    prototype_url TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    description TEXT,
+                    target_testers INTEGER DEFAULT 50,
+                    fee_per_test INTEGER DEFAULT 2000,
+                    tester_reward INTEGER DEFAULT 1400,
+                    platform_fee INTEGER DEFAULT 600,
+                    total_budget INTEGER DEFAULT 100000,
+                    completed_testers INTEGER DEFAULT 0,
+                    status TEXT DEFAULT 'ACTIVE',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS prototype_sessions (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL,
+                    tester_id TEXT NOT NULL,
+                    active_seconds INTEGER DEFAULT 0,
+                    visible_seconds INTEGER DEFAULT 0,
+                    status TEXT DEFAULT 'STARTED',
+                    started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    completed_at TIMESTAMP
+                );
+                CREATE TABLE IF NOT EXISTS prototype_feedbacks (
+                    id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL,
+                    session_id TEXT NOT NULL UNIQUE,
+                    tester_id TEXT NOT NULL,
+                    tester_alias TEXT NOT NULL,
+                    dwell_seconds INTEGER NOT NULL,
+                    ux_score INTEGER NOT NULL,
+                    functionality_score INTEGER NOT NULL,
+                    willingness_to_pay INTEGER NOT NULL,
+                    nps_recommend_score INTEGER NOT NULL,
+                    blocker_category TEXT NOT NULL,
+                    qualitative_feedback TEXT NOT NULL,
+                    reward_amount INTEGER NOT NULL,
+                    reward_status TEXT DEFAULT 'PAID',
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );
                 """
                 )
                 # company_profile 단일행(id=1) 기본행 확보(프로필 부재 시 빈 상태 반환 방지)
@@ -160,11 +263,100 @@ class GrantDatabase:
                 INSERT OR IGNORE INTO users (id, tenant_id, email, name, auth_provider, role)
                 VALUES ('user_default', 'tenant_default', 'ceo@chorong.ai', '홍길동 대표', 'local_demo', 'OWNER');
                 """)
+                # REQ-047 데모 바이브코딩 검증 캠페인 시드
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at
+                ) VALUES (
+                    'camp_01_carbon_dmrv', 'item_01_carbon_dmrv', 'tenant_default',
+                    'https://carbon-dmrv-demo.vibecoding.app',
+                    '2026 탄소배출권 디지털 MRV 및 에너지 AX 웹앱',
+                    '센서 데이터 자동 집계 및 온실가스 배출량 인증 보고서 생성 프로토타입 실사용 검증',
+                    50, 2000, 1400, 600, 100000, 34, 'ACTIVE', '2026-10-27 10:00:00'
+                );
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at
+                ) VALUES (
+                    'camp_02_voice_ai', 'item_02_voice_ai', 'tenant_default',
+                    'https://ondevice-voice-ai.vibecoding.app',
+                    '초경량 온디바이스 음성인식 AI 컨트롤러',
+                    '네트워크 단절 환경에서의 산업용 음성 커맨드 제어 반응속도 및 오인식률 테스트',
+                    30, 2000, 1400, 600, 60000, 12, 'ACTIVE', '2026-10-27 14:00:00'
+                );
+                """)
+                # REQ-047 데모 피드백 시드
+                sample_feedbacks = [
+                    ('fb_demo_01', 'camp_01_carbon_dmrv', 'sess_seed_01', 'tester_01', '동료 창업자 #12 (기후테크)', 142, 5, 4, 4, 9, '기능오류/버그', '데이터 연동 속도가 빠르고 직관적입니다. 엑셀 내보내기 서식 지원이 추가되면 좋겠습니다.', 1400, 'PAID', '2026-10-27 11:20:00'),
+                    ('fb_demo_02', 'camp_01_carbon_dmrv', 'sess_seed_02', 'tester_02', '제조업 전문 대표님 #07', 95, 4, 5, 5, 10, '기타', '현장 센서와의 실시간 동기화 인터페이스가 우수합니다. 공장별 커스텀 대시보드 기능이 필요합니다.', 1400, 'PAID', '2026-10-27 13:45:00'),
+                    ('fb_demo_03', 'camp_01_carbon_dmrv', 'sess_seed_03', 'tester_03', '초기창업자 #88 (SaaS)', 180, 4, 4, 3, 8, '속도지연', '초기 로딩 시 대용량 데이터 렌더링에 약간의 지연이 발생하지만 전체적인 분석 프로세스가 명확합니다.', 1400, 'PAID', '2026-10-27 15:10:00'),
+                    ('fb_demo_04', 'camp_01_carbon_dmrv', 'sess_seed_04', 'tester_04', 'ESG 컨설턴트 #19', 210, 5, 5, 5, 10, '기타', '정부 온실가스 배출권 검증 가이드라인에 완벽히 부합하는 필수 입력 필드가 잘 정리되어 있습니다.', 1400, 'PAID', '2026-10-27 17:30:00'),
+                    ('fb_demo_05', 'camp_01_carbon_dmrv', 'sess_seed_05', 'tester_05', 'IT 솔루션 대표 #34', 85, 3, 4, 3, 7, 'UI깨짐/가독성', '모바일 반응형 뷰에서 일부 차트 범례가 겹쳐 보입니다. 데스크톱 뷰는 매우 훌륭합니다.', 1400, 'PAID', '2026-10-28 09:15:00'),
+                ]
+                for fb in sample_feedbacks:
+                    conn.execute("""
+                    INSERT OR IGNORE INTO prototype_feedbacks (
+                        id, campaign_id, session_id, tester_id, tester_alias,
+                        dwell_seconds, ux_score, functionality_score, willingness_to_pay,
+                        nps_recommend_score, blocker_category, qualitative_feedback,
+                        reward_amount, reward_status, created_at
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+                    """, fb)
                 # 기존 테이블 마이그레이션: target_year 컬럼 유무 점검 및 추가
                 cols = [r["name"] for r in conn.execute("PRAGMA table_info(announcements)").fetchall()]
                 if "target_year" not in cols:
                     conn.execute("ALTER TABLE announcements ADD COLUMN target_year INTEGER DEFAULT 2026;")
+                # REQ-030: tenant_salt 컬럼 유무 점검 및 추가(idempotent)
+                tcols = [r["name"] for r in conn.execute("PRAGMA table_info(tenants)").fetchall()]
+                if "tenant_salt" not in tcols:
+                    conn.execute("ALTER TABLE tenants ADD COLUMN tenant_salt TEXT DEFAULT '';")
+                # REQ-032: 1테넌트=1사업자 Hard-Lock / 구독 / 멤버십 잔여 한도 컬럼 보강(idempotent)
+                if "biz_model" not in tcols:
+                    conn.execute("ALTER TABLE tenants ADD COLUMN biz_model TEXT DEFAULT 'ict_deeptech';")
+                if "subscription_tier" not in tcols:
+                    conn.execute("ALTER TABLE tenants ADD COLUMN subscription_tier TEXT DEFAULT 'free';")
+                if "credit_balance" not in tcols:
+                    conn.execute("ALTER TABLE tenants ADD COLUMN credit_balance INTEGER DEFAULT 0;")
                 conn.commit()
+                # REQ-035: grant_master.db 기본 Ground-Truth 2026 공고 2건 시딩
+                if self.db_path.name == "grant_master.db" and "pytest" not in str(self.db_path):
+                    conn.execute(
+                        """INSERT OR IGNORE INTO announcements
+                           (canonical_id, official_notice_no, title, organization, ministry, deadline, source_portal, detail_url, target_year)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        (
+                            "iris:2026_lam_ai",
+                            "제2026-022696호",
+                            "2026년도 인간-AI 협업형 LAM 개발 지원사업",
+                            "정보통신기획평가원",
+                            "과학기술정보통신부",
+                            "2026-12-31",
+                            "iris",
+                            "https://www.iris.go.kr/contents/retrieveBsnsAncmView.do?ancmId=022696",
+                            2026,
+                        ),
+                    )
+                    conn.execute(
+                        """INSERT OR IGNORE INTO announcements
+                           (canonical_id, official_notice_no, title, organization, ministry, deadline, source_portal, detail_url, target_year)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                        (
+                            "k_startup:2026_master_biz",
+                            "제2026-175783호",
+                            "2026년도 중앙부처 및 지자체 창업지원사업 통합공고",
+                            "창업진흥원",
+                            "중소벤처기업부",
+                            "2026-12-31",
+                            "k_startup",
+                            "https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&pbancSn=175783",
+                            2026,
+                        ),
+                    )
         except Exception as e:
             logger.warning("DB 스키마 보강 실패(degrade): %s", e)
 
@@ -591,15 +783,16 @@ class GrantDatabase:
             with self._connect() as conn:
                 conn.execute(
                     """
-                    INSERT INTO tenants (id, company_name, biz_reg_no, opened_date, rep_name, region, plan_tier)
-                    VALUES (?, ?, ?, ?, ?, ?, ?)
+                    INSERT INTO tenants (id, company_name, biz_reg_no, opened_date, rep_name, region, plan_tier, tenant_salt)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
                     ON CONFLICT(id) DO UPDATE SET
                         company_name = excluded.company_name,
                         biz_reg_no = excluded.biz_reg_no,
                         opened_date = excluded.opened_date,
                         rep_name = excluded.rep_name,
                         region = excluded.region,
-                        plan_tier = excluded.plan_tier;
+                        plan_tier = excluded.plan_tier,
+                        tenant_salt = COALESCE(NULLIF(excluded.tenant_salt, ''), tenant_salt);
                     """,
                     (
                         data.get("id"),
@@ -609,6 +802,7 @@ class GrantDatabase:
                         data.get("rep_name", ""),
                         data.get("region", "서울"),
                         data.get("plan_tier", "PRO"),
+                        data.get("tenant_salt", ""),
                     ),
                 )
                 conn.commit()
@@ -714,6 +908,36 @@ class GrantDatabase:
         except Exception as e:
             logger.warning("add_tenant_asset 실패: %s", e)
             return False
+
+    def list_tenant_assets_raw(self, tenant_id: str, category: Optional[str] = None) -> List[dict]:
+        """자산을 저장된 원문(raw) 형태로 조회. 암호 복호화는 보안/서비스 레이어에서 수행.
+        (list_tenant_assets와 달리 parsed_metadata를 json.loads하지 않고 그대로 반환)"""
+        try:
+            with self._connect() as conn:
+                sql = "SELECT * FROM tenant_assets WHERE tenant_id = ?"
+                params = [tenant_id]
+                if category and category != "ALL":
+                    sql += " AND asset_category = ?"
+                    params.append(category)
+                sql += " ORDER BY created_at DESC"
+                cur = conn.execute(sql, params)
+                return [dict(r) for r in cur.fetchall()]
+        except Exception as e:
+            logger.warning("list_tenant_assets_raw 실패: %s", e)
+            return []
+
+    def get_tenant_asset_raw(self, asset_id: str, tenant_id: str) -> Optional[dict]:
+        """단일 자산의 저장된 원문(raw) 조회(parsed_metadata json 파싱 X)."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT * FROM tenant_assets WHERE id = ? AND tenant_id = ?",
+                    (asset_id, tenant_id),
+                ).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_tenant_asset_raw 실패: %s", e)
+            return None
 
     def list_tenant_assets(self, tenant_id: str, category: Optional[str] = None) -> List[dict]:
         """테넌트의 자산 목록 조회 (카테고리 필터 옵션)."""
@@ -880,4 +1104,208 @@ class GrantDatabase:
         except Exception as e:
             logger.warning("delete_grant_project 실패: %s", e)
             return False
+
+    # ------------------------------------------------------------------ REQ-047 프로토타입 검증 & 리워드 경제
+    def create_prototype_campaign(self, campaign: dict) -> bool:
+        """신규 프로토타입 검증 캠페인 생성."""
+        try:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO prototype_campaigns (
+                        id, item_id, tenant_id, prototype_url, title, description,
+                        target_testers, fee_per_test, tester_reward, platform_fee,
+                        total_budget, completed_testers, status, created_at
+                    ) VALUES (
+                        :id, :item_id, :tenant_id, :prototype_url, :title, :description,
+                        :target_testers, :fee_per_test, :tester_reward, :platform_fee,
+                        :total_budget, :completed_testers, :status, :created_at
+                    )
+                    """,
+                    campaign,
+                )
+                return True
+        except Exception as e:
+            logger.warning("create_prototype_campaign 실패: %s", e)
+            return False
+
+    def get_prototype_campaign(self, campaign_id: str) -> Optional[dict]:
+        """단일 프로토타입 검증 캠페인 조회."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT * FROM prototype_campaigns WHERE id = ?", (campaign_id,)
+                ).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_prototype_campaign 실패: %s", e)
+            return None
+
+    def list_prototype_campaigns(
+        self, status: Optional[str] = None, item_id: Optional[str] = None
+    ) -> List[dict]:
+        """프로토타입 검증 캠페인 목록 조회."""
+        try:
+            with self._connect() as conn:
+                query = "SELECT * FROM prototype_campaigns WHERE 1=1"
+                params: list = []
+                if status:
+                    query += " AND status = ?"
+                    params.append(status)
+                if item_id:
+                    query += " AND item_id = ?"
+                    params.append(item_id)
+                query += " ORDER BY created_at DESC"
+                cur = conn.execute(query, params)
+                return [dict(r) for r in cur.fetchall()]
+        except Exception as e:
+            logger.warning("list_prototype_campaigns 실패: %s", e)
+            return []
+
+    def update_prototype_campaign(self, campaign_id: str, **fields: Any) -> bool:
+        """캠페인 상태/참여자 수 갱신."""
+        allowed = {"completed_testers", "status", "title", "description", "prototype_url"}
+        payload = {k: v for k, v in fields.items() if k in allowed}
+        if not payload:
+            return False
+        try:
+            with self._connect() as conn:
+                cols = ", ".join(f"{k} = ?" for k in payload)
+                cur = conn.execute(
+                    f"UPDATE prototype_campaigns SET {cols} WHERE id = ?",
+                    list(payload.values()) + [campaign_id],
+                )
+                return cur.rowcount > 0
+        except Exception as e:
+            logger.warning("update_prototype_campaign 실패: %s", e)
+            return False
+
+    def start_prototype_session(self, session: dict) -> bool:
+        """테스터 실사용 세션 시작."""
+        try:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO prototype_sessions (
+                        id, campaign_id, tester_id, active_seconds, visible_seconds,
+                        status, started_at, completed_at
+                    ) VALUES (
+                        :id, :campaign_id, :tester_id, :active_seconds, :visible_seconds,
+                        :status, :started_at, :completed_at
+                    )
+                    """,
+                    session,
+                )
+                return True
+        except Exception as e:
+            logger.warning("start_prototype_session 실패: %s", e)
+            return False
+
+    def get_prototype_session(self, session_id: str) -> Optional[dict]:
+        """프로토타입 세션 조회."""
+        try:
+            with self._connect() as conn:
+                row = conn.execute(
+                    "SELECT * FROM prototype_sessions WHERE id = ?", (session_id,)
+                ).fetchone()
+                return dict(row) if row else None
+        except Exception as e:
+            logger.warning("get_prototype_session 실패: %s", e)
+            return None
+
+    def update_prototype_session(
+        self, session_id: str, active_seconds: int, visible_seconds: int, status: str
+    ) -> bool:
+        """세션 하트비트 누적 및 상태 갱신."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    """
+                    UPDATE prototype_sessions
+                    SET active_seconds = ?, visible_seconds = ?, status = ?
+                    WHERE id = ?
+                    """,
+                    (active_seconds, visible_seconds, status, session_id),
+                )
+                return cur.rowcount > 0
+        except Exception as e:
+            logger.warning("update_prototype_session 실패: %s", e)
+            return False
+
+    def save_prototype_feedback(self, feedback: dict) -> bool:
+        """피드백 저장 및 리워드 지급 상태 기록."""
+        try:
+            with self._connect() as conn:
+                conn.execute(
+                    """
+                    INSERT INTO prototype_feedbacks (
+                        id, campaign_id, session_id, tester_id, tester_alias,
+                        dwell_seconds, ux_score, functionality_score, willingness_to_pay,
+                        nps_recommend_score, blocker_category, qualitative_feedback,
+                        reward_amount, reward_status, created_at
+                    ) VALUES (
+                        :id, :campaign_id, :session_id, :tester_id, :tester_alias,
+                        :dwell_seconds, :ux_score, :functionality_score, :willingness_to_pay,
+                        :nps_recommend_score, :blocker_category, :qualitative_feedback,
+                        :reward_amount, :reward_status, :created_at
+                    )
+                    """,
+                    feedback,
+                )
+                # 세션 상태도 COMPLETED로 갱신
+                conn.execute(
+                    "UPDATE prototype_sessions SET status = 'COMPLETED', completed_at = ? WHERE id = ?",
+                    (feedback["created_at"], feedback["session_id"]),
+                )
+                # 캠페인 completed_testers 증가 및 목표 달성 시 COMPLETED 전환
+                conn.execute(
+                    """
+                    UPDATE prototype_campaigns
+                    SET completed_testers = completed_testers + 1,
+                        status = CASE WHEN completed_testers + 1 >= target_testers THEN 'COMPLETED' ELSE status END
+                    WHERE id = ?
+                    """,
+                    (feedback["campaign_id"],),
+                )
+                return True
+        except Exception as e:
+            logger.warning("save_prototype_feedback 실패: %s", e)
+            return False
+
+    def list_prototype_feedbacks(self, campaign_id: str) -> List[dict]:
+        """캠페인에 등록된 피드백 목록 조회."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    "SELECT * FROM prototype_feedbacks WHERE campaign_id = ? ORDER BY created_at DESC",
+                    (campaign_id,),
+                )
+                return [dict(r) for r in cur.fetchall()]
+        except Exception as e:
+            logger.warning("list_prototype_feedbacks 실패: %s", e)
+            return []
+
+    def get_tester_rewards_summary(self, tester_id: str) -> dict:
+        """특정 테스터의 누적 리워드 요약."""
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    """
+                    SELECT COUNT(*) as completed_count, COALESCE(SUM(reward_amount), 0) as total_reward
+                    FROM prototype_feedbacks
+                    WHERE tester_id = ? AND reward_status = 'PAID'
+                    """,
+                    (tester_id,),
+                )
+                row = cur.fetchone()
+                if row:
+                    return {
+                        "completed_count": row["completed_count"],
+                        "total_reward": row["total_reward"],
+                    }
+                return {"completed_count": 0, "total_reward": 0}
+        except Exception as e:
+            logger.warning("get_tester_rewards_summary 실패: %s", e)
+            return {"completed_count": 0, "total_reward": 0}
+
 

@@ -1,0 +1,891 @@
+{% extends "base.html" %}
+{% import "components/kh_macros.html" as kh %}
+{% block title %}과제비서 AI · 정부지원사업 맞춤형 공고 매칭 & 지원 자격 진단{% endblock %}
+
+{% block content %}
+<div class="space-y-10">
+  <!-- 메인 히어로 섹션 -->
+  <section id="hero-intro" class="kh-hero-obsidian kh-page-hero reveal kh-scroll-target">
+    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+      <span class="kh-badge cyan">정부지원사업 맞춤 매칭<span class="sr-only">2026</span></span>
+      <span class="text-xs text-cyan-300">중앙부처·공공기관 실시간 공고 분석 · 25대 결격사유 1초 사전 검증</span>
+    </div>
+
+    <!-- 시연 비디오 -->
+    <div class="relative h-[380px] sm:h-[420px] w-full overflow-hidden mb-6 rounded-2xl border border-white/15 shadow-2xl">
+      <video autoplay muted loop playsinline poster="/static/media/intro/hero_fatigue_vs_winning_edge.jpg" class="w-full h-full object-cover">
+        <source src="/static/media/intro/intro_showreel.mp4" type="video/mp4" />
+        귀하의 브라우저는 비디오 재생을 지원하지 않습니다.
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-transparent flex items-end p-6">
+        <div class="flex items-center gap-3 text-white/90 text-xs sm:text-sm">
+          <i class="fa-solid fa-circle-play text-cyan-400 text-2xl"></i>
+          <span>찾아 헤매는 번거로움은 없애고, 신청 준비 효율을 극대화합니다</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 핵심 가치 문구 -->
+    <div class="text-center max-w-4xl mx-auto">
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight">
+        과제사업을 일일이 찾아다니고<br />
+        수많은 정부 공고 중 내 기업에 맞는 지원사업을 일일이 탐색하는 피로
+      </h1>
+      <p class="text-lg sm:text-2xl text-slate-200 mb-8 leading-relaxed">
+        기업 맞춤 공고 추천과 공고별 필수 자격요건 및 가점 항목 정밀 분석을 통해<br />
+        <span class="text-cyan-300 font-bold">빠르게 검토하고</span>
+        <span class="text-emerald-300 font-bold">완성도 높은 서류로 적시 지원하는 가치</span>
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 mt-4">
+        <a href="#prototype-lounge" class="kh-btn primary text-base px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white">
+          <i class="fa-solid fa-play"></i> ⚡ 프로토타입 체험 &amp; 7:3 리워드 라운지
+        </a>
+        <a href="/vault?role=subscriber" class="kh-btn ghost text-white border-white/30 bg-white/10 px-6 py-3">
+          <i class="fa-solid fa-rocket"></i> 1분 무료 과제 매칭 시작하기
+        </a>
+        <button type="button" class="kh-btn ghost text-white border-white/30 bg-white/10 px-5 py-3" onclick="document.querySelector('[data-tab=pricing-plan]')?.click(); document.getElementById('section-pricing-plan')?.scrollIntoView({behavior:'smooth'});">
+          <i class="fa-solid fa-gem"></i> 요금 안내·샘플 보기
+        </button>
+        <a href="/dashboard/biz?role=subscriber" class="kh-btn ghost text-cyan-300 border-cyan-400/40 bg-cyan-950/40 px-5 py-3">
+          <i class="fa-solid fa-briefcase"></i> 사업자 워크스페이스 둘러보기
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 권한별 서비스 안내 -->
+  <section>
+    {{ kh.kh_section_header('', '맞춤 서비스 안내', '초기 방문자, 유료 사업자, 관리자의 목적에 맞는 맞춤 화면을 제공합니다.', 'cyan') }}
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {% for r_key, r_info in (all_portals or {}).items() %}
+      <div class="krds-card krds-hover flex flex-col justify-between {% if current_role == r_key %}ring-2 ring-blue-600{% endif %}">
+        <div>
+          <span class="kh-badge {% if r_key == 'visitor' %}cyan{% elif r_key == 'subscriber' %}emerald{% else %}gold{% endif %}">{{ r_info.badge }}</span>
+          <h4 class="font-bold text-slate-900 text-lg mt-2">{{ r_info.label }}</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">{{ r_info.subtitle }}</p>
+        </div>
+        <button type="button" class="krds-btn ghost mt-4 w-full text-xs" onclick="switchServiceRole('{{ r_key }}', '{{ r_info.home_url }}')">
+          <i class="fa-solid {{ r_info.icon }}"></i> {{ r_info.short_label }} 모드로 전환
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 5막 공감 스토리보드 -->
+  <section id="story-5acts" class="kh-scroll-target">
+    {{ kh.kh_section_header('', '대표님의 여정: 5막 성장 스토리', '야근의 한숨부터 아침 맞춤 알림, 공고 요건 정밀 분석, 다지원 신청, 그리고 소중한 인맥과 사업운까지', 'violet') }}
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {% for act in story_5acts %}
+        {{ kh.kh_story_act_card(act, loop.index) }}
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- 2026 모두의 창업 대비: AI 바이브코딩 프로토타입 체험 & 7:3 리워드 라운지 (모두를 위한 오픈 라운지) -->
+  <section id="prototype-lounge" class="kh-scroll-target">
+    <div class="krds-card p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-purple-950 to-slate-950 text-white rounded-2xl shadow-xl border border-purple-800/40">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap mb-2">
+            <span class="kh-badge violet"><i class="fa-solid fa-code-compare mr-1"></i>2026 모두의 창업 · 예비창업 실전 대비</span>
+            <span class="kh-badge emerald"><i class="fa-solid fa-hand-holding-dollar mr-1"></i>건당 70% 리워드 즉시 정산</span>
+            <span class="kh-badge cyan"><i class="fa-solid fa-stamp mr-1"></i>심사위원 제출용 A4 공인 보고서</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+            동료 창업자 바이브코딩 프로토타입 체험 &amp; 7:3 피드백 리워드 라운지
+          </h2>
+          <p class="text-xs sm:text-sm text-purple-200 mt-1.5 leading-relaxed max-w-3xl">
+            AI 혁명으로 청년, 중장년, 실버 창업자 누구나 바이브코딩으로 웹과 앱을 개발하는 시대입니다. 
+            동료가 만든 실서비스를 <strong>60초간 직접 체험</strong>하고 솔직한 피드백을 남겨주시면 <strong>건당 요금의 70%(1,400원)</strong>가 테스터 수당으로 정산되며, 
+            창업자에게는 정부 심사위원이 신뢰하는 <strong>위·변조 방지 SHA-256 전자서명 평가 보고서</strong>가 발행됩니다.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+          <div class="p-3 rounded-xl bg-white/10 border border-white/15 backdrop-blur-sm text-right">
+            <span class="text-xs text-purple-200 block">나의 테스터 수당 현황</span>
+            <span class="text-base font-extrabold text-white kh-tabular">
+              {{ tester_summary.total_reward if tester_summary and tester_summary.total_reward is defined else 0 }}원
+              <span class="text-xs font-normal text-purple-300 ml-1">({{ tester_summary.completed_count if tester_summary and tester_summary.completed_count is defined else 0 }}건 완료)</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4대 가치 인프라 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-6">
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-stopwatch text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">60초 유효 체류시간 락</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">Page Visibility 실사용 탐색 감지로 체리피커를 차단하고 60초 이상 사용 시에만 피드백 제출 잠금이 해제됩니다.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-hand-holding-dollar text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">7:3 투명한 상생 리워드</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">건당 2,000원의 검증 예산 중 70%(1,400원)는 참여자에게 즉시 지급되고 30%(600원)는 플랫폼 운영 수수료로 정산됩니다.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-chart-pie text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">3단계 구조화 실사용 평가</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">핵심 블로커(버그/가치/UI/속도), 4대 정량 지표(UX/기능/지불용의/NPS), 15자 이상의 심층 의견을 수집합니다.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-file-shield text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">심사위원 제출용 A4 공인 서식</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">정부과제 심사위원이 공인할 수 있는 NPS 분석 차트와 데이터 무결성 보증 SHA-256 전자서명 날인 보고서가 자동 생성됩니다.</p>
+        </div>
+      </div>
+
+      <!-- 실시간 활성 프로토타입 체험 캠페인 그리드 -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-purple-400"></i>
+            <span>현재 참여 가능한 동료 프로토타입 검증 캠페인</span>
+          </h3>
+          <span class="text-xs text-purple-300">누구나 즉시 체험하고 수당을 적립할 수 있습니다</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {% for c in active_campaigns %}
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800 border border-purple-200">
+                    <i class="fa-solid fa-bolt mr-1"></i>실사용 테스터 모집 중
+                  </span>
+                  <h4 class="text-sm font-bold text-slate-900 mt-1.5">{{ c.title or c.item_id }}</h4>
+                </div>
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg shrink-0">
+                  건당 {{ c.tester_reward }}원 적립
+                </span>
+              </div>
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                {{ c.description or '바이브코딩으로 배포된 웹/앱 프로토타입 실사용 검증' }}
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>{{ c.prototype_url }}
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>검증 참여 진척</span>
+                  <span class="font-bold kh-tabular">{{ c.completed_testers }} / {{ c.target_testers }}명 ({{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+                  <div class="bg-purple-600 h-2 rounded-full" style="width: {{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="/prototype/report/{{ c.id }}" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 고객 검증 보고서 샘플
+              </a>
+              <button type="button" onclick="openTesterModal('{{ c.id }}', '{{ c.title or c.item_id }}', '{{ c.prototype_url }}', {{ c.tester_reward }})" class="krds-btn primary text-xs py-1.5 px-3.5 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>60초 체험 &amp; 수당 받기
+              </button>
+            </div>
+          </div>
+          {% else %}
+          <div class="col-span-2 text-center py-8 text-xs text-purple-200 bg-white/5 rounded-xl border border-dashed border-white/20">
+            현재 진행 중인 동료 창업자 프로토타입 검증 캠페인이 없습니다.
+          </div>
+          {% endfor %}
+        </div>
+
+        <!-- 창업자용 캠페인 발주 유도 배너 -->
+        <div class="mt-4 p-4 rounded-xl bg-purple-900/60 border border-purple-500/40 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-purple-200">
+            <span class="font-bold text-white text-sm block">💡 대표님의 AI 바이브코딩 프로토타입도 객관적 평가가 필요하신가요?</span>
+            웹/앱 링크만 등록하시면 동료 창업자 및 외부 테스터들이 60초간 검증하고 심사위원용 A4 보고서를 생성해 드립니다.
+          </div>
+          <a href="/items" class="krds-btn primary text-xs py-2 px-4 bg-white text-purple-900 hover:bg-purple-50 font-bold shrink-0">
+            <i class="fa-solid fa-plus mr-1"></i>내 프로토타입 검증 캠페인 발주하기
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 제5막 성장의 길잡이 & 파트너 생태계 -->
+  <section id="growth-partners" class="kh-scroll-target">
+    <div class="krds-card p-6 sm:p-8 bg-gradient-to-br from-slate-50 to-blue-50/40">
+      {{ kh.kh_section_header('', '성장의 길잡이 & 5대 전문 파트너 생태계', '과제 자금도 기업의 성장에 맞춰 단계별로 미리 준비해야 합니다. 본연의 사업에 집중하세요.', 'emerald') }}
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="krds-card">
+          <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-route text-blue-600"></i> 성장 단계별 로드맵
+          </h4>
+          <ul class="space-y-2.5 text-xs text-slate-700">
+            {% for s in growth_steps %}
+            <li class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <strong class="text-slate-900 block">{{ s.step }} ({{ s.grant_scale }})</strong>
+              <span class="text-slate-600">{{ s.prep }}</span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="krds-card">
+          <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-handshake-angle text-emerald-600"></i> 5대 전문 파트너 네트워크
+          </h4>
+          <ul class="space-y-2 text-xs text-slate-700">
+            {% for p in partner_pillars %}
+            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+              <i class="fa-solid {{ p.icon }} text-blue-600 mt-0.5"></i>
+              <div>
+                <strong class="text-slate-900">{{ p.name }}</strong>
+                <span class="text-slate-600 block">{{ p.desc }}</span>
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="krds-card flex flex-col justify-between bg-slate-900 text-white">
+          <div>
+            <blockquote class="border-l-4 border-emerald-400 pl-4 italic text-slate-100 text-base leading-relaxed mt-2">
+              "사업은 인맥이고, 그 인맥을 위해 본연의 사업에 집중하세요. 그러면 인맥과 사업운은 따라옵니다."
+            </blockquote>
+          </div>
+          <p class="text-xs text-slate-300 mt-4 leading-relaxed">
+            복잡한 공고 분석과 자격 요건 검토는 과제비서 AI에게 맡기시고, 대표님은 핵심 서비스와 사람을 만나는 데 집중하세요.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 샘플 미리보기 및 요금 안내 -->
+  {% set default_tab = 'pricing-plan' if active_page == 'pricing' else 'sample-overview' %}
+  <section id="section-pricing-plan" class="kh-scroll-target">
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3 mb-6" role="tablist" aria-label="샘플 및 요금 안내 탭">
+      <button class="krds-btn ghost tab-btn {% if default_tab == 'sample-overview' %}active{% endif %}" data-tab="sample-overview" role="tab" aria-selected="{{ 'true' if default_tab == 'sample-overview' else 'false' }}" id="tab-btn-sample">작성 가이드 샘플</button>
+      <button class="krds-btn ghost tab-btn" data-tab="paywall-preview" role="tab" aria-selected="false" id="tab-btn-paywall">잠금 미리보기</button>
+      <button class="krds-btn ghost tab-btn {% if default_tab == 'pricing-plan' %}active{% endif %}" data-tab="pricing-plan" role="tab" aria-selected="{{ 'true' if default_tab == 'pricing-plan' else 'false' }}" id="tab-btn-pricing">요금 안내</button>
+    </div>
+
+    <div class="tab-content {% if default_tab == 'sample-overview' %}active{% endif %}" id="tab-sample-overview">
+      <h3 class="font-bold text-slate-900 mb-3">작성 가이드 샘플</h3>
+      <p class="text-slate-600 text-sm mb-4">공고 항목별 심사위원 채점 기준에 맞춘 표준 작성 가이드입니다.</p>
+      <div class="krds-card p-6">
+        <h4 class="font-bold text-slate-800 mb-3">작성 항목 예시</h4>
+        <ul class="list-disc list-inside text-slate-600 text-sm space-y-2">
+          <li>문제인식: 과제의 핵심 필요성을 1문장으로 명확히 요약</li>
+          <li>기술개발: 독자적인 기술 차별점 및 정량적 목표치 기술</li>
+          <li>사업화 전략: 실질적인 시장 진입 경로 및 판로 확보 방안</li>
+          <li>예산 산출표: 정부출연금과 민간부담금의 합리적 배분 산출</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-paywall-preview">
+      <h3 class="font-bold text-slate-900 mb-3">미리보기 및 유료 잠금</h3>
+      <p class="text-slate-600 text-sm mb-4">무료 체험에서는 첫 번째 항목(문제인식)을 즉시 확인하실 수 있습니다.</p>
+      <div class="krds-card p-6 relative overflow-hidden">
+        <p class="text-slate-700 text-sm font-medium mb-2">항목 1 (문제인식): <span class="text-emerald-600 font-bold">열람 가능 — 시장 규모 및 핵심 문제 정의 완료</span></p>
+        <div class="p-4 bg-slate-100 rounded mt-3 space-y-2 select-none blur-sm">
+          <p class="text-slate-600 text-sm">항목 2~4 (기술개발·사업화·예산): 유료 플랜 잠금 — 상세 기술 계획 및 예산 산출 내역</p>
+          <p class="text-slate-600 text-sm">공식 양식 다운로드: 정부출연금 75% / 기업부담금 25% 자동 계산표</p>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-2 bg-blue-50 p-3.5 rounded-lg border border-blue-200">
+          <span class="text-sm font-semibold text-slate-800">전체 항목 열람 및 공식 양식 다운로드</span>
+          <button type="button" class="krds-btn primary" onclick="subscribePlan('growth')">성장형 플랜으로 시작하기</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content {% if default_tab == 'pricing-plan' %}active{% endif %}" id="tab-pricing-plan">
+      <h3 class="font-bold text-slate-900 mb-4">월간 / 연간 요금 안내</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        {% for plan in pricing_4tiers %}
+          {{ kh.kh_pricing_card(plan) }}
+        {% endfor %}
+      </div>
+
+      <div class="mt-6 p-4 bg-slate-100 rounded-xl border border-slate-200">
+        <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
+          <input type="checkbox" id="annual-toggle" class="rounded border-slate-400 w-4 h-4" />
+          <span>연간 결제 시 20% 특별 할인 (부가세 10% 별도)</span>
+        </label>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 2026 모두의 창업 대비: 프로토타입 실사용 체험 및 피드백 모달 -->
+<div id="testerModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 text-xs text-slate-700 my-8 max-h-[90vh] overflow-y-auto flex flex-col justify-between">
+    <div>
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="kh-badge violet">바이브코딩 실사용 평가</span>
+            <h3 class="text-sm font-bold text-slate-900" id="testerModalTitle">프로토타입 실사용 검증</h3>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            조작 및 체류 시간 60초 이상 충족 후 정성 피드백을 작성하시면 <span id="testerModalRewardText" class="font-bold text-purple-700">1,400원</span> 테스터 수당이 정산됩니다.
+          </p>
+        </div>
+        <button type="button" onclick="closeTesterModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+      </div>
+
+      <!-- 실시간 체류 타이머 & 체리피커 방지 상태 바 -->
+      <div class="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-base">
+            <i class="fa-solid fa-stopwatch"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500 block">실사용 체류 시간</span>
+            <span id="dwellTimerText" class="font-mono text-base font-extrabold text-purple-800">00:00</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span id="dwellStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+            <i class="fa-solid fa-shield-halved mr-1"></i>체류 기준: 60초 필요 (<span id="dwellRemainingSec">60</span>초 남음)
+          </span>
+          <p class="text-xs text-slate-400 mt-1">※ 다른 탭으로 전환 시 체류 시간 측정이 일시 정지됩니다.</p>
+        </div>
+      </div>
+
+      <!-- 프로토타입 뷰어 영역 -->
+      <div class="mt-4 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-window-maximize text-blue-600"></i> 임베디드 프로토타입 샌드박스
+          </span>
+          <a id="testerDirectLink" href="#" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+            새 창에서 전체화면으로 열기 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+        <div class="w-full h-72 border border-slate-200 rounded-xl bg-slate-100 overflow-hidden relative">
+          <iframe id="testerIframe" class="w-full h-full bg-white" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
+        </div>
+      </div>
+
+      <!-- 3단계 실사용 피드백 작성 폼 -->
+      <div class="mt-6 border-t border-slate-200 pt-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <h4 class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-check text-purple-600"></i> 심사위원 제출용 3단계 실사용 피드백
+          </h4>
+          <span id="feedbackLockStatus" class="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+            <i class="fa-solid fa-lock mr-1"></i>60초 실사용 체험 후 작성 활성화
+          </span>
+        </div>
+
+        <form id="testerFeedbackForm" onsubmit="submitTesterFeedback(event)" class="space-y-4">
+          <!-- 1. 핵심 블로커 선택 -->
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">1. 사용 중 발견된 가장 큰 개선 블로커</label>
+            <select id="fb_blocker_category" class="w-full border rounded-lg p-2 bg-white text-xs">
+              <option value="NONE">핵심 결함 없음 (원활하게 작동 및 핵심 가치 전달됨)</option>
+              <option value="UI_UX">UI/UX 결함 (조작이 복잡하거나 직관성이 낮음)</option>
+              <option value="FEATURE_BUG">기능 오류 / 버그 (버튼 미작동, 로딩 멈춤 등)</option>
+              <option value="VALUE_PROP">가치 제안 모호 (기능 대비 효용성이나 차별성이 부족함)</option>
+              <option value="PERFORMANCE">반응 속도 지연 (응답 속도가 느리거나 무거움)</option>
+            </select>
+          </div>
+
+          <!-- 2. 4대 정량 지표 평가 -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">UI 직관성</label>
+              <select id="fb_ux_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 (매우 직관적)</option>
+                <option value="4" selected>4점 (우수)</option>
+                <option value="3">3점 (보통)</option>
+                <option value="2">2점 (미흡)</option>
+                <option value="1">1점 (매우 불편)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">기능 완성도</label>
+              <select id="fb_func_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 (완성도 높음)</option>
+                <option value="4" selected>4점 (기능 충실)</option>
+                <option value="3">3점 (보통)</option>
+                <option value="2">2점 (핵심 기능 누락)</option>
+                <option value="1">1점 (작동 불가)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">지불 용의성</label>
+              <select id="fb_wtp_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 (기꺼이 유료 구매)</option>
+                <option value="4">4점 (합리적 가격 시 구매)</option>
+                <option value="3" selected>3점 (무료 위주 탐색)</option>
+                <option value="2">2점 (지불 의사 희박)</option>
+                <option value="1">1점 (지불 의사 없음)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">동료 추천(NPS)</label>
+              <select id="fb_nps_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="10">10점 (적극 추천)</option>
+                <option value="9" selected>9점 (추천)</option>
+                <option value="8">8점 (우수)</option>
+                <option value="7">7점 (중립)</option>
+                <option value="5">5점 (보통)</option>
+                <option value="3">3점 (비추천)</option>
+                <option value="0">0점 (절대 비추천)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 3. 구체 정성 피드백 -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-semibold text-slate-700">3. 심사위원 제출용 정성 평가 의견 (최소 15자 이상)</label>
+              <span id="fbCharCount" class="text-xs text-slate-400 font-mono">0 / 15자 이상</span>
+            </div>
+            <textarea id="fb_qualitative_text" rows="3" minlength="15" required oninput="updateCharCount(this)" placeholder="프로토타입을 직접 조작해보며 느낀 핵심 장점, 아쉬운 점 또는 추가되었으면 하는 기능을 구체적으로 적어주세요. (최소 15자)" class="w-full border rounded-lg p-2.5 bg-white text-xs leading-relaxed"></textarea>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+            <button type="button" onclick="closeTesterModal()" class="px-3.5 py-2 rounded-lg border text-slate-600 hover:bg-slate-50">닫기</button>
+            <button type="submit" id="btnSubmitFeedback" disabled class="px-4 py-2 rounded-lg bg-slate-300 text-slate-500 font-bold cursor-not-allowed transition flex items-center gap-1.5">
+              <i class="fa-solid fa-lock" id="btnFeedbackIcon"></i>
+              <span id="btnFeedbackLabel">60초 실사용 체험 필요</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  // 1. 3대 서브 탭 양방향 URL 해시 동기화 함수
+  function switchTab(targetTab, updateHash = true) {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    let found = false;
+
+    tabBtns.forEach(btn => {
+      if (btn.getAttribute('data-tab') === targetTab) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        found = true;
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      }
+    });
+
+    if (!found) return;
+
+    tabContents.forEach(content => {
+      if (content.id === 'tab-' + targetTab) {
+        content.classList.add('active');
+      } else {
+        content.classList.remove('active');
+      }
+    });
+
+    if (updateHash) {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', '#' + targetTab);
+      } else {
+        window.location.hash = targetTab;
+      }
+    }
+  }
+
+  // 2. GNB 서브 메뉴 활성 상태(ScrollSpy) 실시간 갱신
+  function activateGnbItem(pageKey) {
+    document.querySelectorAll('.kh-nav-item').forEach(el => {
+      const p = el.getAttribute('data-nav-page');
+      if (p === pageKey) {
+        el.classList.add('active');
+        el.setAttribute('aria-current', 'page');
+      } else {
+        el.classList.remove('active');
+        el.removeAttribute('aria-current');
+      }
+    });
+
+    document.querySelectorAll('#mobileNavMenu a[data-mobile-nav-page]').forEach(el => {
+      const p = el.getAttribute('data-mobile-nav-page');
+      if (p === pageKey) {
+        el.classList.add('bg-blue-600/20', 'text-cyan-300', 'font-semibold', 'border', 'border-cyan-400/30');
+        el.classList.remove('text-slate-300');
+      } else {
+        el.classList.remove('bg-blue-600/20', 'text-cyan-300', 'font-semibold', 'border', 'border-cyan-400/30');
+        el.classList.add('text-slate-300');
+      }
+    });
+  }
+
+  // 3. 페이지 로드 및 해시 변경 시 처리 핸들러
+  function handleHashAndPricing() {
+    const hash = window.location.hash;
+    const path = window.location.pathname;
+
+    if (path === '/pricing' || hash === '#section-pricing-plan' || hash === '#pricing-plan') {
+      switchTab('pricing-plan', false);
+      activateGnbItem('pricing');
+      const sec = document.getElementById('section-pricing-plan');
+      if (sec && (path === '/pricing' || hash)) {
+        setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+      }
+    } else if (hash === '#sample-overview') {
+      switchTab('sample-overview', false);
+      activateGnbItem('pricing');
+      const sec = document.getElementById('section-pricing-plan');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#paywall-preview') {
+      switchTab('paywall-preview', false);
+      activateGnbItem('pricing');
+      const sec = document.getElementById('section-pricing-plan');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#story-5acts') {
+      activateGnbItem('story');
+      const sec = document.getElementById('story-5acts');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#growth-partners') {
+      activateGnbItem('partners');
+      const sec = document.getElementById('growth-partners');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#hero-intro') {
+      activateGnbItem('intro');
+      const sec = document.getElementById('hero-intro');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // 탭 버튼 클릭 리스너 바인딩
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetTab = this.getAttribute('data-tab');
+        switchTab(targetTab, true);
+      });
+    });
+
+    // 연간 할인 토글 리스너
+    const annualToggle = document.getElementById('annual-toggle');
+    const prices = {
+      free: { monthly: '0원 / 월', annual: '0원 / 월' },
+      growth: { monthly: '39,000원 / 월', annual: '31,200원 / 월 (20% 할인)' },
+      scaleup: { monthly: '120,000원 / 월', annual: '96,000원 / 월 (20% 할인)' },
+      agency: { monthly: '300,000원 / 월', annual: '240,000원 / 월 (20% 할인)' }
+    };
+    if (annualToggle) {
+      annualToggle.addEventListener('change', function() {
+        const isAnnual = this.checked;
+        Object.keys(prices).forEach(tier => {
+          const el = document.getElementById('price-' + tier);
+          if (el) el.textContent = isAnnual ? prices[tier].annual : prices[tier].monthly;
+        });
+      });
+    }
+
+    // 동일 페이지 앵커 링크 부드러운 스크롤 인터셉트
+    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (!href) return;
+        const hashIdx = href.indexOf('#');
+        if (hashIdx === -1) return;
+        const targetPath = href.substring(0, hashIdx);
+        const targetHash = href.substring(hashIdx);
+
+        if (targetPath === '' || targetPath === '/intro' || targetPath === window.location.pathname) {
+          const targetEl = document.querySelector(targetHash);
+          if (targetEl) {
+            e.preventDefault();
+            if (targetHash === '#section-pricing-plan' || targetHash === '#pricing-plan') {
+              switchTab('pricing-plan', true);
+            } else if (targetHash === '#sample-overview') {
+              switchTab('sample-overview', true);
+            } else if (targetHash === '#paywall-preview') {
+              switchTab('paywall-preview', true);
+            }
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+            if (window.history && window.history.replaceState) {
+              window.history.replaceState(null, '', targetHash);
+            }
+          }
+        }
+      });
+    });
+
+    // GNB 내비게이션 링크 중 /pricing 또는 /intro 동일 페이지 인터셉트
+    document.querySelectorAll('.kh-nav-item, #mobileNavMenu a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (window.location.pathname === '/intro') {
+          if (href === '/pricing') {
+            e.preventDefault();
+            switchTab('pricing-plan', true);
+            const sec = document.getElementById('section-pricing-plan');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+          } else if (href === '/intro') {
+            e.preventDefault();
+            const hero = document.getElementById('hero-intro');
+            if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+
+    // ScrollSpy (IntersectionObserver & Scroll Listener Fallback)
+    const spySections = [
+      { id: 'hero-intro', page: 'intro' },
+      { id: 'story-5acts', page: 'story' },
+      { id: 'prototype-lounge', page: 'prototypes' },
+      { id: 'growth-partners', page: 'partners' },
+      { id: 'section-pricing-plan', page: 'pricing' }
+    ];
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const found = spySections.find(s => s.id === entry.target.id);
+            if (found) {
+              activateGnbItem(found.page);
+            }
+          }
+        });
+      }, {
+        rootMargin: '-15% 0px -60% 0px',
+        threshold: 0
+      });
+
+      spySections.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (el) observer.observe(el);
+      });
+    }
+
+    // 초기 해시 및 가격표 탭 라우팅 실행
+    handleHashAndPricing();
+  });
+
+  window.addEventListener('hashchange', handleHashAndPricing);
+
+  async function subscribePlan(tier) {
+    const isAnnual = document.getElementById('annual-toggle')?.checked;
+    const cycle = isAnnual ? 'annual' : 'monthly';
+    const res = await fetch('/api/billing/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier: tier, cycle: cycle, biz_reg_no: '123-45-67890' })
+    });
+    const data = await res.json();
+    if (window.showToast) {
+      window.showToast(data.ok ? '구독 신청이 접수되었습니다.' : '요청 처리 완료', 'ok');
+    }
+  }
+
+  // REQ-047: 바이브코딩 테스터 실사용 및 7:3 피드백 리워드 스크립트 (공개 인트로 라운지)
+  let activeCampaignId = null;
+  let activeSessionId = null;
+  let dwellActiveSeconds = 0;
+  let dwellTimerInterval = null;
+  let heartbeatInterval = null;
+  let isPageVisible = true;
+
+  document.addEventListener('visibilitychange', () => {
+    isPageVisible = !document.hidden;
+  });
+
+  async function openTesterModal(campaignId, itemName, protoUrl, reward) {
+    activeCampaignId = campaignId;
+    activeSessionId = null;
+    dwellActiveSeconds = 0;
+    updateDwellUI();
+
+    document.getElementById('testerModalTitle').textContent = `[${itemName}] 프로토타입 실사용 검증`;
+    document.getElementById('testerModalRewardText').textContent = `${(reward || 1400).toLocaleString()}원`;
+    document.getElementById('testerDirectLink').href = protoUrl;
+    document.getElementById('testerIframe').src = protoUrl;
+
+    document.getElementById('testerFeedbackForm').reset();
+    document.getElementById('fbCharCount').textContent = '0 / 15자 이상';
+    lockFeedbackButton();
+
+    try {
+      const res = await fetch('/api/prototype/sessions/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaign_id: campaignId, tester_id: 'visitor_tester_' + Math.floor(Math.random() * 1000) })
+      });
+      const data = await res.json();
+      if (res.ok && data.session_id) {
+        activeSessionId = data.session_id;
+      }
+    } catch (e) {
+      console.error('Session start error:', e);
+    }
+
+    clearInterval(dwellTimerInterval);
+    clearInterval(heartbeatInterval);
+
+    dwellTimerInterval = setInterval(() => {
+      if (isPageVisible) {
+        dwellActiveSeconds += 1;
+        updateDwellUI();
+      }
+    }, 1000);
+
+    heartbeatInterval = setInterval(async () => {
+      if (!activeSessionId) return;
+      try {
+        await fetch('/api/prototype/sessions/heartbeat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_id: activeSessionId,
+            active_increment: isPageVisible ? 5 : 0,
+            visible_increment: 5
+          })
+        });
+      } catch (e) {
+        console.error('Heartbeat error:', e);
+      }
+    }, 5000);
+
+    document.getElementById('testerModal').classList.remove('hidden');
+  }
+
+  function updateDwellUI() {
+    const mins = Math.floor(dwellActiveSeconds / 60);
+    const secs = dwellActiveSeconds % 60;
+    const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    const timerEl = document.getElementById('dwellTimerText');
+    if (timerEl) timerEl.textContent = timeStr;
+
+    const remaining = Math.max(0, 60 - dwellActiveSeconds);
+    const remEl = document.getElementById('dwellRemainingSec');
+    if (remEl) remEl.textContent = remaining;
+
+    if (dwellActiveSeconds >= 60) {
+      unlockFeedbackButton();
+    }
+  }
+
+  function lockFeedbackButton() {
+    const btn = document.getElementById('btnSubmitFeedback');
+    const icon = document.getElementById('btnFeedbackIcon');
+    const label = document.getElementById('btnFeedbackLabel');
+    const status = document.getElementById('feedbackLockStatus');
+    if (btn) {
+      btn.disabled = true;
+      btn.className = 'px-4 py-2 rounded-lg bg-slate-300 text-slate-500 font-bold cursor-not-allowed transition flex items-center gap-1.5';
+    }
+    if (icon) icon.className = 'fa-solid fa-lock';
+    if (label) label.textContent = '60초 실사용 체험 필요';
+    if (status) {
+      status.className = 'text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full';
+      status.innerHTML = '<i class="fa-solid fa-lock mr-1"></i>60초 실사용 체험 후 작성 활성화';
+    }
+  }
+
+  function unlockFeedbackButton() {
+    const btn = document.getElementById('btnSubmitFeedback');
+    const icon = document.getElementById('btnFeedbackIcon');
+    const label = document.getElementById('btnFeedbackLabel');
+    const status = document.getElementById('feedbackLockStatus');
+    if (btn) {
+      btn.disabled = false;
+      btn.className = 'px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer';
+    }
+    if (icon) icon.className = 'fa-solid fa-paper-plane';
+    if (label) label.textContent = '피드백 제출 및 수당 정산';
+    if (status) {
+      status.className = 'text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full';
+      status.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>실사용 60초 달성! 피드백 작성 가능';
+    }
+    const badge = document.getElementById('dwellStatusBadge');
+    if (badge) {
+      badge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
+      badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>체류 기준 통과 (피드백 정산 가능)';
+    }
+  }
+
+  function updateCharCount(el) {
+    const len = el.value.length;
+    const countEl = document.getElementById('fbCharCount');
+    if (countEl) {
+      countEl.textContent = `${len} / 15자 이상`;
+      if (len >= 15) {
+        countEl.className = 'text-xs text-emerald-600 font-mono font-bold';
+      } else {
+        countEl.className = 'text-xs text-slate-400 font-mono';
+      }
+    }
+  }
+
+  function closeTesterModal() {
+    clearInterval(dwellTimerInterval);
+    clearInterval(heartbeatInterval);
+    const iframe = document.getElementById('testerIframe');
+    if (iframe) iframe.src = 'about:blank';
+    document.getElementById('testerModal').classList.add('hidden');
+  }
+
+  async function submitTesterFeedback(e) {
+    e.preventDefault();
+    if (dwellActiveSeconds < 60) {
+      alert('체리피커 방지 기준에 따라 60초 이상 실제 프로토타입을 조작·탐색한 후 제출하실 수 있습니다.');
+      return;
+    }
+    const textVal = document.getElementById('fb_qualitative_text').value.trim();
+    if (textVal.length < 15) {
+      alert('구체적인 사용성 평가를 위해 최소 15자 이상 의견을 작성해주세요.');
+      return;
+    }
+
+    const payload = {
+      campaign_id: activeCampaignId,
+      session_id: activeSessionId,
+      tester_id: 'visitor_tester',
+      ux_score: parseInt(document.getElementById('fb_ux_score').value, 10),
+      func_score: parseInt(document.getElementById('fb_func_score').value, 10),
+      wtp_score: parseInt(document.getElementById('fb_wtp_score').value, 10),
+      nps_score: parseInt(document.getElementById('fb_nps_score').value, 10),
+      qualitative_text: textVal,
+      blocker_category: document.getElementById('fb_blocker_category').value
+    };
+
+    try {
+      const res = await fetch('/api/prototype/feedback/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (window.showToast) {
+          window.showToast(data.message || '피드백이 성공적으로 등록되었으며 1,400원 테스터 수당이 정산되었습니다.', 'ok');
+        } else {
+          alert(data.message || '피드백이 성공적으로 등록되었으며 테스터 수당이 정산되었습니다.');
+        }
+        closeTesterModal();
+        setTimeout(() => window.location.reload(), 1200);
+      } else {
+        alert('피드백 제출 실패: ' + (data.detail || data.message || '오류가 발생했습니다.'));
+      }
+    } catch (err) {
+      alert('통신 오류: ' + err);
+    }
+  }
+</script>
+{% endblock %}

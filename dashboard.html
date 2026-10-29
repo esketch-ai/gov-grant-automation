@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>대시보드 &middot; 모두의 창업비서 (SSA)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/k_horizon_2027.css?v=20261029_ssa">
+</head>
+<body class="min-h-screen flex flex-col" data-role="admin">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge admin">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>관리자 통합 관제</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">플랫폼 현황 및 감사로그 모니터링</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="./admin_platform.html" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="./static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
+          </div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
+            <span class="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">SSA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
+        
+          
+          <a
+            href="./admin_platform.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="admin_platform"
+            data-nav-href="./admin_platform.html"
+          >
+            <i class="fa-solid fa-sliders text-xs opacity-75"></i>
+            <span>총괄 플랫폼</span>
+          </a>
+          
+          <a
+            href="./governance_partner.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="governance_partner"
+            data-nav-href="./governance_partner.html"
+          >
+            <i class="fa-solid fa-building-columns text-xs opacity-75"></i>
+            <span>거버넌스</span>
+          </a>
+          
+          <a
+            href="./portals.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="portals"
+            data-nav-href="./portals.html"
+          >
+            <i class="fa-solid fa-globe text-xs opacity-75"></i>
+            <span>포털 연동</span>
+          </a>
+          
+          <a
+            href="./audit.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="audit"
+            data-nav-href="./audit.html"
+          >
+            <i class="fa-solid fa-shield-halved text-xs opacity-75"></i>
+            <span>전주기 감사</span>
+          </a>
+          
+          <a
+            href="./audit_logs.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="admin_audit_logs"
+            data-nav-href="./audit_logs.html"
+          >
+            <i class="fa-solid fa-link text-xs opacity-75"></i>
+            <span>감사 추적</span>
+          </a>
+          
+          <a
+            href="./logs.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="logs"
+            data-nav-href="./logs.html"
+          >
+            <i class="fa-solid fa-terminal text-xs opacity-75"></i>
+            <span>시스템 로그</span>
+          </a>
+          
+        
+      </nav>
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('visitor', './intro.html')"
+            class="kh-role-pill kh-role-visitor "
+            data-role-btn="visitor"
+            title="초기 방문자"
+          >
+            <i class="fa-solid fa-compass text-xs"></i>
+            <span>방문자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('subscriber', './biz_dashboard.html')"
+            class="kh-role-pill kh-role-subscriber "
+            data-role-btn="subscriber"
+            title="유료 사업자"
+          >
+            <i class="fa-solid fa-briefcase text-xs"></i>
+            <span>사업자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            onclick="switchServiceRole('admin', './admin_platform.html')"
+            class="kh-role-pill kh-role-admin active"
+            data-role-btn="admin"
+            title="플랫폼 관리자"
+          >
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>관리자</span>
+          </button>
+          
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="./dashboard.html">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        
+        <a
+          href="./admin_platform.html"
+          class="kh-btn-cta amber hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>운영 관제</span>
+        </a>
+        
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge admin">
+          관리자 통합 관제
+        </span>
+      </div>
+      
+        
+        <a
+          href="./admin_platform.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="admin_platform"
+          data-mobile-nav-href="./admin_platform.html"
+        >
+          <i class="fa-solid fa-sliders text-xs w-4 text-center"></i>
+          <span>총괄 플랫폼</span>
+        </a>
+        
+        <a
+          href="./governance_partner.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="governance_partner"
+          data-mobile-nav-href="./governance_partner.html"
+        >
+          <i class="fa-solid fa-building-columns text-xs w-4 text-center"></i>
+          <span>거버넌스</span>
+        </a>
+        
+        <a
+          href="./portals.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="portals"
+          data-mobile-nav-href="./portals.html"
+        >
+          <i class="fa-solid fa-globe text-xs w-4 text-center"></i>
+          <span>포털 연동</span>
+        </a>
+        
+        <a
+          href="./audit.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="audit"
+          data-mobile-nav-href="./audit.html"
+        >
+          <i class="fa-solid fa-shield-halved text-xs w-4 text-center"></i>
+          <span>전주기 감사</span>
+        </a>
+        
+        <a
+          href="./audit_logs.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="admin_audit_logs"
+          data-mobile-nav-href="./audit_logs.html"
+        >
+          <i class="fa-solid fa-link text-xs w-4 text-center"></i>
+          <span>감사 추적</span>
+        </a>
+        
+        <a
+          href="./logs.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="logs"
+          data-mobile-nav-href="./logs.html"
+        >
+          <i class="fa-solid fa-terminal text-xs w-4 text-center"></i>
+          <span>시스템 로그</span>
+        </a>
+        
+      
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        
+        <a href="./admin_platform.html" onclick="toggleMobileNav()" class="kh-btn-cta amber w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>운영 관제</span>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+<div class="space-y-6">
+  <!-- 상단 요약 배너 (REQ-031 KRDS Hero) -->
+  <section class="kh-page-hero tone-indigo reveal mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <div>
+      <h1 class="text-2xl font-bold flex items-center gap-2">
+        <span>정부 R&D 및 공공조달 매칭 대시보드</span>
+        <span class="sr-only">2026년도 정부 R&D/조달 자동 매칭 대시보드</span>
+      </h1>
+      <p class="text-blue-100 text-sm mt-1">지원사업 실시간 적격 매칭 및 통합 데이터 영속화</p>
+    </div>
+    <div class="bg-blue-900/50 backdrop-blur px-4 py-2.5 rounded-lg border border-blue-400/30 text-xs flex gap-4">
+      <div>
+        <span class="text-blue-300 block">시스템 상태</span>
+        <span class="font-semibold text-emerald-400 flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 정상 가동</span>
+      </div>
+      <div>
+        <span class="text-blue-300 block">포털 서킷 보호</span>
+        <span class="font-semibold text-emerald-300 flex items-center gap-1">
+          <i class="fa-solid fa-shield-virus text-emerald-400"></i> 정상 연동
+        </span>
+      </div>
+      <div>
+        <span class="text-blue-300 block">공고 적합성 기준<span class="sr-only">2026 연도 거버넌스</span></span>
+        <span class="font-semibold text-emerald-300 flex items-center gap-1">
+          <i class="fa-solid fa-check-double text-emerald-400"></i> 준수율 100.0%
+        </span>
+      </div>
+      <div>
+        <span class="text-blue-300 block">공고 캘린더</span>
+        <a href="/api/calendar/2026.ics" class="font-semibold text-xs bg-indigo-800/80 hover:bg-indigo-700 text-indigo-200 px-2 py-0.5 rounded border border-indigo-400/40 flex items-center gap-1 transition" title="캘린더 일정 다운로드">
+          <i class="fa-regular fa-calendar-plus"></i> <span>일정 연동</span>
+        </a>
+      </div>
+      <div>
+        <span class="text-blue-300 block">자동 스케줄러</span>
+        <button onclick="toggleScheduler()" id="schedBtn" class="font-semibold text-xs bg-blue-800/80 hover:bg-blue-700 text-blue-200 px-2 py-0.5 rounded border border-blue-400/40 flex items-center gap-1 transition">
+          <i class="fa-solid fa-clock"></i> <span>주기 30분 (대기)</span>
+        </button>
+      </div>
+      <div>
+        <span class="text-blue-300 block">품질 감사<span class="sr-only">QA 스웜 감사</span></span>
+        <a href="./audit.html" class="font-semibold text-indigo-200 hover:text-white flex items-center gap-1">
+          <i class="fa-solid fa-shield-check text-emerald-400"></i> 100% 무결성 검증
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 사업주 프로필 배너 (REQ-020) -->
+  <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div class="flex items-start gap-3 flex-1">
+        <span class="text-2xl">⚠️</span>
+        <div>
+          <div class="text-xs text-slate-600 font-semibold mb-1">
+            사업주 프로필 미등록
+          </div>
+          
+          <div class="text-xs text-slate-500">
+            사업자등록증 정보와 대표자 생년월일을 등록하면 <strong class="text-slate-700">업력·청년·여성·지역 4대 축</strong>이 자동 판정되어 1초 맞춤 추천이 활성화됩니다.
+          </div>
+          
+        </div>
+      </div>
+      <a href="./announcements.html"
+         class="shrink-0 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5">
+        <i class="fa-solid fa-sliders"></i> 프로필 등록하기 &rarr;
+      </a>
+    </div>
+  </div>
+
+  <!-- KPI 통계 카드 그리드 -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
+    <div class="bg-white p-4 rounded-xl border border-indigo-200 shadow-sm flex items-center gap-3 bg-gradient-to-br from-indigo-50/50 to-white">
+      <div class="w-11 h-11 rounded-lg bg-indigo-100 text-indigo-700 flex items-center justify-center text-lg font-bold">
+        <i class="fa-solid fa-bullseye"></i>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-indigo-800 uppercase tracking-wider">적격 맞춤 추천<span class="sr-only">맞춤 추천 (GREEN)</span></span>
+        <div class="text-xl font-bold text-indigo-900">1 <span class="text-xs font-normal text-slate-400">건</span></div>
+      </div>
+    </div>
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+      <div class="w-11 h-11 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-lg font-bold">
+        <i class="fa-solid fa-cloud-arrow-down"></i>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">수집·분석 공고<span class="sr-only">영속화 공고 (2026)</span></span>
+        <div class="text-xl font-bold text-slate-800">5 <span class="text-xs font-normal text-slate-400">건</span></div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+      <div class="w-11 h-11 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center text-lg font-bold">
+        <i class="fa-solid fa-hourglass-half"></i>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">마감 임박 (D-7 이내)</span>
+        <div class="text-xl font-bold text-rose-600">0 <span class="text-xs font-normal text-slate-400">건</span></div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+      <div class="w-11 h-11 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center text-lg font-bold">
+        <i class="fa-solid fa-puzzle-piece"></i>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">분석된 세부 과제</span>
+        <div class="text-xl font-bold text-slate-800">3 <span class="text-xs font-normal text-slate-400">개</span></div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+      <div class="w-11 h-11 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg font-bold">
+        <i class="fa-solid fa-paper-plane"></i>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">발송 완료 건수</span>
+        <div class="text-xl font-bold text-slate-800">1 <span class="text-xs font-normal text-slate-400">건</span></div>
+      </div>
+    </div>
+
+    <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex items-center gap-3">
+      <div class="w-11 h-11 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-lg font-bold">
+        <i class="fa-solid fa-layer-group"></i>
+      </div>
+      <div>
+        <span class="text-xs font-semibold text-slate-600 uppercase tracking-wider">등록 사업 아이템</span>
+        <div class="text-xl font-bold text-slate-800">4 <span class="text-xs font-normal text-slate-400">개</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 맞춤 추천 긴급 공고 (REQ-020) -->
+  
+
+  <!-- 긴급 마감 임박 공고 (D-7 이내) 경보 박스 -->
+  
+
+  <!-- 2열 그리드: 등록 아이템 현황 & 최근 공고 피드 -->
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- 등록 사업 아이템 (1열) -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-briefcase text-blue-600"></i> 활성 사업 아이템
+        </h2>
+        <a href="./items.html" class="text-xs text-blue-600 hover:underline">상세 관리 &rarr;</a>
+      </div>
+      <div class="space-y-4">
+        
+        <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200/80 hover:border-blue-300 transition">
+          <div class="flex justify-between items-start">
+            <span class="font-semibold text-sm text-slate-900">체계적인 전국구 온라인 심리상담 플랫폼</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-medium">20261026_ChoRong</span>
+          </div>
+          <div class="text-xs text-slate-500 mt-2 flex flex-wrap gap-2">
+            <span>최소점수: <strong class="text-slate-700">75점</strong></span>
+            <span>수신자: <strong class="text-slate-700"></strong></span>
+          </div>
+        </div>
+        
+        <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200/80 hover:border-blue-300 transition">
+          <div class="flex justify-between items-start">
+            <span class="font-semibold text-sm text-slate-900">디지털 ESG 얼라이언스소개</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-medium">20261027_iDEA</span>
+          </div>
+          <div class="text-xs text-slate-500 mt-2 flex flex-wrap gap-2">
+            <span>최소점수: <strong class="text-slate-700">75점</strong></span>
+            <span>수신자: <strong class="text-slate-700">admin@company.com</strong></span>
+          </div>
+        </div>
+        
+        <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200/80 hover:border-blue-300 transition">
+          <div class="flex justify-between items-start">
+            <span class="font-semibold text-sm text-slate-900">AI 기반 디지털 MRV 및 탄소배출권 자산 라우팅 플랫폼</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-medium">item_01_carbon_dmrv</span>
+          </div>
+          <div class="text-xs text-slate-500 mt-2 flex flex-wrap gap-2">
+            <span>최소점수: <strong class="text-slate-700">75점</strong></span>
+            <span>수신자: <strong class="text-slate-700">pm@company.com</strong></span>
+          </div>
+        </div>
+        
+        <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200/80 hover:border-blue-300 transition">
+          <div class="flex justify-between items-start">
+            <span class="font-semibold text-sm text-slate-900">AI 음성 분리 및 다자간 화자 인식 솔루션</span>
+            <span class="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded font-mono font-medium">item_02_voice_ai</span>
+          </div>
+          <div class="text-xs text-slate-500 mt-2 flex flex-wrap gap-2">
+            <span>최소점수: <strong class="text-slate-700">75점</strong></span>
+            <span>수신자: <strong class="text-slate-700">pm@company.com</strong></span>
+          </div>
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- 최근 등록 공고 피드 (2열) -->
+    <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm p-6">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+          <i class="fa-solid fa-clock-rotate-left text-blue-600"></i> 최근 수집 및 분석 공고
+        </h2>
+        <a href="./announcements.html" class="text-xs text-blue-600 hover:underline">전체 공고 보기 &rarr;</a>
+      </div>
+      
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-slate-50 text-slate-500 uppercase border-b border-slate-200">
+            <tr>
+              <th class="py-2.5 px-3 font-semibold">포털</th>
+              <th class="py-2.5 px-3 font-semibold">공고 제목</th>
+              <th class="py-2.5 px-3 font-semibold">담당부처 / 기관</th>
+              <th class="py-2.5 px-3 font-semibold">마감일 / D-Day</th>
+              <th class="py-2.5 px-3 font-semibold text-center">캘린더</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 px-3 font-medium text-slate-700">
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">ntis</span>
+              </td>
+              <td class="py-2.5 px-3 font-semibold text-slate-900 max-w-xs truncate" title="2026년 디지털 트윈 실증 R&amp;D">
+                <a href="https://www.ntis.go.kr/rndgate/eg/un/ra/view.do?roRndUid=1279968" target="_blank" class="hover:text-blue-600">2026년 디지털 트윈 실증 R&amp;D</a>
+              </td>
+              <td class="py-2.5 px-3 text-slate-600">과학기술정보통신부</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 border border-blue-200 font-semibold">D-26</span>
+                  <span class="text-slate-600 font-mono text-xs">2026-11-25 18:00</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3 text-center">
+                <a href="/api/announcements/ntis:test_sim_detail/calendar.ics" class="text-indigo-600 hover:text-indigo-800" title="캘린더(.ics) 다운로드">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </a>
+              </td>
+            </tr>
+            
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 px-3 font-medium text-slate-700">
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">ntis</span>
+              </td>
+              <td class="py-2.5 px-3 font-semibold text-slate-900 max-w-xs truncate" title="2026년 전통 옹기 및 한과 제조 지원사업">
+                <a href="https://www.ntis.go.kr/rndgate/eg/un/ra/view.do?roRndUid=1279968" target="_blank" class="hover:text-blue-600">2026년 전통 옹기 및 한과 제조 지원사업</a>
+              </td>
+              <td class="py-2.5 px-3 text-slate-600">과학기술정보통신부</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 border border-blue-200 font-semibold">D-26</span>
+                  <span class="text-slate-600 font-mono text-xs">2026-11-25 18:00</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3 text-center">
+                <a href="/api/announcements/ntis:test_sim_disqualified/calendar.ics" class="text-indigo-600 hover:text-indigo-800" title="캘린더(.ics) 다운로드">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </a>
+              </td>
+            </tr>
+            
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 px-3 font-medium text-slate-700">
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">ntis</span>
+              </td>
+              <td class="py-2.5 px-3 font-semibold text-slate-900 max-w-xs truncate" title="2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제">
+                <a href="https://www.ntis.go.kr/rndgate/eg/un/ra/view.do?roRndUid=1279968" target="_blank" class="hover:text-blue-600">2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제</a>
+              </td>
+              <td class="py-2.5 px-3 text-slate-600">과학기술정보통신부</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-blue-100 text-blue-800 border border-blue-200 font-semibold">D-26</span>
+                  <span class="text-slate-600 font-mono text-xs">2026-11-25 18:00</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3 text-center">
+                <a href="/api/announcements/ntis:test_sim_qualified/calendar.ics" class="text-indigo-600 hover:text-indigo-800" title="캘린더(.ics) 다운로드">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </a>
+              </td>
+            </tr>
+            
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 px-3 font-medium text-slate-700">
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">iris</span>
+              </td>
+              <td class="py-2.5 px-3 font-semibold text-slate-900 max-w-xs truncate" title="2026년도 인간-AI 협업형 LAM 개발 지원사업">
+                <a href="https://www.iris.go.kr/contents/retrieveBsnsAncmView.do?ancmId=022696" target="_blank" class="hover:text-blue-600">2026년도 인간-AI 협업형 LAM 개발 지원사업</a>
+              </td>
+              <td class="py-2.5 px-3 text-slate-600">과학기술정보통신부</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium">D-62</span>
+                  <span class="text-slate-600 font-mono text-xs">2026-12-31</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3 text-center">
+                <a href="/api/announcements/iris:2026_lam_ai/calendar.ics" class="text-indigo-600 hover:text-indigo-800" title="캘린더(.ics) 다운로드">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </a>
+              </td>
+            </tr>
+            
+            <tr class="hover:bg-slate-50/80 transition">
+              <td class="py-2.5 px-3 font-medium text-slate-700">
+                <span class="bg-slate-100 px-2 py-0.5 rounded border border-slate-200">k_startup</span>
+              </td>
+              <td class="py-2.5 px-3 font-semibold text-slate-900 max-w-xs truncate" title="2026년도 중앙부처 및 지자체 창업지원사업 통합공고">
+                <a href="https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&amp;pbancSn=175783" target="_blank" class="hover:text-blue-600">2026년도 중앙부처 및 지자체 창업지원사업 통합공고</a>
+              </td>
+              <td class="py-2.5 px-3 text-slate-600">중소벤처기업부</td>
+              <td class="py-2.5 px-3 whitespace-nowrap">
+                <div class="flex items-center gap-1.5">
+                  <span class="px-1.5 py-0.5 rounded text-xs bg-emerald-100 text-emerald-800 border border-emerald-200 font-medium">D-62</span>
+                  <span class="text-slate-600 font-mono text-xs">2026-12-31</span>
+                </div>
+              </td>
+              <td class="py-2.5 px-3 text-center">
+                <a href="/api/announcements/k_startup:2026_master_biz/calendar.ics" class="text-indigo-600 hover:text-indigo-800" title="캘린더(.ics) 다운로드">
+                  <i class="fa-regular fa-calendar-check"></i>
+                </a>
+              </td>
+            </tr>
+            
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+  </main>
+
+  <!-- 파이프라인 실행 결과 모달 -->
+  <div id="pipelineResultModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+          <h3 class="text-base font-bold">파이프라인 실행 완료</h3>
+        </div>
+        <button onclick="closePipelineModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+            <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
+          </div>
+        </div>
+        <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
+          </h4>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <a href="./matches.html" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
+          <i class="fa-solid fa-paper-plane"></i> 발송 이력 페이지(/matches)로 이동
+        </a>
+        <div class="flex items-center gap-2">
+          <button onclick="window.location.reload()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> 화면 새로고침
+          </button>
+          <button onclick="closePipelineModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
+  </footer>
+
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
+  <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineResultModal').classList.add('hidden');
+    }
+
+    async function triggerPipeline() {
+      const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
+      try {
+        const res = await fetch('/api/pipeline/run', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
+        }
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
+  </script>
+  
+<script>
+  async function toggleScheduler() {
+    try {
+      const res = await fetch('/api/scheduler/toggle', { method: 'POST' });
+      const data = await res.json();
+      const btn = document.getElementById('schedBtn');
+      if (data.enabled) {
+        btn.innerHTML = '<i class="fa-solid fa-circle-check text-emerald-400"></i> <span class="text-emerald-300">가동 중 (30분)</span>';
+      } else {
+        btn.innerHTML = '<i class="fa-solid fa-clock"></i> <span>주기 30분 (대기)</span>';
+      }
+      alert(data.message || '스케줄러 상태 변경 완료');
+    } catch (err) {
+      alert('스케줄러 토글 오류: ' + err);
+    }
+  }
+</script>
+
+
+  <!-- GitHub Pages Client-side Mock API Layer -->
+  <script src="./static/js/github_pages_mock_api.js"></script>
+</body>
+</html>

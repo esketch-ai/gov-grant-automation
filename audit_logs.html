@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>감사로그 무결성 검증 &middot; 모두의 창업비서 (SSA)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/k_horizon_2027.css?v=20261029_ssa">
+</head>
+<body class="min-h-screen flex flex-col" data-role="admin">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge admin">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>관리자 통합 관제</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">플랫폼 현황 및 감사로그 모니터링</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="./admin_platform.html" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="./static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
+          </div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
+            <span class="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">SSA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
+        
+          
+          <a
+            href="./admin_platform.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="admin_platform"
+            data-nav-href="./admin_platform.html"
+          >
+            <i class="fa-solid fa-sliders text-xs opacity-75"></i>
+            <span>총괄 플랫폼</span>
+          </a>
+          
+          <a
+            href="./governance_partner.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="governance_partner"
+            data-nav-href="./governance_partner.html"
+          >
+            <i class="fa-solid fa-building-columns text-xs opacity-75"></i>
+            <span>거버넌스</span>
+          </a>
+          
+          <a
+            href="./portals.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="portals"
+            data-nav-href="./portals.html"
+          >
+            <i class="fa-solid fa-globe text-xs opacity-75"></i>
+            <span>포털 연동</span>
+          </a>
+          
+          <a
+            href="./audit.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="audit"
+            data-nav-href="./audit.html"
+          >
+            <i class="fa-solid fa-shield-halved text-xs opacity-75"></i>
+            <span>전주기 감사</span>
+          </a>
+          
+          <a
+            href="./audit_logs.html"
+            class="kh-nav-item active"
+            aria-current="page"
+            data-nav-role="admin"
+            data-nav-page="admin_audit_logs"
+            data-nav-href="./audit_logs.html"
+          >
+            <i class="fa-solid fa-link text-xs opacity-75"></i>
+            <span>감사 추적</span>
+          </a>
+          
+          <a
+            href="./logs.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="logs"
+            data-nav-href="./logs.html"
+          >
+            <i class="fa-solid fa-terminal text-xs opacity-75"></i>
+            <span>시스템 로그</span>
+          </a>
+          
+        
+      </nav>
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('visitor', './intro.html')"
+            class="kh-role-pill kh-role-visitor "
+            data-role-btn="visitor"
+            title="초기 방문자"
+          >
+            <i class="fa-solid fa-compass text-xs"></i>
+            <span>방문자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('subscriber', './biz_dashboard.html')"
+            class="kh-role-pill kh-role-subscriber "
+            data-role-btn="subscriber"
+            title="유료 사업자"
+          >
+            <i class="fa-solid fa-briefcase text-xs"></i>
+            <span>사업자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            onclick="switchServiceRole('admin', './admin_platform.html')"
+            class="kh-role-pill kh-role-admin active"
+            data-role-btn="admin"
+            title="플랫폼 관리자"
+          >
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>관리자</span>
+          </button>
+          
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="./dashboard.html">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        
+        <a
+          href="./admin_platform.html"
+          class="kh-btn-cta amber hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>운영 관제</span>
+        </a>
+        
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge admin">
+          관리자 통합 관제
+        </span>
+      </div>
+      
+        
+        <a
+          href="./admin_platform.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="admin_platform"
+          data-mobile-nav-href="./admin_platform.html"
+        >
+          <i class="fa-solid fa-sliders text-xs w-4 text-center"></i>
+          <span>총괄 플랫폼</span>
+        </a>
+        
+        <a
+          href="./governance_partner.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="governance_partner"
+          data-mobile-nav-href="./governance_partner.html"
+        >
+          <i class="fa-solid fa-building-columns text-xs w-4 text-center"></i>
+          <span>거버넌스</span>
+        </a>
+        
+        <a
+          href="./portals.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="portals"
+          data-mobile-nav-href="./portals.html"
+        >
+          <i class="fa-solid fa-globe text-xs w-4 text-center"></i>
+          <span>포털 연동</span>
+        </a>
+        
+        <a
+          href="./audit.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="audit"
+          data-mobile-nav-href="./audit.html"
+        >
+          <i class="fa-solid fa-shield-halved text-xs w-4 text-center"></i>
+          <span>전주기 감사</span>
+        </a>
+        
+        <a
+          href="./audit_logs.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition bg-blue-600/20 text-cyan-300 font-semibold border border-cyan-400/30"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="admin_audit_logs"
+          data-mobile-nav-href="./audit_logs.html"
+        >
+          <i class="fa-solid fa-link text-xs w-4 text-center"></i>
+          <span>감사 추적</span>
+        </a>
+        
+        <a
+          href="./logs.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="logs"
+          data-mobile-nav-href="./logs.html"
+        >
+          <i class="fa-solid fa-terminal text-xs w-4 text-center"></i>
+          <span>시스템 로그</span>
+        </a>
+        
+      
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        
+        <a href="./admin_platform.html" onclick="toggleMobileNav()" class="kh-btn-cta amber w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>운영 관제</span>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+<div class="space-y-6">
+  <!-- 감사로그 무결성 검증 상단 표준 배너 -->
+  <section class="kh-page-hero tone-amber reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge gold">
+            <i class="fa-solid fa-link mr-1"></i>블록 암호 감사 체인
+          </span>
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-shield-halved mr-1"></i>위·변조 방지
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">감사로그 무결성 검증 콘솔</h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          모든 결제, 공고 요건 분석, 프로토타입 실증, 데이터 파기 기록의 위·변조 여부를 실시간으로 대조·검증합니다.
+        </p>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button class="kh-btn-cta amber text-xs" onclick="verifyChain()">
+          <i class="fa-solid fa-shield-halved mr-1"></i>전체 무결성 검증 실행
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 감사로그 무결성 검증 결과 배너 (REQ-041) -->
+  <div id="verify-result" class="hidden mb-4 p-4 rounded-xl border border-slate-200 bg-white shadow-sm"></div>
+
+  <!-- 감사로그 테이블 -->
+    <div class="krds-card reveal">
+      <h3 class="font-bold text-slate-900 mb-3">감사로그 목록 (총 <span id="audit-count" class="kh-tabular">0</span>건)</h3>
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead>
+            <tr class="text-left text-slate-500 text-xs uppercase border-b border-slate-200">
+              <th class="py-3">순번</th>
+              <th class="py-3">기록 번호</th>
+              <th class="py-3">기업 ID</th>
+              <th class="py-3">작업 구분</th>
+              <th class="py-3">내용</th>
+              <th class="py-3">이전 검증값</th>
+              <th class="py-3">현재 검증값</th>
+              <th class="py-3">기록 일시</th>
+            </tr>
+          </thead>
+          <tbody id="audit-table">
+            
+            <tr><td colspan="8" class="py-4 text-center text-slate-400">등록된 감사로그가 없습니다. 상단 '검증 실행'을 클릭하세요.</td></tr>
+            
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 상세 내역 -->
+    <div class="krds-card reveal mt-6 hidden" id="detail-panel">
+      <h3 class="font-bold text-slate-900 mb-3">감사로그 상세 내역</h3>
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+        <div><p class="text-slate-500">순번</p><p class="text-lg font-bold kh-tabular" id="detail-id">-</p></div>
+        <div><p class="text-slate-500">현재 검증값</p><p class="text-sm font-mono" id="detail-curr-hash">-</p></div>
+        <div><p class="text-slate-500">이전 검증값</p><p class="text-sm font-mono" id="detail-prev-hash">-</p></div>
+        <div><p class="text-slate-500">기업 식별자</p><p class="text-sm font-mono" id="detail-tenant">-</p></div>
+        <div><p class="text-slate-500">작업 구분</p><p class="text-sm font-mono" id="detail-category">-</p></div>
+        <div><p class="text-slate-500">처리 작업</p><p class="text-sm font-mono" id="detail-action">-</p></div>
+        <div><p class="text-slate-500">접속 IP</p><p class="text-sm font-mono" id="detail-ip">-</p></div>
+        <div><p class="text-slate-500">기록 일시</p><p class="text-sm font-mono" id="detail-created">-</p></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function verifyChain() {
+      const resultDiv = document.getElementById('verify-result');
+      const tableBody = document.getElementById('audit-table');
+      resultDiv.innerHTML = '<p class="text-slate-500 text-sm">검증을 진행하고 있습니다...</p>';
+      resultDiv.classList.remove('hidden');
+      try {
+        const res = await fetch('/api/admin/audit/verify');
+        const data = await res.json();
+        if (data.ok) {
+          resultDiv.innerHTML = `<p class="text-emerald-600 text-sm font-bold">✅ 감사 체인 전체가 위·변조 없이 유효합니다. (총 ${data.verified_count}건)</p>`;
+          const countEl = document.getElementById('audit-count');
+          if (countEl && data.verified_count !== undefined) countEl.textContent = data.verified_count;
+          if (Array.isArray(data.logs) && data.logs.length > 0 && tableBody) {
+            tableBody.innerHTML = data.logs.map((log, idx) => `
+              <tr class="border-b border-slate-100 text-sm">
+                <td class="py-2 kh-tabular">${idx + 1}</td>
+                <td class="py-2 kh-tabular">${log.id || ''}</td>
+                <td class="py-2">${log.tenant_id || ''}</td>
+                <td class="py-2"><span class="kh-badge cyan">${log.category || ''}</span></td>
+                <td class="py-2 font-medium">${log.action || ''}</td>
+                <td class="py-2 font-mono text-xs">${(log.prev_hash || '').slice(0, 12)}</td>
+                <td class="py-2 font-mono text-xs">${(log.curr_hash || '').slice(0, 12)}</td>
+                <td class="py-2 text-xs kh-tabular">${log.created_at || ''}</td>
+              </tr>
+            `).join('');
+          }
+        } else {
+          resultDiv.innerHTML = '<p class="text-rose-600 text-sm font-bold">❌ 데이터 위·변조가 감지되었습니다.</p>';
+        }
+      } catch (e) {
+        resultDiv.innerHTML = '<p class="text-rose-600 text-sm">검증 요청 중 오류가 발생했습니다.</p>';
+      }
+    }
+  </script>
+
+  </main>
+
+  <!-- 파이프라인 실행 결과 모달 -->
+  <div id="pipelineResultModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+          <h3 class="text-base font-bold">파이프라인 실행 완료</h3>
+        </div>
+        <button onclick="closePipelineModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+            <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
+          </div>
+        </div>
+        <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
+          </h4>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <a href="./matches.html" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
+          <i class="fa-solid fa-paper-plane"></i> 발송 이력 페이지(/matches)로 이동
+        </a>
+        <div class="flex items-center gap-2">
+          <button onclick="window.location.reload()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> 화면 새로고침
+          </button>
+          <button onclick="closePipelineModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
+  </footer>
+
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
+  <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineResultModal').classList.add('hidden');
+    }
+
+    async function triggerPipeline() {
+      const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
+      try {
+        const res = await fetch('/api/pipeline/run', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
+        }
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
+  </script>
+  
+
+  <!-- GitHub Pages Client-side Mock API Layer -->
+  <script src="./static/js/github_pages_mock_api.js"></script>
+</body>
+</html>

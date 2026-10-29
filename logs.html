@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>시스템 로그 &middot; 모두의 창업비서 (SSA)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/k_horizon_2027.css?v=20261029_ssa">
+</head>
+<body class="min-h-screen flex flex-col" data-role="admin">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge admin">
+          <i class="fa-solid fa-shield-halved"></i>
+          <span>관리자 통합 관제</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">플랫폼 현황 및 감사로그 모니터링</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="./admin_platform.html" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="./static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
+          </div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
+            <span class="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">SSA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
+        
+          
+          <a
+            href="./admin_platform.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="admin_platform"
+            data-nav-href="./admin_platform.html"
+          >
+            <i class="fa-solid fa-sliders text-xs opacity-75"></i>
+            <span>총괄 플랫폼</span>
+          </a>
+          
+          <a
+            href="./governance_partner.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="governance_partner"
+            data-nav-href="./governance_partner.html"
+          >
+            <i class="fa-solid fa-building-columns text-xs opacity-75"></i>
+            <span>거버넌스</span>
+          </a>
+          
+          <a
+            href="./portals.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="portals"
+            data-nav-href="./portals.html"
+          >
+            <i class="fa-solid fa-globe text-xs opacity-75"></i>
+            <span>포털 연동</span>
+          </a>
+          
+          <a
+            href="./audit.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="audit"
+            data-nav-href="./audit.html"
+          >
+            <i class="fa-solid fa-shield-halved text-xs opacity-75"></i>
+            <span>전주기 감사</span>
+          </a>
+          
+          <a
+            href="./audit_logs.html"
+            class="kh-nav-item "
+            
+            data-nav-role="admin"
+            data-nav-page="admin_audit_logs"
+            data-nav-href="./audit_logs.html"
+          >
+            <i class="fa-solid fa-link text-xs opacity-75"></i>
+            <span>감사 추적</span>
+          </a>
+          
+          <a
+            href="./logs.html"
+            class="kh-nav-item active"
+            aria-current="page"
+            data-nav-role="admin"
+            data-nav-page="logs"
+            data-nav-href="./logs.html"
+          >
+            <i class="fa-solid fa-terminal text-xs opacity-75"></i>
+            <span>시스템 로그</span>
+          </a>
+          
+        
+      </nav>
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('visitor', './intro.html')"
+            class="kh-role-pill kh-role-visitor "
+            data-role-btn="visitor"
+            title="초기 방문자"
+          >
+            <i class="fa-solid fa-compass text-xs"></i>
+            <span>방문자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('subscriber', './biz_dashboard.html')"
+            class="kh-role-pill kh-role-subscriber "
+            data-role-btn="subscriber"
+            title="유료 사업자"
+          >
+            <i class="fa-solid fa-briefcase text-xs"></i>
+            <span>사업자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            onclick="switchServiceRole('admin', './admin_platform.html')"
+            class="kh-role-pill kh-role-admin active"
+            data-role-btn="admin"
+            title="플랫폼 관리자"
+          >
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>관리자</span>
+          </button>
+          
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="./dashboard.html">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        
+        <a
+          href="./admin_platform.html"
+          class="kh-btn-cta amber hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>운영 관제</span>
+        </a>
+        
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge admin">
+          관리자 통합 관제
+        </span>
+      </div>
+      
+        
+        <a
+          href="./admin_platform.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="admin_platform"
+          data-mobile-nav-href="./admin_platform.html"
+        >
+          <i class="fa-solid fa-sliders text-xs w-4 text-center"></i>
+          <span>총괄 플랫폼</span>
+        </a>
+        
+        <a
+          href="./governance_partner.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="governance_partner"
+          data-mobile-nav-href="./governance_partner.html"
+        >
+          <i class="fa-solid fa-building-columns text-xs w-4 text-center"></i>
+          <span>거버넌스</span>
+        </a>
+        
+        <a
+          href="./portals.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="portals"
+          data-mobile-nav-href="./portals.html"
+        >
+          <i class="fa-solid fa-globe text-xs w-4 text-center"></i>
+          <span>포털 연동</span>
+        </a>
+        
+        <a
+          href="./audit.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="audit"
+          data-mobile-nav-href="./audit.html"
+        >
+          <i class="fa-solid fa-shield-halved text-xs w-4 text-center"></i>
+          <span>전주기 감사</span>
+        </a>
+        
+        <a
+          href="./audit_logs.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="admin_audit_logs"
+          data-mobile-nav-href="./audit_logs.html"
+        >
+          <i class="fa-solid fa-link text-xs w-4 text-center"></i>
+          <span>감사 추적</span>
+        </a>
+        
+        <a
+          href="./logs.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition bg-blue-600/20 text-cyan-300 font-semibold border border-cyan-400/30"
+          data-mobile-nav-role="admin"
+          data-mobile-nav-page="logs"
+          data-mobile-nav-href="./logs.html"
+        >
+          <i class="fa-solid fa-terminal text-xs w-4 text-center"></i>
+          <span>시스템 로그</span>
+        </a>
+        
+      
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        
+        <a href="./admin_platform.html" onclick="toggleMobileNav()" class="kh-btn-cta amber w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>운영 관제</span>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+<div class="space-y-6">
+  <!-- 상단 표준 배너 -->
+  <section class="kh-page-hero tone-amber reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge gold">
+            <i class="fa-solid fa-terminal mr-1"></i>실시간 실행 로그
+          </span>
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-server mr-1"></i>엔진 프로세스 추적
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2">
+          실시간 시스템 실행 로그
+        </h1>
+        <p class="text-slate-300 text-xs sm:text-sm leading-relaxed max-w-2xl">
+          수집기, 분석기, 매칭기, 알림기, 스케줄러의 실시간 실행 로그를 모니터링합니다.
+        </p>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <label class="inline-flex items-center gap-1.5 text-xs text-slate-200 bg-white/10 px-3 py-1.5 rounded-lg border border-white/15 cursor-pointer select-none">
+          <input type="checkbox" id="autoRefreshToggle" class="rounded text-blue-500" onchange="toggleAutoRefresh(this.checked)">
+          <span>5초 자동 새로고침</span>
+        </label>
+        <button onclick="refreshLogs()" id="refreshBtn" class="kh-btn-cta primary text-xs">
+          <i class="fa-solid fa-arrows-rotate mr-1"></i>새로고침
+        </button>
+        <button onclick="scrollToBottom()" class="kh-btn-action ghost text-xs" title="맨 아래로 스크롤">
+          <i class="fa-solid fa-arrow-down"></i>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 콘솔 터미널 박스 -->
+  <div class="bg-slate-950 rounded-xl shadow-xl border border-slate-800 overflow-hidden">
+    <!-- 터미널 타이틀바 -->
+    <div class="bg-slate-900/90 px-4 py-2.5 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-rose-500/80 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-amber-500/80 inline-block"></span>
+        <span class="w-3 h-3 rounded-full bg-emerald-500/80 inline-block"></span>
+        <span class="font-mono text-xs text-slate-300 ml-2">stdout / app.log (최근 200줄)</span>
+      </div>
+      <div class="flex items-center gap-3 font-mono text-xs">
+        <span id="logCount">총 200 줄</span>
+        <span class="text-slate-600">|</span>
+        <span id="lastUpdated" class="text-slate-400">조회됨</span>
+      </div>
+    </div>
+
+    <!-- 터미널 출력 영역 -->
+    <div id="logTerminal" class="p-4 font-mono text-xs leading-relaxed text-slate-300 overflow-y-auto max-h-[640px] whitespace-pre-wrap select-text">
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">AttributeError: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:41 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년도 중앙부처 및 지자체 창업지원사업 통합공고</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:41 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년도 중앙부처 및 지자체 창업지원사업 통합공고] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:41 | INFO    | main | 완료 item=20261027_iDEA collected=0 unique=0 year_kept=0 evaluated=5 dropped=0 persisted=5 matched=0 dispatched=0 skipped_dup=0 errors=0</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:41 | INFO    | httpx | HTTP Request: GET https://apis.data.go.kr/B552735/kisedKstartupService/getAnnouncementInformation?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;pageNo=1&amp;numOfRows=20&amp;returnType=json&amp;searchWord=%ED%83%84%EC%86%8C%EB%B0%B0%EC%B6%9C%EA%B6%8C &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:41 | WARNING | src.collector.multi_collector | K-Startup API 실패: Client error &#39;400 Bad Request&#39; for url &#39;https://apis.data.go.kr/B552735/kisedKstartupService/getAnnouncementInformation?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;pageNo=1&amp;numOfRows=20&amp;returnType=json&amp;searchWord=%ED%83%84%EC%86%8C%EB%B0%B0%EC%B6%9C%EA%B6%8C&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:41 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; ntis 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:41 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; iris 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:41 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; nipa 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:41 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; keit 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:41 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; smtech 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | httpx | HTTP Request: GET http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;numOfRows=25&amp;pageNo=1&amp;type=json&amp;inqryDiv=1&amp;inqryBgnDt=202610020000&amp;inqryEndDt=202610302359&amp;bidNtceNm=%ED%83%84%EC%86%8C%EB%B0%B0%EC%B6%9C%EA%B6%8C &#34;HTTP/1.1 403 Forbidden&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | G2B API 실패: Client error &#39;403 Forbidden&#39; for url &#39;http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;numOfRows=25&amp;pageNo=1&amp;type=json&amp;inqryDiv=1&amp;inqryBgnDt=202610020000&amp;inqryEndDt=202610302359&amp;bidNtceNm=%ED%83%84%EC%86%8C%EB%B0%B0%EC%B6%9C%EA%B6%8C&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; songpa_se 레거시 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.collector.multi_collector | TAVILLY_API_KEY 미설정 -&gt; 오픈웹 탐색 폴백(빈 결과)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.collector.multi_collector | 총 수집 완료: 0 건</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년 디지털 트윈 실증 R&amp;D</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년 디지털 트윈 실증 R&amp;D] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년 전통 옹기 및 한과 제조 지원사업</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년 전통 옹기 및 한과 제조 지원사업] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 통과 -&gt; Tier 2 LLM 심층 평가 진입: [2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제] (시맨틱=52.3점)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-rose-400 font-semibold">2026-10-30 00:18:42 | ERROR   | src.matcher.eligibility_matcher | 매칭 평가 중 예외 발생, degrade 적용: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">Traceback (most recent call last):</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">  File &#34;/Users/ssh/Documents/Develope/SSHAI-CWA/gov-grant-automation/src/matcher/eligibility_matcher.py&#34;, line 76, in evaluate_notice</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">    raw = self.llm.generate_structured(</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">AttributeError: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년도 인간-AI 협업형 LAM 개발 지원사업</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년도 인간-AI 협업형 LAM 개발 지원사업] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년도 중앙부처 및 지자체 창업지원사업 통합공고</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년도 중앙부처 및 지자체 창업지원사업 통합공고] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | main | 완료 item=item_01_carbon_dmrv collected=0 unique=0 year_kept=0 evaluated=5 dropped=0 persisted=5 matched=1 dispatched=0 skipped_dup=1 errors=0</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | httpx | HTTP Request: GET https://apis.data.go.kr/B552735/kisedKstartupService/getAnnouncementInformation?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;pageNo=1&amp;numOfRows=20&amp;returnType=json&amp;searchWord=%EC%9D%8C%EC%84%B1%EB%B6%84%EB%A6%AC &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | K-Startup API 실패: Client error &#39;400 Bad Request&#39; for url &#39;https://apis.data.go.kr/B552735/kisedKstartupService/getAnnouncementInformation?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;pageNo=1&amp;numOfRows=20&amp;returnType=json&amp;searchWord=%EC%9D%8C%EC%84%B1%EB%B6%84%EB%A6%AC&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/400</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; nipa 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; smtech 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; modoo 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | httpx | HTTP Request: GET http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;numOfRows=25&amp;pageNo=1&amp;type=json&amp;inqryDiv=1&amp;inqryBgnDt=202610020000&amp;inqryEndDt=202610302359&amp;bidNtceNm=%EC%9D%8C%EC%84%B1%EB%B6%84%EB%A6%AC &#34;HTTP/1.1 403 Forbidden&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | G2B API 실패: Client error &#39;403 Forbidden&#39; for url &#39;http://apis.data.go.kr/1230000/ad/BidPublicInfoService/getBidPblancListInfoServc?serviceKey=z1VMIFwI0aDtd4VDR7CHSCd2PRt3G%2FxRzaoKacIeRkutNOB8i4kA4GVk%2FYkl8OpGL5uB7YgkiOxv1rMxeRQ%2BaQ%3D%3D&amp;numOfRows=25&amp;pageNo=1&amp;type=json&amp;inqryDiv=1&amp;inqryBgnDt=202610020000&amp;inqryEndDt=202610302359&amp;bidNtceNm=%EC%9D%8C%EC%84%B1%EB%B6%84%EB%A6%AC&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/403</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.collector.multi_collector | Playwright 미설치 -&gt; ntis 보드 수집 건너뜀</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.collector.multi_collector | TAVILLY_API_KEY 미설정 -&gt; 오픈웹 탐색 폴백(빈 결과)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.collector.multi_collector | 총 수집 완료: 0 건</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년 디지털 트윈 실증 R&amp;D</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년 디지털 트윈 실증 R&amp;D] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년 전통 옹기 및 한과 제조 지원사업</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년 전통 옹기 및 한과 제조 지원사업] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 통과 -&gt; Tier 2 LLM 심층 평가 진입: [2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제] (시맨틱=19.5점)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-rose-400 font-semibold">2026-10-30 00:18:42 | ERROR   | src.matcher.eligibility_matcher | 매칭 평가 중 예외 발생, degrade 적용: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">Traceback (most recent call last):</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">  File &#34;/Users/ssh/Documents/Develope/SSHAI-CWA/gov-grant-automation/src/matcher/eligibility_matcher.py&#34;, line 76, in evaluate_notice</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">    raw = self.llm.generate_structured(</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">AttributeError: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년도 인간-AI 협업형 LAM 개발 지원사업</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년도 인간-AI 협업형 LAM 개발 지원사업] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년도 중앙부처 및 지자체 창업지원사업 통합공고</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년도 중앙부처 및 지자체 창업지원사업 통합공고] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | main | 완료 item=item_02_voice_ai collected=0 unique=0 year_kept=0 evaluated=5 dropped=0 persisted=5 matched=0 dispatched=0 skipped_dup=0 errors=0</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | main | 일일 파이프라인 종료: {&#39;run_at&#39;: &#39;2026-10-30T00:18:41.576496&#39;, &#39;items&#39;: [{&#39;item_id&#39;: &#39;20261026_ChoRong&#39;, &#39;collected&#39;: 0, &#39;unique&#39;: 0, &#39;year_dropped&#39;: 0, &#39;year_kept&#39;: 0, &#39;evaluated&#39;: 5, &#39;persistence&#39;: 5, &#39;matched&#39;: 0, &#39;dispatched&#39;: 0, &#39;skipped_dup&#39;: 0, &#39;errors&#39;: 0, &#39;matched_details&#39;: []}, {&#39;item_id&#39;: &#39;20261027_iDEA&#39;, &#39;collected&#39;: 0, &#39;unique&#39;: 0, &#39;year_dropped&#39;: 0, &#39;year_kept&#39;: 0, &#39;evaluated&#39;: 5, &#39;persistence&#39;: 5, &#39;matched&#39;: 0, &#39;dispatched&#39;: 0, &#39;skipped_dup&#39;: 0, &#39;errors&#39;: 0, &#39;matched_details&#39;: []}, {&#39;item_id&#39;: &#39;item_01_carbon_dmrv&#39;, &#39;collected&#39;: 0, &#39;unique&#39;: 0, &#39;year_dropped&#39;: 0, &#39;year_kept&#39;: 0, &#39;evaluated&#39;: 5, &#39;persistence&#39;: 5, &#39;matched&#39;: 1, &#39;dispatched&#39;: 0, &#39;skipped_dup&#39;: 1, &#39;errors&#39;: 0, &#39;matched_details&#39;: [{&#39;canonical_id&#39;: &#39;ntis:test_sim_qualified&#39;, &#39;title&#39;: &#39;2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제&#39;, &#39;score&#39;: 75, &#39;rfp_id&#39;: &#39;ntis:test_sim_qualified#0&#39;}]}, {&#39;item_id&#39;: &#39;item_02_voice_ai&#39;, &#39;collected&#39;: 0, &#39;unique&#39;: 0, &#39;year_dropped&#39;: 0, &#39;year_kept&#39;: 0, &#39;evaluated&#39;: 5, &#39;persistence&#39;: 5, &#39;matched&#39;: 0, &#39;dispatched&#39;: 0, &#39;skipped_dup&#39;: 0, &#39;errors&#39;: 0, &#39;matched_details&#39;: []}]}</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | httpx | HTTP Request: POST http://testserver/api/pipeline/run &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.matcher.eligibility_matcher | 매칭 결과: eligible=False score=25 문의=0건</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.matcher.eligibility_matcher | 매칭 결과: eligible=True score=92 문의=1건</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-rose-400 font-semibold">2026-10-30 00:18:42 | ERROR   | src.matcher.eligibility_matcher | 매칭 평가 중 예외 발생, degrade 적용: 의도된 외부 연동 단절</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">Traceback (most recent call last):</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">  File &#34;/Users/ssh/Documents/Develope/SSHAI-CWA/gov-grant-automation/src/matcher/eligibility_matcher.py&#34;, line 76, in evaluate_notice</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">    raw = self.llm.generate_structured(</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">        system_prompt=SYSTEM_PROMPT,</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">        user_prompt=user_payload,</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">        response_schema=GrantEvaluationResult,</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">    )</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">  File &#34;/Users/ssh/Documents/Develope/SSHAI-CWA/gov-grant-automation/tests/audit/agents/matcher_precision.py&#34;, line 128, in generate_structured</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">    raise RuntimeError(&#34;의도된 외부 연동 단절&#34;)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">RuntimeError: 의도된 외부 연동 단절</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | httpx | HTTP Request: GET http://testserver/announcements?q=%3Cscript%3Ealert(&#39;pwned&#39;)%3C/script%3E &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:42 | WARNING | src.notifier.email_notifier | SMTP username 미설정(.env SMTP_USERNAME 필요) - 발송 불가</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | src.notifier.email_notifier | 매칭 0건 -&gt; 메일 발송 건너뜀: test</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:42 | INFO    | httpx | HTTP Request: GET https://www.ntis.go.kr/rndgate/eg/un/ra/view.do?roRndUid=1279968 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:43 | INFO    | httpx | HTTP Request: GET https://www.ntis.go.kr/rndgate/eg/un/ra/view.do?roRndUid=1279968 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:43 | INFO    | httpx | HTTP Request: GET https://www.ntis.go.kr/rndgate/eg/un/ra/view.do?roRndUid=1279968 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET https://www.iris.go.kr/contents/retrieveBsnsAncmView.do?ancmId=022696 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET https://www.k-startup.go.kr/web/contents/bizpbanc-ongoing.do?schM=view&amp;pbancSn=175783 &#34;HTTP/1.1 200 200&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/audit/run &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/api/scheduler/status &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | scheduler | 비동기 스케줄러 시작됨 (주기: 1800초)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/scheduler/toggle &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | scheduler | 비동기 스케줄러 중지됨</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/scheduler/toggle &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/announcements &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/admin/audit-logs &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/api/export/hwpx &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/export/hwpx &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/api/export/docx &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/export/docx &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/api/admin/audit/verify &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/admin/audit/verify &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 409 Conflict&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: PUT http://testserver/api/items/test_item_to_update &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: PUT http://testserver/api/items/non_existent_item_9999 &#34;HTTP/1.1 404 Not Found&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: DELETE http://testserver/api/items/test_item_to_delete &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: DELETE http://testserver/api/items/..%2Fevil &#34;HTTP/1.1 404 Not Found&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items/analyze-proposal &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/items &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/items &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: PUT http://testserver/api/items/test-item-smartfarm-ai &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년도 여성특화 창업패키지 지원사업</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년도 여성특화 창업패키지 지원사업] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/simulate &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:44 | INFO    | httpx | HTTP Request: GET http://testserver/logs &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/logs?lines=50 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/audit/download/md &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/audit/download/json &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/audit/download/invalid_fmt &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/announcements/ntis:test_sim_detail &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/announcements/non_existent_portal:999999 &#34;HTTP/1.1 404 Not Found&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | rule_prefilter | 사전필터 탈락(키워드 0건): 2026년 전통 옹기 및 한과 제조 지원사업</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | hybrid_matcher | Tier 1 사전필터 탈락: [2026년 전통 옹기 및 한과 제조 지원사업] -&gt; 핵심 기술 키워드 일치 0건 (도메인 불일치) (LLM 호출 생략)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/simulate &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | hybrid_matcher | Tier 1 통과 -&gt; Tier 2 LLM 심층 평가 진입: [2026년 탄소배출권 디지털 MRV 및 에너지 AX 실증과제] (시맨틱=50.9점)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-rose-400 font-semibold">2026-10-30 00:18:45 | ERROR   | src.matcher.eligibility_matcher | 매칭 평가 중 예외 발생, degrade 적용: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">Traceback (most recent call last):</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">  File &#34;/Users/ssh/Documents/Develope/SSHAI-CWA/gov-grant-automation/src/matcher/eligibility_matcher.py&#34;, line 76, in evaluate_notice</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">    raw = self.llm.generate_structured(</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-400">AttributeError: &#39;NoneType&#39; object has no attribute &#39;generate_structured&#39;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/simulate &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/simulate &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/portals &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/portals/status &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-amber-300">2026-10-30 00:18:45 | WARNING | resilience | 서킷 [smtech] 연속 1회 실패 -&gt; OPEN 전이 (요청 임시 차단)</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/profile &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/profile &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/profile &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/preflight &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/preflight &#34;HTTP/1.1 404 Not Found&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://testserver/api/matcher/preflight &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/announcements?tab=ALL &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/announcements?tab=EARLY_STARTUP &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/dashboard &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | year_filter | 연도필터: 5건 중 5건 드롭(older_cycle_dropped(latest=2025&lt;2026))</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | year_filter | 연도필터: 4건 중 2건 드롭(older_cycle_dropped(latest=2024&lt;2026); older_cycle_dropped(latest=2025&lt;2026))</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/announcements &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/announcements?year=all &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/announcements?year=past &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/stats/years &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/dashboard &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://127.0.0.1:11434/api/generate &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: POST http://127.0.0.1:11434/api/generate &#34;HTTP/1.1 400 Bad Request&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:45 | INFO    | httpx | HTTP Request: GET http://testserver/api/status &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:18:58 | INFO    | main | 웹 관리자 대시보드 서버 시작: http://127.0.0.1:8081</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:25 | INFO    | httpx | HTTP Request: GET http://testserver/intro &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:25 | INFO    | httpx | HTTP Request: GET http://testserver/intro &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:25 | INFO    | httpx | HTTP Request: GET http://testserver/feedback-lounge &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:25 | INFO    | httpx | HTTP Request: GET http://testserver/pricing &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/dashboard &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/dashboard/biz &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/announcements &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/items &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/matches &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/projects &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/proposals/tailor &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/vault &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/portals &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/governance/partner &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/admin/platform &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/admin/audit-logs &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/audit &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/logs &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/prototype/report/camp_a25f1d7caf1d &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/prototype/report/camp_38f7973a0954 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/prototype/report/camp_37bbbd311fd3 &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/prototype/report/camp_a88bb7f66c3e &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/prototype/report/camp_a2b7a12396fe &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:20:26 | INFO    | httpx | HTTP Request: GET http://testserver/prototype/report/camp_c5fcb9dfe2bb &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/intro &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/intro &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/feedback-lounge &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/pricing &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/dashboard &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/dashboard/biz &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/announcements &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/items &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/matches &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/projects &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/proposals/tailor &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/vault &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/portals &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/governance/partner &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/admin/platform &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/admin/audit-logs &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+      <div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded">
+        
+        <span class="text-slate-300">2026-10-30 00:21:17 | INFO    | httpx | HTTP Request: GET http://testserver/audit &#34;HTTP/1.1 200 OK&#34;</span>
+        
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<script>
+  let autoRefreshTimer = null;
+
+  function scrollToBottom() {
+    const el = document.getElementById('logTerminal');
+    el.scrollTop = el.scrollHeight;
+  }
+
+  function formatLogLine(line) {
+    let colorClass = 'text-slate-300';
+    if (line.includes('ERROR') || line.includes('FAIL')) {
+      colorClass = 'text-rose-400 font-semibold';
+    } else if (line.includes('WARNING') || line.includes('WARN')) {
+      colorClass = 'text-amber-300';
+    } else if (line.includes('INFO')) {
+      colorClass = 'text-slate-300';
+    } else {
+      colorClass = 'text-slate-400';
+    }
+    const escaped = line.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `<div class="py-0.5 hover:bg-slate-900/60 transition px-1 rounded"><span class="${colorClass}">${escaped}</span></div>`;
+  }
+
+  async function refreshLogs() {
+    const btn = document.getElementById('refreshBtn');
+    btn.disabled = true;
+    try {
+      const res = await fetch('/api/logs?lines=200');
+      const data = await res.json();
+      if (data.status === 'success') {
+        const terminal = document.getElementById('logTerminal');
+        terminal.innerHTML = data.lines.map(formatLogLine).join('');
+        document.getElementById('logCount').innerText = '총 ' + data.count + ' 줄';
+        document.getElementById('lastUpdated').innerText = new Date().toLocaleTimeString();
+      }
+    } catch (err) {
+      console.error('로그 갱신 오류:', err);
+    } finally {
+      btn.disabled = false;
+    }
+  }
+
+  function toggleAutoRefresh(enabled) {
+    if (autoRefreshTimer) {
+      clearInterval(autoRefreshTimer);
+      autoRefreshTimer = null;
+    }
+    if (enabled) {
+      autoRefreshTimer = setInterval(refreshLogs, 5000);
+    }
+  }
+
+  window.addEventListener('DOMContentLoaded', () => {
+    scrollToBottom();
+  });
+</script>
+
+  </main>
+
+  <!-- 파이프라인 실행 결과 모달 -->
+  <div id="pipelineResultModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+          <h3 class="text-base font-bold">파이프라인 실행 완료</h3>
+        </div>
+        <button onclick="closePipelineModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+            <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
+          </div>
+        </div>
+        <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
+          </h4>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <a href="./matches.html" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
+          <i class="fa-solid fa-paper-plane"></i> 발송 이력 페이지(/matches)로 이동
+        </a>
+        <div class="flex items-center gap-2">
+          <button onclick="window.location.reload()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> 화면 새로고침
+          </button>
+          <button onclick="closePipelineModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
+  </footer>
+
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
+  <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineResultModal').classList.add('hidden');
+    }
+
+    async function triggerPipeline() {
+      const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
+      try {
+        const res = await fetch('/api/pipeline/run', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
+        }
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
+  </script>
+  
+
+  <!-- GitHub Pages Client-side Mock API Layer -->
+  <script src="./static/js/github_pages_mock_api.js"></script>
+</body>
+</html>

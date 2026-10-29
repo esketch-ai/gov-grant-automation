@@ -1,0 +1,1796 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모두의 창업비서 (SSA : Startup Secretary for All) · 정부지원사업 맞춤형 공고 매칭 & 지원 자격 진단</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/k_horizon_2027.css?v=20261029_ssa">
+</head>
+<body class="min-h-screen flex flex-col" data-role="visitor">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge visitor">
+          <i class="fa-solid fa-compass"></i>
+          <span>초기 방문자 포털</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">지원사업 맞춤 추천과 성장 스토리를 확인하는 초기 방문자 서비스</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="./intro.html" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="./static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
+          </div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
+            <span class="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">SSA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
+        
+          
+          <a
+            href="./intro.html"
+            class="kh-nav-item "
+            
+            data-nav-role="visitor"
+            data-nav-page="intro"
+            data-nav-href="./intro.html"
+          >
+            <i class="fa-solid fa-sparkles text-xs opacity-75"></i>
+            <span>서비스 소개</span>
+          </a>
+          
+          <a
+            href="./feedback_lounge.html"
+            class="kh-nav-item "
+            
+            data-nav-role="visitor"
+            data-nav-page="feedback_lounge"
+            data-nav-href="./feedback_lounge.html"
+          >
+            <i class="fa-solid fa-comments text-xs opacity-75"></i>
+            <span>피드백 라운지</span>
+          </a>
+          
+          <a
+            href="/intro#story-5acts"
+            class="kh-nav-item "
+            
+            data-nav-role="visitor"
+            data-nav-page="story"
+            data-nav-href="/intro#story-5acts"
+          >
+            <i class="fa-solid fa-film text-xs opacity-75"></i>
+            <span>성장 스토리</span>
+          </a>
+          
+          <a
+            href="/intro#growth-partners"
+            class="kh-nav-item "
+            
+            data-nav-role="visitor"
+            data-nav-page="partners"
+            data-nav-href="/intro#growth-partners"
+          >
+            <i class="fa-solid fa-handshake text-xs opacity-75"></i>
+            <span>전문 파트너</span>
+          </a>
+          
+          <a
+            href="./pricing.html"
+            class="kh-nav-item active"
+            aria-current="page"
+            data-nav-role="visitor"
+            data-nav-page="pricing"
+            data-nav-href="./pricing.html"
+          >
+            <i class="fa-solid fa-gem text-xs opacity-75"></i>
+            <span>요금제 안내</span>
+          </a>
+          
+        
+      </nav>
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            onclick="switchServiceRole('visitor', './intro.html')"
+            class="kh-role-pill kh-role-visitor active"
+            data-role-btn="visitor"
+            title="초기 방문자"
+          >
+            <i class="fa-solid fa-compass text-xs"></i>
+            <span>방문자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('subscriber', './biz_dashboard.html')"
+            class="kh-role-pill kh-role-subscriber "
+            data-role-btn="subscriber"
+            title="유료 사업자"
+          >
+            <i class="fa-solid fa-briefcase text-xs"></i>
+            <span>사업자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('admin', './admin_platform.html')"
+            class="kh-role-pill kh-role-admin "
+            data-role-btn="admin"
+            title="플랫폼 관리자"
+          >
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>관리자</span>
+          </button>
+          
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="./dashboard.html">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        
+        <a
+          href="/vault?role=subscriber"
+          class="kh-btn-cta primary hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>1분 과제 진단</span>
+        </a>
+        
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge visitor">
+          초기 방문자 포털
+        </span>
+      </div>
+      
+        
+        <a
+          href="./intro.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="visitor"
+          data-mobile-nav-page="intro"
+          data-mobile-nav-href="./intro.html"
+        >
+          <i class="fa-solid fa-sparkles text-xs w-4 text-center"></i>
+          <span>서비스 소개</span>
+        </a>
+        
+        <a
+          href="./feedback_lounge.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="visitor"
+          data-mobile-nav-page="feedback_lounge"
+          data-mobile-nav-href="./feedback_lounge.html"
+        >
+          <i class="fa-solid fa-comments text-xs w-4 text-center"></i>
+          <span>피드백 라운지</span>
+        </a>
+        
+        <a
+          href="/intro#story-5acts"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="visitor"
+          data-mobile-nav-page="story"
+          data-mobile-nav-href="/intro#story-5acts"
+        >
+          <i class="fa-solid fa-film text-xs w-4 text-center"></i>
+          <span>성장 스토리</span>
+        </a>
+        
+        <a
+          href="/intro#growth-partners"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="visitor"
+          data-mobile-nav-page="partners"
+          data-mobile-nav-href="/intro#growth-partners"
+        >
+          <i class="fa-solid fa-handshake text-xs w-4 text-center"></i>
+          <span>전문 파트너</span>
+        </a>
+        
+        <a
+          href="./pricing.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition bg-blue-600/20 text-cyan-300 font-semibold border border-cyan-400/30"
+          data-mobile-nav-role="visitor"
+          data-mobile-nav-page="pricing"
+          data-mobile-nav-href="./pricing.html"
+        >
+          <i class="fa-solid fa-gem text-xs w-4 text-center"></i>
+          <span>요금제 안내</span>
+        </a>
+        
+      
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        
+        <a href="/vault?role=subscriber" onclick="toggleMobileNav()" class="kh-btn-cta primary w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>1분 과제 진단</span>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+<div class="space-y-10">
+  <!-- 메인 히어로 섹션 -->
+  <section id="hero-intro" class="kh-hero-obsidian kh-page-hero reveal kh-scroll-target">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-5 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md shadow-xl">
+      <div class="flex items-center gap-3.5">
+        <div class="relative shrink-0">
+          <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 opacity-60 blur-md animate-pulse"></div>
+          <img src="./static/img/ssa_brand_emblem_3d_v2.png" alt="SSA Brand Emblem" class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="kh-badge cyan font-bold">모두의 창업비서 (SSA)</span>
+            <span class="text-xs font-semibold text-purple-300">Startup Secretary for All</span>
+          </div>
+          <p class="text-xs text-slate-300 mt-0.5">중기부·과기정통부 R&amp;D/사업화 공고 분석 · 25대 법정 결격사유 0.05초 사전 검증 인텔리전스</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap text-xs">
+        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-semibold">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i>25대 결격사유 ALL PASS
+        </span>
+        <span class="px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 font-semibold">
+          <i class="fa-solid fa-shield-halved text-cyan-400"></i>SHA-256 공인 인증필
+        </span>
+      </div>
+    </div>
+
+    <!-- 시연 비디오 -->
+    <div class="relative h-[380px] sm:h-[420px] w-full overflow-hidden mb-6 rounded-2xl border border-white/15 shadow-2xl">
+      <video autoplay muted loop playsinline poster="./static/media/intro/hero_fatigue_vs_winning_edge.jpg" class="w-full h-full object-cover">
+        <source src="./static/media/intro/intro_showreel.mp4" type="video/mp4" />
+        귀하의 브라우저는 비디오 재생을 지원하지 않습니다.
+      </video>
+      <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-slate-900/30 to-transparent flex items-end p-6">
+        <div class="flex items-center gap-3 text-white/90 text-xs sm:text-sm">
+          <i class="fa-solid fa-circle-play text-cyan-400 text-2xl"></i>
+          <span>찾아 헤매는 번거로움은 없애고, 신청 준비 효율을 극대화합니다</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 핵심 가치 문구 -->
+    <div class="text-center max-w-4xl mx-auto">
+      <h1 class="text-3xl sm:text-5xl font-extrabold text-white mb-4 leading-tight tracking-tight">
+        과제사업을 일일이 찾아다니고<br />
+        수많은 정부 공고 중 내 기업에 맞는 지원사업을 일일이 탐색하는 피로
+      </h1>
+      <p class="text-lg sm:text-2xl text-slate-200 mb-8 leading-relaxed">
+        기업 맞춤 공고 추천과 공고별 필수 자격요건 및 가점 항목 정밀 분석을 통해<br />
+        <span class="text-cyan-300 font-bold">빠르게 검토하고</span>
+        <span class="text-emerald-300 font-bold">완성도 높은 서류로 적시 지원하는 가치</span>
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 mt-4">
+        <a href="#prototype-lounge" class="kh-btn primary text-base px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white">
+          <i class="fa-solid fa-play"></i> ⚡ 기획·앱 체험 &amp; 피드백 라운지
+        </a>
+        <a href="/vault?role=subscriber" class="kh-btn ghost text-white border-white/30 bg-white/10 px-6 py-3">
+          <i class="fa-solid fa-rocket"></i> 1분 무료 과제 매칭 시작하기
+        </a>
+        <button type="button" class="kh-btn ghost text-white border-white/30 bg-white/10 px-5 py-3" onclick="document.querySelector('[data-tab=pricing-plan]')?.click(); document.getElementById('section-pricing-plan')?.scrollIntoView({behavior:'smooth'});">
+          <i class="fa-solid fa-gem"></i> 요금 안내·샘플 보기
+        </button>
+        <a href="/dashboard/biz?role=subscriber" class="kh-btn ghost text-cyan-300 border-cyan-400/40 bg-cyan-950/40 px-5 py-3">
+          <i class="fa-solid fa-briefcase"></i> 사업자 워크스페이스 둘러보기
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- 권한별 서비스 안내 -->
+  <section>
+    
+<div class="mb-6">
+  
+  <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">맞춤 서비스 안내</h3>
+  
+  <p class="text-sm text-slate-600 mt-1 leading-relaxed">초기 방문자, 유료 사업자, 관리자의 목적에 맞는 맞춤 화면을 제공합니다.</p>
+  
+</div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      
+      <div class="krds-card krds-hover flex flex-col justify-between ring-2 ring-blue-600">
+        <div>
+          <span class="kh-badge cyan">초기 방문자 포털</span>
+          <h4 class="font-bold text-slate-900 text-lg mt-2">초기 방문자</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">지원사업 맞춤 추천과 성장 스토리를 확인하는 초기 방문자 서비스</p>
+        </div>
+        <button type="button" class="krds-btn ghost mt-4 w-full text-xs" onclick="switchServiceRole('visitor', './intro.html')">
+          <i class="fa-solid fa-compass"></i> 방문자 모드로 전환
+        </button>
+      </div>
+      
+      <div class="krds-card krds-hover flex flex-col justify-between ">
+        <div>
+          <span class="kh-badge emerald">유료 사업자 전용 워크스페이스</span>
+          <h4 class="font-bold text-slate-900 text-lg mt-2">유료 사업자</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">맞춤 대시보드와 공고 요건 정밀 분석 공간</p>
+        </div>
+        <button type="button" class="krds-btn ghost mt-4 w-full text-xs" onclick="switchServiceRole('subscriber', './biz_dashboard.html')">
+          <i class="fa-solid fa-briefcase"></i> 사업자 모드로 전환
+        </button>
+      </div>
+      
+      <div class="krds-card krds-hover flex flex-col justify-between ">
+        <div>
+          <span class="kh-badge gold">관리자 통합 관제</span>
+          <h4 class="font-bold text-slate-900 text-lg mt-2">플랫폼 관리자</h4>
+          <p class="text-xs text-slate-600 mt-1 leading-relaxed">플랫폼 현황 및 감사로그 모니터링</p>
+        </div>
+        <button type="button" class="krds-btn ghost mt-4 w-full text-xs" onclick="switchServiceRole('admin', './admin_platform.html')">
+          <i class="fa-solid fa-shield-halved"></i> 관리자 모드로 전환
+        </button>
+      </div>
+      
+    </div>
+  </section>
+
+  <!-- 5막 공감 스토리보드 -->
+  <section id="story-5acts" class="kh-scroll-target">
+    
+<div class="mb-6">
+  
+  <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">대표님의 여정: 5막 성장 스토리</h3>
+  
+  <p class="text-sm text-slate-600 mt-1 leading-relaxed">야근의 한숨부터 아침 맞춤 알림, 공고 요건 정밀 분석, 다지원 신청, 그리고 소중한 인맥과 사업운까지</p>
+  
+</div>
+
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      
+        
+<div class="krds-card krds-hover reveal reveal-delay-1 flex flex-col justify-between">
+  <div>
+    <div class="relative h-56 w-full rounded-lg overflow-hidden bg-slate-900 mb-3">
+      <img src="./static/media/intro/story_act1_exhaustion.jpg" alt="야근의 한숨" class="w-full h-full object-cover" />
+      <span class="absolute top-2.5 left-2.5 kh-badge crimson">야근의 한숨</span>
+    </div>
+    <div class="px-1">
+      <h3 class="font-bold text-slate-900 text-sm mb-1">제1막 · 끝없는 공고 검색의 피로</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">&#34;오늘도 공고만 찾다 하루가 다 갔네... 기관마다 다른 서식은 언제 다 채우지?&#34;</p>
+    </div>
+  </div>
+</div>
+
+      
+        
+<div class="krds-card krds-hover reveal reveal-delay-2 flex flex-col justify-between">
+  <div>
+    <div class="relative h-56 w-full rounded-lg overflow-hidden bg-slate-900 mb-3">
+      <img src="./static/media/intro/story_act2_morning_alert.jpg" alt="아침 맞춤 알림" class="w-full h-full object-cover" />
+      <span class="absolute top-2.5 left-2.5 kh-badge cyan">아침 맞춤 알림</span>
+    </div>
+    <div class="px-1">
+      <h3 class="font-bold text-slate-900 text-sm mb-1">제2막 · 기업 맞춤 적격 과제 브리핑</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">출근길 도착한 적합 공고 알림 — 우리 기업 조건에 꼭 맞는 사업만 골라줍니다.</p>
+    </div>
+  </div>
+</div>
+
+      
+        
+<div class="krds-card krds-hover reveal reveal-delay-3 flex flex-col justify-between">
+  <div>
+    <div class="relative h-56 w-full rounded-lg overflow-hidden bg-slate-900 mb-3">
+      <img src="./static/media/intro/story_act3_warm_guide.jpg" alt="요건 정밀 분석 가이드" class="w-full h-full object-cover" />
+      <span class="absolute top-2.5 left-2.5 kh-badge violet">요건 정밀 분석</span>
+    </div>
+    <div class="px-1">
+      <h3 class="font-bold text-slate-900 text-sm mb-1">제3막 · 공고 요건 및 가점 정밀 분석</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">등록된 기업 정보를 바탕으로 심사위원이 요구하는 핵심 자격요건과 가점 항목을 정밀 분석합니다.</p>
+    </div>
+  </div>
+</div>
+
+      
+        
+<div class="krds-card krds-hover reveal reveal-delay-4 flex flex-col justify-between">
+  <div>
+    <div class="relative h-56 w-full rounded-lg overflow-hidden bg-slate-900 mb-3">
+      <img src="./static/media/intro/story_act4_winning_joy.jpg" alt="과제 지원 완료" class="w-full h-full object-cover" />
+      <span class="absolute top-2.5 left-2.5 kh-badge emerald">체계적 적시 지원</span>
+    </div>
+    <div class="px-1">
+      <h3 class="font-bold text-slate-900 text-sm mb-1">제4막 · 철저한 준비로 완성하는 지원</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">맞춤 공고 알림과 서식 가이드로 최적의 과제를 찾아 적시에 빈틈없이 지원하고, 기업 데이터는 안전하게 보호됩니다.</p>
+    </div>
+  </div>
+</div>
+
+      
+        
+<div class="krds-card krds-hover reveal reveal-delay-5 flex flex-col justify-between">
+  <div>
+    <div class="relative h-56 w-full rounded-lg overflow-hidden bg-slate-900 mb-3">
+      <img src="./static/media/intro/story_act5_growth_network_fortune.jpg" alt="전문 파트너 연계" class="w-full h-full object-cover" />
+      <span class="absolute top-2.5 left-2.5 kh-badge gold">성장의 길잡이</span>
+    </div>
+    <div class="px-1">
+      <h3 class="font-bold text-slate-900 text-sm mb-1">제5막 · 5대 전문 파트너 생태계</h3>
+      <p class="text-xs text-slate-600 leading-relaxed">회계·마케팅·광고·투자·법률 파트너 연결까지 — 대표님은 본연의 사업과 인맥에만 집중하세요.</p>
+    </div>
+  </div>
+</div>
+
+      
+    </div>
+  </section>
+
+  <!-- 기획·웹·앱 실사용자 피드백 & 설문 보고서 라운지 (모두를 위한 오픈 라운지) -->
+  <section id="prototype-lounge" class="kh-scroll-target">
+    <div class="krds-card p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-purple-950 to-slate-950 text-white rounded-2xl shadow-xl border border-purple-800/40">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+        <div>
+          <div class="flex items-center gap-2 flex-wrap mb-2">
+            <span class="kh-badge violet"><i class="fa-solid fa-lightbulb mr-1"></i>실사용자 피드백 수집</span>
+            <span class="kh-badge emerald"><i class="fa-solid fa-gift mr-1"></i>참여 테스터 리워드 지급</span>
+            <span class="kh-badge cyan"><i class="fa-solid fa-file-lines mr-1"></i>사업계획서 첨부용 설문 보고서</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
+            동료 창업자 기획·웹·앱 체험 &amp; 피드백 라운지
+          </h2>
+          <p class="text-xs sm:text-sm text-purple-200 mt-1.5 leading-relaxed max-w-3xl">
+            내가 만든 기획안, 웹, 앱을 동료 창업자와 실제 사용자들에게 직접 피드백받고, 이를 정리하여 사업계획서 시장 검증(Traction) 자료로 바로 활용할 수 있는 설문 통계 보고서를 생성합니다.
+            다른 창업자의 서비스를 테스트해주면 소정의 참여 리워드가 지급됩니다.
+          </p>
+        </div>
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 shrink-0">
+          <div class="p-3 rounded-xl bg-white/10 border border-white/15 backdrop-blur-sm text-right">
+            <span class="text-xs text-purple-200 block">나의 테스터 수당 현황</span>
+            <span class="text-base font-extrabold text-white kh-tabular">
+              0원
+              <span class="text-xs font-normal text-purple-300 ml-1">(0건 완료)</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4대 가치 인프라 -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 my-6">
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-stopwatch text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">최소한의 사용 테스트 시간</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">단순 클릭 이탈을 방지하고 실제 기능을 충분히 살펴본 뒤, 신뢰할 수 있는 피드백을 작성할 수 있도록 지원합니다.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-gift text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">참여 테스터 리워드 제공</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">기획과 제품을 꼼꼼히 체험하고 솔직한 의견을 남겨준 테스터에게 정당한 보상이 지급되어 진정성 있는 피드백을 모읍니다.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-comments text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">실질적인 고객 반응 피드백</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">사용자가 느낀 핵심 장단점, 개선 필요점, 실제 사용 의향 등 실질적인 정량·정성 피드백을 체계적으로 수집합니다.</p>
+        </div>
+        <div class="p-3.5 rounded-xl bg-white/5 border border-white/10">
+          <div class="w-8 h-8 rounded-lg bg-amber-500/20 text-amber-300 flex items-center justify-center font-bold mb-2">
+            <i class="fa-solid fa-file-lines text-sm"></i>
+          </div>
+          <h4 class="font-bold text-xs text-white mb-1">사업계획서 첨부용 설문 보고서</h4>
+          <p class="text-xs text-purple-200/80 leading-relaxed">수집된 고객 반응과 설문 통계를 사업계획서 시장 검증 자료로 바로 활용할 수 있도록 일목요연한 보고서로 정리해 드립니다.</p>
+        </div>
+      </div>
+
+      <!-- 실시간 활성 프로토타입 체험 캠페인 그리드 (엄선된 큐레이션 6선) -->
+      <div class="space-y-3">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-sm font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-layer-group text-purple-400"></i>
+              <span>주목받는 동료 프로젝트 큐레이션 (최신 6선)</span>
+            </h3>
+            <p class="text-xs text-purple-300 mt-0.5">전체 334개 프로젝트 중 활발히 검증 중인 추천 6선입니다.</p>
+          </div>
+          <a href="./feedback_lounge.html" class="text-xs text-purple-200 hover:text-white font-bold flex items-center gap-1.5 bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg border border-white/20 transition self-start sm:self-auto">
+            <span>피드백 라운지 전체보기 (334개)</span>
+            <i class="fa-solid fa-arrow-right text-xs"></i>
+          </a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                    <i class="fa-solid fa-gem text-purple-600"></i>보증검증
+                  </span>
+                  
+                  <span class="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">일반</span>
+                </div>
+
+                
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+                  건당 1400원
+                </span>
+                
+              </div>
+
+              <h4 class="text-sm font-bold text-slate-900 mt-1 line-clamp-1">item_api_test</h4>
+              
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+                item_api_test 실사용자 유료 보증 검증
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>https://api-test.vibecoding.app
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>참여 진척</span>
+                  <span class="font-bold kh-tabular">0 / 50명 (0%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-purple-600 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="./prototype_report_camp_a25f1d7caf1d.html" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+              </a>
+              <button type="button" onclick="openTesterModal('camp_a25f1d7caf1d', 'item_api_test', 'https://api-test.vibecoding.app', 1400)" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>체험 &amp; 피드백
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                    <i class="fa-solid fa-gem text-purple-600"></i>보증검증
+                  </span>
+                  
+                  <span class="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">일반</span>
+                </div>
+
+                
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+                  건당 1400원
+                </span>
+                
+              </div>
+
+              <h4 class="text-sm font-bold text-slate-900 mt-1 line-clamp-1">item_flow_test</h4>
+              
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+                item_flow_test 실사용자 유료 보증 검증
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>https://flow-test.vibecoding.app
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>참여 진척</span>
+                  <span class="font-bold kh-tabular">1 / 30명 (3%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-purple-600 h-1.5 rounded-full" style="width: 3%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="./prototype_report_camp_38f7973a0954.html" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+              </a>
+              <button type="button" onclick="openTesterModal('camp_38f7973a0954', 'item_flow_test', 'https://flow-test.vibecoding.app', 1400)" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>체험 &amp; 피드백
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                    <i class="fa-solid fa-gem text-purple-600"></i>보증검증
+                  </span>
+                  
+                  <span class="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">AI/딥테크</span>
+                </div>
+
+                
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+                  건당 1400원
+                </span>
+                
+              </div>
+
+              <h4 class="text-sm font-bold text-slate-900 mt-1 line-clamp-1">유료 보증 검증 앱</h4>
+              
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+                유료 보증 검증 앱 실사용자 유료 보증 검증
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>https://paid-app.com
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>참여 진척</span>
+                  <span class="font-bold kh-tabular">0 / 50명 (0%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-purple-600 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="./prototype_report_camp_37bbbd311fd3.html" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+              </a>
+              <button type="button" onclick="openTesterModal('camp_37bbbd311fd3', '유료 보증 검증 앱', 'https://paid-app.com', 1400)" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>체험 &amp; 피드백
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                    <i class="fa-solid fa-gem text-purple-600"></i>보증검증
+                  </span>
+                  
+                  <span class="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">일반</span>
+                </div>
+
+                
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+                  건당 1400원
+                </span>
+                
+              </div>
+
+              <h4 class="text-sm font-bold text-slate-900 mt-1 line-clamp-1">중복 방지 테스트 캠페인</h4>
+              
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+                중복 방지 테스트 캠페인 실사용자 유료 보증 검증
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>https://dup-test.app
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>참여 진척</span>
+                  <span class="font-bold kh-tabular">1 / 30명 (3%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-purple-600 h-1.5 rounded-full" style="width: 3%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="./prototype_report_camp_a88bb7f66c3e.html" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+              </a>
+              <button type="button" onclick="openTesterModal('camp_a88bb7f66c3e', '중복 방지 테스트 캠페인', 'https://dup-test.app', 1400)" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>체험 &amp; 피드백
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                    <i class="fa-solid fa-gem text-purple-600"></i>보증검증
+                  </span>
+                  
+                  <span class="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">일반</span>
+                </div>
+
+                
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+                  건당 1400원
+                </span>
+                
+              </div>
+
+              <h4 class="text-sm font-bold text-slate-900 mt-1 line-clamp-1">유료 보증 검증 실증 앱</h4>
+              
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+                유료 보증 검증 실증 앱 실사용자 유료 보증 검증
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>https://paid-proto.test
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>참여 진척</span>
+                  <span class="font-bold kh-tabular">0 / 50명 (0%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-purple-600 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="./prototype_report_camp_a2b7a12396fe.html" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+              </a>
+              <button type="button" onclick="openTesterModal('camp_a2b7a12396fe', '유료 보증 검증 실증 앱', 'https://paid-proto.test', 1400)" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>체험 &amp; 피드백
+              </button>
+            </div>
+          </div>
+          
+          <div class="p-4 rounded-xl bg-white text-slate-800 shadow-md space-y-3 flex flex-col justify-between">
+            <div class="space-y-2">
+              <div class="flex justify-between items-start gap-2">
+                <div class="flex items-center gap-1.5 flex-wrap">
+                  
+                  <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                    <i class="fa-solid fa-gem text-purple-600"></i>보증검증
+                  </span>
+                  
+                  <span class="text-xs text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded">일반</span>
+                </div>
+
+                
+                <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+                  건당 1400원
+                </span>
+                
+              </div>
+
+              <h4 class="text-sm font-bold text-slate-900 mt-1 line-clamp-1">item_api_test</h4>
+              
+              <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+                item_api_test 실사용자 유료 보증 검증
+              </p>
+              <p class="text-xs text-slate-500 truncate font-mono">
+                <i class="fa-solid fa-link text-slate-400 mr-1"></i>https://api-test.vibecoding.app
+              </p>
+              <div class="space-y-1">
+                <div class="flex justify-between text-xs text-slate-600">
+                  <span>참여 진척</span>
+                  <span class="font-bold kh-tabular">0 / 50명 (0%)</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
+                  <div class="bg-purple-600 h-1.5 rounded-full" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+              <a href="./prototype_report_camp_c5fcb9dfe2bb.html" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+                <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+              </a>
+              <button type="button" onclick="openTesterModal('camp_c5fcb9dfe2bb', 'item_api_test', 'https://api-test.vibecoding.app', 1400)" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow">
+                <i class="fa-solid fa-play mr-1"></i>체험 &amp; 피드백
+              </button>
+            </div>
+          </div>
+          
+        </div>
+
+        <!-- 창업자용 라운지 전체보기 및 등록 유도 배너 -->
+        <div class="mt-4 p-4 rounded-xl bg-purple-900/60 border border-purple-500/40 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div class="text-xs text-purple-200">
+            <span class="font-bold text-white text-sm block">💡 대표님의 기획안, 웹, 앱도 실사용자의 객관적 평가가 필요하신가요?</span>
+            무료 품앗이 등록(0원) 또는 목표 보증 유료 검증 중 원하시는 방식을 선택하여 사업계획서 설문 증빙 데이터를 만들어보세요.
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <a href="./feedback_lounge.html" class="krds-btn primary text-xs py-2 px-4 bg-white text-purple-900 hover:bg-purple-50 font-bold">
+              <i class="fa-solid fa-comments mr-1"></i>피드백 라운지 바로가기 &rarr;
+            </a>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 제5막 성장의 길잡이 & 파트너 생태계 -->
+  <section id="growth-partners" class="kh-scroll-target">
+    <div class="krds-card p-6 sm:p-8 bg-gradient-to-br from-slate-50 to-blue-50/40">
+      
+<div class="mb-6">
+  
+  <h3 class="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">성장의 길잡이 &amp; 5대 전문 파트너 생태계</h3>
+  
+  <p class="text-sm text-slate-600 mt-1 leading-relaxed">과제 자금도 기업의 성장에 맞춰 단계별로 미리 준비해야 합니다. 본연의 사업에 집중하세요.</p>
+  
+</div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="krds-card">
+          <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-route text-blue-600"></i> 성장 단계별 로드맵
+          </h4>
+          <ul class="space-y-2.5 text-xs text-slate-700">
+            
+            <li class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <strong class="text-slate-900 block">1단계: 예비·초기 창업 (최대 1억 ~ 3억 원)</strong>
+              <span class="text-slate-600">벤처기업 확인서 · 전담 연구개발 인력 · 표준 사업계획서 체계화</span>
+            </li>
+            
+            <li class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <strong class="text-slate-900 block">2단계: 도약 및 기술개발 (최대 5억 ~ 15억 원)</strong>
+              <span class="text-slate-600">핵심 특허 포트폴리오 · 기술개발 정량지표 · 고용 및 매출 증빙 연동</span>
+            </li>
+            
+            <li class="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+              <strong class="text-slate-900 block">3단계: 글로벌 진출 및 확장 (최대 20억 원 이상)</strong>
+              <span class="text-slate-600">수출 바우처 · 글로벌 인증 · 후속 투자 및 판로 연계</span>
+            </li>
+            
+          </ul>
+        </div>
+
+        <div class="krds-card">
+          <h4 class="font-bold text-slate-900 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-handshake-angle text-emerald-600"></i> 5대 전문 파트너 네트워크
+          </h4>
+          <ul class="space-y-2 text-xs text-slate-700">
+            
+            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+              <i class="fa-solid fa-calculator text-blue-600 mt-0.5"></i>
+              <div>
+                <strong class="text-slate-900">회계·세무</strong>
+                <span class="text-slate-600 block">정부과제 연구비 정산 · 세액공제 자문 · 재무 건전성</span>
+              </div>
+            </li>
+            
+            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+              <i class="fa-solid fa-bullhorn text-blue-600 mt-0.5"></i>
+              <div>
+                <strong class="text-slate-900">마케팅·브랜딩</strong>
+                <span class="text-slate-600 block">시장 검증 · 고객 발굴 · 브랜드 스토리텔링</span>
+              </div>
+            </li>
+            
+            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+              <i class="fa-solid fa-chart-line text-blue-600 mt-0.5"></i>
+              <div>
+                <strong class="text-slate-900">온라인 광고</strong>
+                <span class="text-slate-600 block">바우처 연계 광고 효율화 · 성장 캠페인</span>
+              </div>
+            </li>
+            
+            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+              <i class="fa-solid fa-hand-holding-dollar text-blue-600 mt-0.5"></i>
+              <div>
+                <strong class="text-slate-900">벤처투자사</strong>
+                <span class="text-slate-600 block">전문 투자사 매칭 · 사업설명회 고도화 · 후속 투자</span>
+              </div>
+            </li>
+            
+            <li class="flex items-start gap-2 p-2 rounded-lg bg-slate-50 border border-slate-200">
+              <i class="fa-solid fa-scale-balanced text-blue-600 mt-0.5"></i>
+              <div>
+                <strong class="text-slate-900">특허·법률</strong>
+                <span class="text-slate-600 block">핵심 특허 출원 · 기술 분석 · 계약 법률 자문</span>
+              </div>
+            </li>
+            
+          </ul>
+        </div>
+
+        <div class="krds-card flex flex-col justify-between bg-slate-900 text-white">
+          <div>
+            <blockquote class="border-l-4 border-emerald-400 pl-4 italic text-slate-100 text-base leading-relaxed mt-2">
+              "사업은 인맥이고, 그 인맥을 위해 본연의 사업에 집중하세요. 그러면 인맥과 사업운은 따라옵니다."
+            </blockquote>
+          </div>
+          <p class="text-xs text-slate-300 mt-4 leading-relaxed">
+            복잡한 공고 분석과 자격 요건 검토는 모두의 창업비서(SSA : Startup Secretary for All)에게 맡기시고, 대표님은 핵심 서비스와 사람을 만나는 데 집중하세요.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 샘플 미리보기 및 요금 안내 -->
+  
+  <section id="section-pricing-plan" class="kh-scroll-target">
+    <div class="flex flex-wrap gap-2 border-b border-slate-200 pb-3 mb-6" role="tablist" aria-label="샘플 및 요금 안내 탭">
+      <button class="krds-btn ghost tab-btn " data-tab="sample-overview" role="tab" aria-selected="false" id="tab-btn-sample">작성 가이드 샘플</button>
+      <button class="krds-btn ghost tab-btn" data-tab="paywall-preview" role="tab" aria-selected="false" id="tab-btn-paywall">잠금 미리보기</button>
+      <button class="krds-btn ghost tab-btn active" data-tab="pricing-plan" role="tab" aria-selected="true" id="tab-btn-pricing">요금 안내</button>
+    </div>
+
+    <div class="tab-content " id="tab-sample-overview">
+      <h3 class="font-bold text-slate-900 mb-3">작성 가이드 샘플</h3>
+      <p class="text-slate-600 text-sm mb-4">공고 항목별 심사위원 채점 기준에 맞춘 표준 작성 가이드입니다.</p>
+      <div class="krds-card p-6">
+        <h4 class="font-bold text-slate-800 mb-3">작성 항목 예시</h4>
+        <ul class="list-disc list-inside text-slate-600 text-sm space-y-2">
+          <li>문제인식: 과제의 핵심 필요성을 1문장으로 명확히 요약</li>
+          <li>기술개발: 독자적인 기술 차별점 및 정량적 목표치 기술</li>
+          <li>사업화 전략: 실질적인 시장 진입 경로 및 판로 확보 방안</li>
+          <li>예산 산출표: 정부출연금과 민간부담금의 합리적 배분 산출</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tab-content" id="tab-paywall-preview">
+      <h3 class="font-bold text-slate-900 mb-3">미리보기 및 유료 잠금</h3>
+      <p class="text-slate-600 text-sm mb-4">무료 체험에서는 첫 번째 항목(문제인식)을 즉시 확인하실 수 있습니다.</p>
+      <div class="krds-card p-6 relative overflow-hidden">
+        <p class="text-slate-700 text-sm font-medium mb-2">항목 1 (문제인식): <span class="text-emerald-600 font-bold">열람 가능 — 시장 규모 및 핵심 문제 정의 완료</span></p>
+        <div class="p-4 bg-slate-100 rounded mt-3 space-y-2 select-none blur-sm">
+          <p class="text-slate-600 text-sm">항목 2~4 (기술개발·사업화·예산): 유료 플랜 잠금 — 상세 기술 계획 및 예산 산출 내역</p>
+          <p class="text-slate-600 text-sm">공식 양식 다운로드: 정부출연금 75% / 기업부담금 25% 자동 계산표</p>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center justify-between gap-2 bg-blue-50 p-3.5 rounded-lg border border-blue-200">
+          <span class="text-sm font-semibold text-slate-800">전체 항목 열람 및 공식 양식 다운로드</span>
+          <button type="button" class="krds-btn primary" onclick="subscribePlan('growth')">성장형 플랜으로 시작하기</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content active" id="tab-pricing-plan">
+      <h3 class="font-bold text-slate-900 mb-4">월간 / 연간 요금 안내</h3>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-4">
+        
+          
+<div class="krds-card krds-hover p-6 text-center flex flex-col justify-between ">
+  <div>
+    <div class="flex justify-center mb-2">
+      <span class="kh-badge emerald">기본 체험</span>
+    </div>
+    <h4 class="font-bold text-slate-900 text-lg mb-2">무료 체험</h4>
+    <p class="text-2xl font-extrabold text-slate-900 kh-tabular" id="price-free">0원 / 월</p>
+    <p class="text-slate-500 text-xs mt-1">사업 아이템 1개 · 맞춤 공고 매칭 · 25대 결격사유 1초 사전 검증</p>
+  </div>
+  <button class="krds-btn primary mt-5 w-full" onclick="subscribePlan('free')">무료로 시작하기</button>
+</div>
+
+        
+          
+<div class="krds-card krds-hover p-6 text-center flex flex-col justify-between ring-2 ring-blue-600">
+  <div>
+    <div class="flex justify-center mb-2">
+      <span class="kh-badge cyan">가장 인기</span>
+    </div>
+    <h4 class="font-bold text-slate-900 text-lg mb-2">성장형</h4>
+    <p class="text-2xl font-extrabold text-slate-900 kh-tabular" id="price-growth">39,000원 / 월</p>
+    <p class="text-slate-500 text-xs mt-1">사업 아이템 3개 · 공고 요건 심사 대응 가이드 · 카카오/메일 실시간 알림 · 프로토타입 검증 캠페인</p>
+  </div>
+  <button class="krds-btn primary mt-5 w-full" onclick="subscribePlan('growth')">상담 및 시작</button>
+</div>
+
+        
+          
+<div class="krds-card krds-hover p-6 text-center flex flex-col justify-between ">
+  <div>
+    <div class="flex justify-center mb-2">
+      <span class="kh-badge emerald">과제 집중</span>
+    </div>
+    <h4 class="font-bold text-slate-900 text-lg mb-2">도약형</h4>
+    <p class="text-2xl font-extrabold text-slate-900 kh-tabular" id="price-scaleup">120,000원 / 월</p>
+    <p class="text-slate-500 text-xs mt-1">사업 아이템 10개 · 다부처 과제 동시 트래킹 · 5대 전문 파트너 자문 · 심사위원 공인 보고서 무제한</p>
+  </div>
+  <button class="krds-btn primary mt-5 w-full" onclick="subscribePlan('scaleup')">상담 및 시작</button>
+</div>
+
+        
+          
+<div class="krds-card krds-hover p-6 text-center flex flex-col justify-between ">
+  <div>
+    <div class="flex justify-center mb-2">
+      <span class="kh-badge emerald">거버넌스·컨설팅</span>
+    </div>
+    <h4 class="font-bold text-slate-900 text-lg mb-2">전문가형</h4>
+    <p class="text-2xl font-extrabold text-slate-900 kh-tabular" id="price-agency">300,000원 / 월</p>
+    <p class="text-slate-500 text-xs mt-1">보육기업 다중 포트폴리오 관리 · 5대 전문 파트너 전담 배정 · 맞춤형 과제 기획 전략 자문</p>
+  </div>
+  <button class="krds-btn primary mt-5 w-full" onclick="subscribePlan('agency')">전문가 상담</button>
+</div>
+
+        
+      </div>
+
+      <div class="mt-6 p-4 bg-slate-100 rounded-xl border border-slate-200">
+        <label class="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700">
+          <input type="checkbox" id="annual-toggle" class="rounded border-slate-400 w-4 h-4" />
+          <span>연간 결제 시 20% 특별 할인 (부가세 10% 별도)</span>
+        </label>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- 2026 모두의 창업 대비: 프로토타입 실사용 체험 및 피드백 모달 -->
+<div id="testerModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 text-xs text-slate-700 my-8 max-h-[90vh] overflow-y-auto flex flex-col justify-between">
+    <div>
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="kh-badge violet">실사용자 평가</span>
+            <h3 class="text-sm font-bold text-slate-900" id="testerModalTitle">실사용 피드백 체험</h3>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">
+            기능을 충분히 체험하신 후 솔직한 의견을 남겨주시면 <span id="testerModalRewardText" class="font-bold text-purple-700">1,400원</span> 테스터 리워드가 정산됩니다.
+          </p>
+        </div>
+        <button type="button" onclick="closeTesterModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+      </div>
+
+      <!-- 실시간 체류 타이머 & 테스트 상태 바 -->
+      <div class="mt-4 p-3 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-base">
+            <i class="fa-solid fa-stopwatch"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500 block">사용 테스트 시간</span>
+            <span id="dwellTimerText" class="font-mono text-base font-extrabold text-purple-800">00:00</span>
+          </div>
+        </div>
+        <div class="text-right">
+          <span id="dwellStatusBadge" class="text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200">
+            <i class="fa-solid fa-stopwatch mr-1"></i>최소 테스트 시간: <span id="dwellRemainingSec">60</span>초 남음
+          </span>
+          <p class="text-xs text-slate-400 mt-1">※ 다른 탭으로 전환 시 체류 시간 측정이 일시 정지됩니다.</p>
+        </div>
+      </div>
+
+      <!-- 프로토타입 뷰어 영역 -->
+      <div class="mt-4 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="font-semibold text-slate-700 flex items-center gap-1.5">
+            <i class="fa-solid fa-window-maximize text-blue-600"></i> 임베디드 프로토타입 샌드박스
+          </span>
+          <a id="testerDirectLink" href="#" target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
+            새 창에서 전체화면으로 열기 <i class="fa-solid fa-arrow-up-right-from-square"></i>
+          </a>
+        </div>
+        <div class="w-full h-72 border border-slate-200 rounded-xl bg-slate-100 overflow-hidden relative">
+          <iframe id="testerIframe" class="w-full h-full bg-white" sandbox="allow-scripts allow-forms allow-same-origin allow-popups"></iframe>
+        </div>
+      </div>
+
+      <!-- 실사용 피드백 작성 폼 -->
+      <div class="mt-6 border-t border-slate-200 pt-4 space-y-4">
+        <div class="flex items-center justify-between">
+          <h4 class="font-bold text-slate-900 text-xs flex items-center gap-1.5">
+            <i class="fa-solid fa-clipboard-check text-purple-600"></i> 사업계획서 첨부용 실사용자 피드백
+          </h4>
+          <span id="feedbackLockStatus" class="text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full">
+            <i class="fa-solid fa-lock mr-1"></i>최소 사용 테스트 후 작성 활성화
+          </span>
+        </div>
+
+        <form id="testerFeedbackForm" onsubmit="submitTesterFeedback(event)" class="space-y-4">
+          <!-- 1. 핵심 블로커 선택 -->
+          <div>
+            <label class="block font-semibold mb-1 text-slate-700">1. 사용 중 발견된 가장 큰 개선 필요점</label>
+            <select id="fb_blocker_category" class="w-full border rounded-lg p-2 bg-white text-xs">
+              <option value="NONE">핵심 결함 없음 (원활하게 작동 및 핵심 가치 전달됨)</option>
+              <option value="UI_UX">UI/UX 결함 (조작이 복잡하거나 직관성이 낮음)</option>
+              <option value="FEATURE_BUG">기능 오류 / 버그 (버튼 미작동, 로딩 멈춤 등)</option>
+              <option value="VALUE_PROP">가치 제안 모호 (기능 대비 효용성이나 차별성이 부족함)</option>
+              <option value="PERFORMANCE">반응 속도 지연 (응답 속도가 느리거나 무거움)</option>
+            </select>
+          </div>
+
+          <!-- 2. 4대 정량 지표 평가 -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">UI 직관성</label>
+              <select id="fb_ux_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 (매우 직관적)</option>
+                <option value="4" selected>4점 (우수)</option>
+                <option value="3">3점 (보통)</option>
+                <option value="2">2점 (미흡)</option>
+                <option value="1">1점 (매우 불편)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">기능 완성도</label>
+              <select id="fb_func_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 (완성도 높음)</option>
+                <option value="4" selected>4점 (기능 충실)</option>
+                <option value="3">3점 (보통)</option>
+                <option value="2">2점 (핵심 기능 누락)</option>
+                <option value="1">1점 (작동 불가)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">지불 용의성</label>
+              <select id="fb_wtp_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 (기꺼이 유료 구매)</option>
+                <option value="4">4점 (합리적 가격 시 구매)</option>
+                <option value="3" selected>3점 (무료 위주 탐색)</option>
+                <option value="2">2점 (지불 의사 희박)</option>
+                <option value="1">1점 (지불 의사 없음)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold mb-1 text-slate-700">동료 추천(NPS)</label>
+              <select id="fb_nps_score" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="10">10점 (적극 추천)</option>
+                <option value="9" selected>9점 (추천)</option>
+                <option value="8">8점 (우수)</option>
+                <option value="7">7점 (중립)</option>
+                <option value="5">5점 (보통)</option>
+                <option value="3">3점 (비추천)</option>
+                <option value="0">0점 (절대 비추천)</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 3. 구체 정성 피드백 -->
+          <div>
+            <div class="flex justify-between items-center mb-1">
+              <label class="font-semibold text-slate-700">3. 구체적인 사용자 의견 (최소 15자 이상)</label>
+              <span id="fbCharCount" class="text-xs text-slate-400 font-mono">0 / 15자 이상</span>
+            </div>
+            <textarea id="fb_qualitative_text" rows="3" minlength="15" required oninput="updateCharCount(this)" placeholder="기획과 제품을 직접 조작해보며 느낀 핵심 장점, 아쉬운 점 또는 개선 의견을 구체적으로 적어주세요. (최소 15자)" class="w-full border rounded-lg p-2.5 bg-white text-xs leading-relaxed"></textarea>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+            <button type="button" onclick="closeTesterModal()" class="px-3.5 py-2 rounded-lg border text-slate-600 hover:bg-slate-50">닫기</button>
+            <button type="submit" id="btnSubmitFeedback" disabled class="px-4 py-2 rounded-lg bg-slate-300 text-slate-500 font-bold cursor-not-allowed transition flex items-center gap-1.5">
+              <i class="fa-solid fa-lock" id="btnFeedbackIcon"></i>
+              <span id="btnFeedbackLabel">최소 사용 테스트 필요</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+  </main>
+
+  <!-- 파이프라인 실행 결과 모달 -->
+  <div id="pipelineResultModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+          <h3 class="text-base font-bold">파이프라인 실행 완료</h3>
+        </div>
+        <button onclick="closePipelineModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+            <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
+          </div>
+        </div>
+        <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
+          </h4>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <a href="./matches.html" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
+          <i class="fa-solid fa-paper-plane"></i> 발송 이력 페이지(/matches)로 이동
+        </a>
+        <div class="flex items-center gap-2">
+          <button onclick="window.location.reload()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> 화면 새로고침
+          </button>
+          <button onclick="closePipelineModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
+  </footer>
+
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
+  <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineResultModal').classList.add('hidden');
+    }
+
+    async function triggerPipeline() {
+      const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
+      try {
+        const res = await fetch('/api/pipeline/run', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
+        }
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
+  </script>
+  
+<script>
+  // 1. 3대 서브 탭 양방향 URL 해시 동기화 함수
+  function switchTab(targetTab, updateHash = true) {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+    let found = false;
+
+    tabBtns.forEach(btn => {
+      if (btn.getAttribute('data-tab') === targetTab) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-selected', 'true');
+        found = true;
+      } else {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-selected', 'false');
+      }
+    });
+
+    if (!found) return;
+
+    tabContents.forEach(content => {
+      if (content.id === 'tab-' + targetTab) {
+        content.classList.add('active');
+      } else {
+        content.classList.remove('active');
+      }
+    });
+
+    if (updateHash) {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', '#' + targetTab);
+      } else {
+        window.location.hash = targetTab;
+      }
+    }
+  }
+
+  // 2. GNB 서브 메뉴 활성 상태(ScrollSpy) 실시간 갱신
+  function activateGnbItem(pageKey) {
+    document.querySelectorAll('.kh-nav-item').forEach(el => {
+      const p = el.getAttribute('data-nav-page');
+      if (p === pageKey) {
+        el.classList.add('active');
+        el.setAttribute('aria-current', 'page');
+      } else {
+        el.classList.remove('active');
+        el.removeAttribute('aria-current');
+      }
+    });
+
+    document.querySelectorAll('#mobileNavMenu a[data-mobile-nav-page]').forEach(el => {
+      const p = el.getAttribute('data-mobile-nav-page');
+      if (p === pageKey) {
+        el.classList.add('bg-blue-600/20', 'text-cyan-300', 'font-semibold', 'border', 'border-cyan-400/30');
+        el.classList.remove('text-slate-300');
+      } else {
+        el.classList.remove('bg-blue-600/20', 'text-cyan-300', 'font-semibold', 'border', 'border-cyan-400/30');
+        el.classList.add('text-slate-300');
+      }
+    });
+  }
+
+  // 3. 페이지 로드 및 해시 변경 시 처리 핸들러
+  function handleHashAndPricing() {
+    const hash = window.location.hash;
+    const path = window.location.pathname;
+
+    if (path === '/pricing' || hash === '#section-pricing-plan' || hash === '#pricing-plan') {
+      switchTab('pricing-plan', false);
+      activateGnbItem('pricing');
+      const sec = document.getElementById('section-pricing-plan');
+      if (sec && (path === '/pricing' || hash)) {
+        setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+      }
+    } else if (hash === '#sample-overview') {
+      switchTab('sample-overview', false);
+      activateGnbItem('pricing');
+      const sec = document.getElementById('section-pricing-plan');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#paywall-preview') {
+      switchTab('paywall-preview', false);
+      activateGnbItem('pricing');
+      const sec = document.getElementById('section-pricing-plan');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#story-5acts') {
+      activateGnbItem('story');
+      const sec = document.getElementById('story-5acts');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#growth-partners') {
+      activateGnbItem('partners');
+      const sec = document.getElementById('growth-partners');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    } else if (hash === '#hero-intro') {
+      activateGnbItem('intro');
+      const sec = document.getElementById('hero-intro');
+      if (sec) setTimeout(() => sec.scrollIntoView({ behavior: 'smooth' }), 50);
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // 탭 버튼 클릭 리스너 바인딩
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        const targetTab = this.getAttribute('data-tab');
+        switchTab(targetTab, true);
+      });
+    });
+
+    // 연간 할인 토글 리스너
+    const annualToggle = document.getElementById('annual-toggle');
+    const prices = {
+      free: { monthly: '0원 / 월', annual: '0원 / 월' },
+      growth: { monthly: '39,000원 / 월', annual: '31,200원 / 월 (20% 할인)' },
+      scaleup: { monthly: '120,000원 / 월', annual: '96,000원 / 월 (20% 할인)' },
+      agency: { monthly: '300,000원 / 월', annual: '240,000원 / 월 (20% 할인)' }
+    };
+    if (annualToggle) {
+      annualToggle.addEventListener('change', function() {
+        const isAnnual = this.checked;
+        Object.keys(prices).forEach(tier => {
+          const el = document.getElementById('price-' + tier);
+          if (el) el.textContent = isAnnual ? prices[tier].annual : prices[tier].monthly;
+        });
+      });
+    }
+
+    // 동일 페이지 앵커 링크 부드러운 스크롤 인터셉트
+    document.querySelectorAll('a[href*="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (!href) return;
+        const hashIdx = href.indexOf('#');
+        if (hashIdx === -1) return;
+        const targetPath = href.substring(0, hashIdx);
+        const targetHash = href.substring(hashIdx);
+
+        if (targetPath === '' || targetPath === '/intro' || targetPath === window.location.pathname) {
+          const targetEl = document.querySelector(targetHash);
+          if (targetEl) {
+            e.preventDefault();
+            if (targetHash === '#section-pricing-plan' || targetHash === '#pricing-plan') {
+              switchTab('pricing-plan', true);
+            } else if (targetHash === '#sample-overview') {
+              switchTab('sample-overview', true);
+            } else if (targetHash === '#paywall-preview') {
+              switchTab('paywall-preview', true);
+            }
+            targetEl.scrollIntoView({ behavior: 'smooth' });
+            if (window.history && window.history.replaceState) {
+              window.history.replaceState(null, '', targetHash);
+            }
+          }
+        }
+      });
+    });
+
+    // GNB 내비게이션 링크 중 /pricing 또는 /intro 동일 페이지 인터셉트
+    document.querySelectorAll('.kh-nav-item, #mobileNavMenu a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (window.location.pathname === '/intro') {
+          if (href === '/pricing') {
+            e.preventDefault();
+            switchTab('pricing-plan', true);
+            const sec = document.getElementById('section-pricing-plan');
+            if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+          } else if (href === '/intro') {
+            e.preventDefault();
+            const hero = document.getElementById('hero-intro');
+            if (hero) hero.scrollIntoView({ behavior: 'smooth' });
+          }
+        }
+      });
+    });
+
+    // ScrollSpy (IntersectionObserver & Scroll Listener Fallback)
+    const spySections = [
+      { id: 'hero-intro', page: 'intro' },
+      { id: 'story-5acts', page: 'story' },
+      { id: 'prototype-lounge', page: 'prototypes' },
+      { id: 'growth-partners', page: 'partners' },
+      { id: 'section-pricing-plan', page: 'pricing' }
+    ];
+
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const found = spySections.find(s => s.id === entry.target.id);
+            if (found) {
+              activateGnbItem(found.page);
+            }
+          }
+        });
+      }, {
+        rootMargin: '-15% 0px -60% 0px',
+        threshold: 0
+      });
+
+      spySections.forEach(s => {
+        const el = document.getElementById(s.id);
+        if (el) observer.observe(el);
+      });
+    }
+
+    // 초기 해시 및 가격표 탭 라우팅 실행
+    handleHashAndPricing();
+  });
+
+  window.addEventListener('hashchange', handleHashAndPricing);
+
+  async function subscribePlan(tier) {
+    const isAnnual = document.getElementById('annual-toggle')?.checked;
+    const cycle = isAnnual ? 'annual' : 'monthly';
+    const res = await fetch('/api/billing/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ tier: tier, cycle: cycle, biz_reg_no: '123-45-67890' })
+    });
+    const data = await res.json();
+    if (window.showToast) {
+      window.showToast(data.ok ? '구독 신청이 접수되었습니다.' : '요청 처리 완료', 'ok');
+    }
+  }
+
+  // REQ-047: 실사용 테스터 피드백 및 리워드 스크립트 (공개 인트로 라운지)
+  let activeCampaignId = null;
+  let activeSessionId = null;
+  let dwellActiveSeconds = 0;
+  let dwellTimerInterval = null;
+  let heartbeatInterval = null;
+  let isPageVisible = true;
+
+  document.addEventListener('visibilitychange', () => {
+    isPageVisible = !document.hidden;
+  });
+
+  async function openTesterModal(campaignId, itemName, protoUrl, reward) {
+    activeCampaignId = campaignId;
+    activeSessionId = null;
+    dwellActiveSeconds = 0;
+    updateDwellUI();
+
+    document.getElementById('testerModalTitle').textContent = `[${itemName}] 프로토타입 실사용 검증`;
+    document.getElementById('testerModalRewardText').textContent = `${(reward || 1400).toLocaleString()}원`;
+    document.getElementById('testerDirectLink').href = protoUrl;
+    document.getElementById('testerIframe').src = protoUrl;
+
+    document.getElementById('testerFeedbackForm').reset();
+    document.getElementById('fbCharCount').textContent = '0 / 15자 이상';
+    lockFeedbackButton();
+
+    try {
+      const res = await fetch('/api/prototype/sessions/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaign_id: campaignId, tester_id: 'visitor_tester_' + Math.floor(Math.random() * 1000) })
+      });
+      const data = await res.json();
+      if (res.ok && data.session_id) {
+        activeSessionId = data.session_id;
+      }
+    } catch (e) {
+      console.error('Session start error:', e);
+    }
+
+    clearInterval(dwellTimerInterval);
+    clearInterval(heartbeatInterval);
+
+    dwellTimerInterval = setInterval(() => {
+      if (isPageVisible) {
+        dwellActiveSeconds += 1;
+        updateDwellUI();
+      }
+    }, 1000);
+
+    heartbeatInterval = setInterval(async () => {
+      if (!activeSessionId) return;
+      try {
+        await fetch('/api/prototype/sessions/heartbeat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            session_id: activeSessionId,
+            active_increment: isPageVisible ? 5 : 0,
+            visible_increment: 5
+          })
+        });
+      } catch (e) {
+        console.error('Heartbeat error:', e);
+      }
+    }, 5000);
+
+    document.getElementById('testerModal').classList.remove('hidden');
+  }
+
+  function updateDwellUI() {
+    const mins = Math.floor(dwellActiveSeconds / 60);
+    const secs = dwellActiveSeconds % 60;
+    const timeStr = `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    const timerEl = document.getElementById('dwellTimerText');
+    if (timerEl) timerEl.textContent = timeStr;
+
+    const remaining = Math.max(0, 60 - dwellActiveSeconds);
+    const remEl = document.getElementById('dwellRemainingSec');
+    if (remEl) remEl.textContent = remaining;
+
+    if (dwellActiveSeconds >= 60) {
+      unlockFeedbackButton();
+    }
+  }
+
+  function lockFeedbackButton() {
+    const btn = document.getElementById('btnSubmitFeedback');
+    const icon = document.getElementById('btnFeedbackIcon');
+    const label = document.getElementById('btnFeedbackLabel');
+    const status = document.getElementById('feedbackLockStatus');
+    if (btn) {
+      btn.disabled = true;
+      btn.className = 'px-4 py-2 rounded-lg bg-slate-300 text-slate-500 font-bold cursor-not-allowed transition flex items-center gap-1.5';
+    }
+    if (icon) icon.className = 'fa-solid fa-lock';
+    if (label) label.textContent = '최소 사용 테스트 필요';
+    if (status) {
+      status.className = 'text-xs font-bold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-0.5 rounded-full';
+      status.innerHTML = '<i class="fa-solid fa-lock mr-1"></i>최소 사용 테스트 후 작성 활성화';
+    }
+  }
+
+  function unlockFeedbackButton() {
+    const btn = document.getElementById('btnSubmitFeedback');
+    const icon = document.getElementById('btnFeedbackIcon');
+    const label = document.getElementById('btnFeedbackLabel');
+    const status = document.getElementById('feedbackLockStatus');
+    if (btn) {
+      btn.disabled = false;
+      btn.className = 'px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold transition flex items-center gap-1.5 shadow-md cursor-pointer';
+    }
+    if (icon) icon.className = 'fa-solid fa-paper-plane';
+    if (label) label.textContent = '피드백 제출 및 리워드 받기';
+    if (status) {
+      status.className = 'text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-0.5 rounded-full';
+      status.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>테스트 완료! 피드백 작성 가능';
+    }
+    const badge = document.getElementById('dwellStatusBadge');
+    if (badge) {
+      badge.className = 'text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200';
+      badge.innerHTML = '<i class="fa-solid fa-circle-check mr-1"></i>최소 테스트 시간 충족 (작성 가능)';
+    }
+  }
+
+  function updateCharCount(el) {
+    const len = el.value.length;
+    const countEl = document.getElementById('fbCharCount');
+    if (countEl) {
+      countEl.textContent = `${len} / 15자 이상`;
+      if (len >= 15) {
+        countEl.className = 'text-xs text-emerald-600 font-mono font-bold';
+      } else {
+        countEl.className = 'text-xs text-slate-400 font-mono';
+      }
+    }
+  }
+
+  function closeTesterModal() {
+    clearInterval(dwellTimerInterval);
+    clearInterval(heartbeatInterval);
+    const iframe = document.getElementById('testerIframe');
+    if (iframe) iframe.src = 'about:blank';
+    document.getElementById('testerModal').classList.add('hidden');
+  }
+
+  async function submitTesterFeedback(e) {
+    e.preventDefault();
+    if (dwellActiveSeconds < 60) {
+      alert('신뢰할 수 있는 피드백을 위해 최소한의 사용 테스트 시간을 충족한 후 제출하실 수 있습니다.');
+      return;
+    }
+    const textVal = document.getElementById('fb_qualitative_text').value.trim();
+    if (textVal.length < 15) {
+      alert('구체적인 사용성 평가를 위해 최소 15자 이상 의견을 작성해주세요.');
+      return;
+    }
+
+    const payload = {
+      campaign_id: activeCampaignId,
+      session_id: activeSessionId,
+      tester_id: 'visitor_tester',
+      ux_score: parseInt(document.getElementById('fb_ux_score').value, 10),
+      func_score: parseInt(document.getElementById('fb_func_score').value, 10),
+      wtp_score: parseInt(document.getElementById('fb_wtp_score').value, 10),
+      nps_score: parseInt(document.getElementById('fb_nps_score').value, 10),
+      qualitative_text: textVal,
+      blocker_category: document.getElementById('fb_blocker_category').value
+    };
+
+    try {
+      const res = await fetch('/api/prototype/feedback/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok) {
+        if (window.showToast) {
+          window.showToast(data.message || '피드백이 성공적으로 등록되었으며 1,400원 테스터 수당이 정산되었습니다.', 'ok');
+        } else {
+          alert(data.message || '피드백이 성공적으로 등록되었으며 테스터 수당이 정산되었습니다.');
+        }
+        closeTesterModal();
+        setTimeout(() => window.location.reload(), 1200);
+      } else {
+        alert('피드백 제출 실패: ' + (data.detail || data.message || '오류가 발생했습니다.'));
+      }
+    } catch (err) {
+      alert('통신 오류: ' + err);
+    }
+  }
+</script>
+
+
+  <!-- GitHub Pages Client-side Mock API Layer -->
+  <script src="./static/js/github_pages_mock_api.js"></script>
+</body>
+</html>

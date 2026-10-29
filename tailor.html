@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>공고별 심사 요건 및 가점 정밀 분석 스튜디오 &middot; 모두의 창업비서 (SSA)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/k_horizon_2027.css?v=20261029_ssa">
+</head>
+<body class="min-h-screen flex flex-col" data-role="subscriber">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge subscriber">
+          <i class="fa-solid fa-briefcase"></i>
+          <span>유료 사업자 전용 워크스페이스</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">맞춤 대시보드와 공고 요건 정밀 분석 공간</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="./biz_dashboard.html" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="./static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
+          </div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
+            <span class="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">SSA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
+        
+          
+          <a
+            href="./biz_dashboard.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="dashboard_biz"
+            data-nav-href="./biz_dashboard.html"
+          >
+            <i class="fa-solid fa-chart-pie text-xs opacity-75"></i>
+            <span>대시보드</span>
+          </a>
+          
+          <a
+            href="./items.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="items"
+            data-nav-href="./items.html"
+          >
+            <i class="fa-solid fa-id-card text-xs opacity-75"></i>
+            <span>사업 아이템</span>
+          </a>
+          
+          <a
+            href="./feedback_lounge.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="feedback_lounge"
+            data-nav-href="./feedback_lounge.html"
+          >
+            <i class="fa-solid fa-comments text-xs opacity-75"></i>
+            <span>피드백 라운지</span>
+          </a>
+          
+          <a
+            href="./vault.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="vault"
+            data-nav-href="./vault.html"
+          >
+            <i class="fa-solid fa-vault text-xs opacity-75"></i>
+            <span>기업 금고</span>
+          </a>
+          
+          <a
+            href="./announcements.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="announcements"
+            data-nav-href="./announcements.html"
+          >
+            <i class="fa-solid fa-bullhorn text-xs opacity-75"></i>
+            <span>맞춤 공고</span>
+          </a>
+          
+          <a
+            href="./tailor.html"
+            class="kh-nav-item active"
+            aria-current="page"
+            data-nav-role="subscriber"
+            data-nav-page="tailor"
+            data-nav-href="./tailor.html"
+          >
+            <i class="fa-solid fa-clipboard-check text-xs opacity-75"></i>
+            <span>요건 분석</span>
+          </a>
+          
+          <a
+            href="./projects.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="projects"
+            data-nav-href="./projects.html"
+          >
+            <i class="fa-solid fa-bullseye text-xs opacity-75"></i>
+            <span>도전 과제</span>
+          </a>
+          
+        
+      </nav>
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('visitor', './intro.html')"
+            class="kh-role-pill kh-role-visitor "
+            data-role-btn="visitor"
+            title="초기 방문자"
+          >
+            <i class="fa-solid fa-compass text-xs"></i>
+            <span>방문자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            onclick="switchServiceRole('subscriber', './biz_dashboard.html')"
+            class="kh-role-pill kh-role-subscriber active"
+            data-role-btn="subscriber"
+            title="유료 사업자"
+          >
+            <i class="fa-solid fa-briefcase text-xs"></i>
+            <span>사업자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('admin', './admin_platform.html')"
+            class="kh-role-pill kh-role-admin "
+            data-role-btn="admin"
+            title="플랫폼 관리자"
+          >
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>관리자</span>
+          </button>
+          
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="./dashboard.html">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        
+        <a
+          href="./announcements.html"
+          class="kh-btn-cta emerald hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>맞춤 공고 탐색</span>
+        </a>
+        
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge subscriber">
+          유료 사업자 전용 워크스페이스
+        </span>
+      </div>
+      
+        
+        <a
+          href="./biz_dashboard.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="dashboard_biz"
+          data-mobile-nav-href="./biz_dashboard.html"
+        >
+          <i class="fa-solid fa-chart-pie text-xs w-4 text-center"></i>
+          <span>대시보드</span>
+        </a>
+        
+        <a
+          href="./items.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="items"
+          data-mobile-nav-href="./items.html"
+        >
+          <i class="fa-solid fa-id-card text-xs w-4 text-center"></i>
+          <span>사업 아이템</span>
+        </a>
+        
+        <a
+          href="./feedback_lounge.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="feedback_lounge"
+          data-mobile-nav-href="./feedback_lounge.html"
+        >
+          <i class="fa-solid fa-comments text-xs w-4 text-center"></i>
+          <span>피드백 라운지</span>
+        </a>
+        
+        <a
+          href="./vault.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="vault"
+          data-mobile-nav-href="./vault.html"
+        >
+          <i class="fa-solid fa-vault text-xs w-4 text-center"></i>
+          <span>기업 금고</span>
+        </a>
+        
+        <a
+          href="./announcements.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="announcements"
+          data-mobile-nav-href="./announcements.html"
+        >
+          <i class="fa-solid fa-bullhorn text-xs w-4 text-center"></i>
+          <span>맞춤 공고</span>
+        </a>
+        
+        <a
+          href="./tailor.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition bg-blue-600/20 text-cyan-300 font-semibold border border-cyan-400/30"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="tailor"
+          data-mobile-nav-href="./tailor.html"
+        >
+          <i class="fa-solid fa-clipboard-check text-xs w-4 text-center"></i>
+          <span>요건 분석</span>
+        </a>
+        
+        <a
+          href="./projects.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="projects"
+          data-mobile-nav-href="./projects.html"
+        >
+          <i class="fa-solid fa-bullseye text-xs w-4 text-center"></i>
+          <span>도전 과제</span>
+        </a>
+        
+      
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        
+        <a href="./announcements.html" onclick="toggleMobileNav()" class="kh-btn-cta emerald w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>맞춤 공고 탐색</span>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+<div class="space-y-6">
+
+  <!-- ========================================================================= -->
+  <!-- 1. 상단 컨트롤 바: 아이템 선택, 템플릿 선택, 준비도 게이지 -->
+  <!-- ========================================================================= -->
+  <section class="kh-page-hero tone-indigo reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-purple-500/20 text-purple-300 border border-purple-400/30 text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <i class="fa-solid fa-clipboard-check text-purple-300"></i> 요건 정밀 분석 어시스턴트
+            <span class="sr-only">DocuMorph AI</span>
+          </span>
+          
+        </div>
+        <h1 class="text-xl sm:text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+          <span>공고별 심사 기준 대조 및 필수 제출 요건 분석</span>
+          <span class="sr-only">공고 요건 정밀 분석 및 심사 대응 전략 스튜디오</span>
+        </h1>
+        <p class="text-xs text-purple-200/80 max-w-2xl leading-relaxed">
+          기업의 보유 기술 및 스펙을 공고별 심사 기준 및 가점 항목과 1:1 대조하여 전략적 지원 포인트를 도출합니다.
+        </p>
+      </div>
+
+      <!-- 선택 컨트롤러 -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 bg-white/10 p-3.5 rounded-xl border border-white/10 backdrop-blur-md">
+        <!-- 대상 아이템 선택 -->
+        <div class="space-y-1">
+          <label class="text-xs text-purple-200 font-bold block uppercase tracking-wider">마스터 사업 아이템</label>
+          <select id="itemSelect" onchange="switchItemOrTemplate()" class="w-full sm:w-44 px-2.5 py-1.5 rounded-lg bg-slate-900/90 text-white border border-purple-400/30 text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none">
+            
+            <option value="20261026_ChoRong" selected>
+              체계적인 전국구 온라인 심리상담 플랫폼
+            </option>
+            
+            <option value="20261027_iDEA" >
+              디지털 ESG 얼라이언스소개
+            </option>
+            
+            <option value="item_01_carbon_dmrv" >
+              AI 기반 디지털 MRV 및 탄소배출권 자산 라우팅 플랫폼
+            </option>
+            
+            <option value="item_02_voice_ai" >
+              AI 음성 분리 및 다자간 화자 인식 솔루션
+            </option>
+            
+          </select>
+        </div>
+
+        <!-- 템플릿 선택 -->
+        <div class="space-y-1">
+          <label class="text-xs text-purple-200 font-bold block uppercase tracking-wider">공고 표준 양식</label>
+          <select id="templateSelect" onchange="switchItemOrTemplate()" class="w-full sm:w-56 px-2.5 py-1.5 rounded-lg bg-slate-900/90 text-white border border-purple-400/30 text-xs focus:ring-2 focus:ring-purple-400 focus:outline-none">
+            <option value="PSST" selected>K-Startup PSST 표준 (예창패·초창패)</option>
+            <option value="RND_SMTECH" >중기부 SMTECH R&D (디딤돌·TIPS)</option>
+          </select>
+        </div>
+
+        <!-- 전체 내보내기 버튼 -->
+        <div class="space-y-1 sm:self-end">
+          <label class="text-xs text-transparent hidden sm:block">Action</label>
+          <button onclick="openFullPreviewModal()" class="w-full px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white font-semibold text-xs rounded-lg shadow transition flex items-center justify-center gap-1.5 whitespace-nowrap">
+            <i class="fa-solid fa-file-export"></i> 전체 취합본
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 준비도 게이지 바 -->
+    <div class="mt-6 pt-5 border-t border-purple-700/40 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+      <div class="md:col-span-2 space-y-1.5">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-purple-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-gauge-high text-purple-400"></i> 양식 준비도
+          </span>
+          <span class="font-mono font-bold text-white text-sm" id="readinessScoreText">0%</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-purple-700/50">
+          <div class="h-full bg-gradient-to-r from-amber-400 via-emerald-400 to-purple-400 rounded-full transition-all duration-500"
+               id="readinessProgressBar" style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 flex items-center justify-start md:justify-end gap-3 text-xs">
+        <span class="inline-flex items-center gap-1.5 bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-xs"></i> 완전매핑 <strong>0</strong>
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-amber-500/20 text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg">
+          <i class="fa-solid fa-triangle-exclamation text-amber-400 text-xs"></i> 각색필요 <strong>0</strong>
+        </span>
+        <span class="inline-flex items-center gap-1.5 bg-rose-500/20 text-rose-300 border border-rose-500/30 px-2.5 py-1 rounded-lg">
+          <i class="fa-solid fa-circle-xmark text-rose-400 text-xs"></i> 팩트필요 <strong>8</strong>
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 2. 스플릿 뷰 워크스페이스: 좌측 문항 트리 vs 우측 섹션 요건 분석기 -->
+  <!-- ========================================================================= -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+    <!-- [좌측 4컬럼]: 템플릿 문항 내비게이션 및 갭 진단 -->
+    <div class="lg:col-span-4 space-y-4">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3">
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+          <h2 class="text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-purple-600"></i> 공고 양식 문항 목록
+          </h2>
+          <span class="text-xs text-slate-600 font-mono">총 8개 문항</span>
+        </div>
+
+        <div class="space-y-1.5" id="sectionsNavList">
+          
+          <div onclick="selectSection('1-1')"
+               data-sec-id="1-1"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-purple-50/70 border-purple-400 shadow-sm">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">1. 문제인식 (Problem)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                1-1. 창업아이템의 개발 배경 및 필요성
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_1-1">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('1-2')"
+               data-sec-id="1-2"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">1. 문제인식 (Problem)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                1-2. 목표 시장 및 고객 분석 (고객 검증)
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_1-2">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('2-1')"
+               data-sec-id="2-1"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">2. 실현가능성 (Solution)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                2-1. 창업아이템의 개발 방안 및 구체화 현황
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_2-1">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('2-2')"
+               data-sec-id="2-2"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">2. 실현가능성 (Solution)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                2-2. 경쟁사 분석 및 차별화 경쟁우위
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_2-2">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('3-1')"
+               data-sec-id="3-1"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">3. 성장전략 (Scale-up)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                3-1. 자금소요 및 조달 계획
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_3-1">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('3-2')"
+               data-sec-id="3-2"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">3. 성장전략 (Scale-up)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                3-2. 시장진입 및 글로벌 마케팅 전략
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_3-2">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('4-1')"
+               data-sec-id="4-1"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">4. 팀구성 (Team)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                4-1. 대표자 및 팀원의 보유 역량
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_4-1">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+          <div onclick="selectSection('4-2')"
+               data-sec-id="4-2"
+               class="sec-nav-item p-3 rounded-xl border border-slate-200 hover:border-purple-300 cursor-pointer transition flex items-start justify-between gap-2 group bg-slate-50/50 hover:bg-slate-50">
+            <div class="space-y-1 flex-1 min-w-0">
+              <div class="text-xs text-slate-600 font-semibold truncate">4. 팀구성 (Team)</div>
+              <div class="text-xs font-bold text-slate-900 group-hover:text-purple-700 transition truncate">
+                4-2. 신규 고용 및 사회적 가치 실천 계획
+              </div>
+            </div>
+            <div class="shrink-0 flex flex-col items-end gap-1">
+              
+              <span class="px-1.5 py-0.5 rounded text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
+                팩트필요
+              </span>
+              
+              <span class="draft-badge hidden text-xs text-purple-600 font-semibold" id="badge_done_4-2">
+                <i class="fa-solid fa-check"></i> 작성완료
+              </span>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- 안내 팁 카드 -->
+      <div class="bg-indigo-50/80 rounded-xl p-4 border border-indigo-100 text-xs text-indigo-950 space-y-2">
+        <div class="font-bold flex items-center gap-1.5 text-indigo-800">
+          <i class="fa-solid fa-lightbulb text-amber-500"></i> 심사 대응 가이드 도출 팁
+        </div>
+        <p class="text-slate-600 leading-relaxed text-xs">
+          공고 문항에 맞는 대표님만의 <strong>구체적인 수치(인원수, 예산, 목표 성능)</strong>를 우측 가이드 문답창에 짧게 입력하세요.
+          공고 심사 기준에 부합하는 핵심 수치와 가점 요건을 1:1 대조하여 전략 가이드를 제공합니다.
+        </p>
+      </div>
+    </div>
+
+    <!-- [우측 8컬럼]: 섹션별 실시간 공고 요건 분석 및 전략 워크스페이스 -->
+    <div class="lg:col-span-8 space-y-5">
+      <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-5">
+        
+        <!-- 문항 헤더 및 심사위원 배점 가이드 -->
+        <div class="space-y-3 pb-4 border-b border-slate-100">
+          <div class="flex items-center justify-between gap-3">
+            <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-purple-100 text-purple-800 border border-purple-200" id="currentCategoryText">
+              1. 문제인식 (Problem)
+            </span>
+            <span class="text-xs text-slate-500 font-mono" id="currentRecommendedPages">
+              <i class="fa-regular fa-file-lines text-slate-400 mr-1"></i>권장 분량: 1~2페이지
+            </span>
+          </div>
+
+          <h2 class="text-lg font-bold text-slate-900" id="currentSectionTitle">
+            1-1. 창업아이템의 개발 배경 및 필요성
+          </h2>
+
+          <!-- 심사위원 평가 포인트 알림 박스 -->
+          <div class="p-3 bg-purple-50/60 rounded-xl border border-purple-100 text-xs text-purple-950 flex items-start gap-2.5">
+            <i class="fa-solid fa-circle-info text-purple-600 mt-0.5"></i>
+            <div class="space-y-0.5">
+              <div class="font-bold text-purple-900">심사위원 중점 평가 포인트<span class="sr-only"> (Evaluation Focus)</span></div>
+              <p class="text-slate-700 text-xs leading-relaxed" id="currentEvaluationFocus">
+                개발 동기의 진정성, 시장 내 페인포인트의 구체성 및 시장 수요의 객관적 근거
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 1) 기업 아이템 소개 발췌 원문 아코디언 -->
+        <details class="group bg-slate-50 rounded-xl border border-slate-200 overflow-hidden text-xs" open>
+          <summary class="p-3 font-bold text-slate-700 cursor-pointer flex items-center justify-between bg-slate-100/70 hover:bg-slate-100 transition">
+            <span class="flex items-center gap-1.5">
+              <i class="fa-solid fa-folder-open text-indigo-600"></i> 기업 아이템 소개 발췌 내용<span class="sr-only"> (Source Context)</span>
+            </span>
+            <i class="fa-solid fa-chevron-down text-slate-400 group-open:rotate-180 transition"></i>
+          </summary>
+          <div class="p-4 bg-white text-slate-600 text-xs leading-relaxed border-t border-slate-200 whitespace-pre-wrap font-mono" id="currentMasterText">
+            핵심 키워드: 심리 상담 온라인 상담 청년 창업 심리 검사
+기존의 심리 상담은 고객과의 접근성이 쉽지가 않았다. 내방을 해서 심리상담을 해야 하는 번거로움이 존재하였고, 이를 해결하기 위해 온라인 심리상담을 하는 업체들이 생기고 있지만, 체계적이지 않은 운영으로 심리상담 체계가 약해지고 있다. 이러한 단점들을 극복할 수 있는 전국구로 심리상담가들의 체계적인 조직 운영 체계를 구축하여 심리상담을 보다 더 편리하고, 제대로 된 심리 상담 체계가 이루어 질 수 있게 하는 사업화이다.
+          </div>
+        </details>
+
+        <!-- 2) 코파일럿 인터랙티브 팩트 Q&A 영역 -->
+        <div class="bg-gradient-to-br from-indigo-50/50 to-purple-50/50 rounded-xl p-5 border border-indigo-100 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+              <i class="fa-solid fa-comment-dots text-purple-600"></i> 코파일럿 가이드 문답 (핵심 팩트 보완)
+            </h3>
+            <span class="text-xs text-purple-700 bg-purple-100 px-2 py-0.5 rounded font-semibold">반자동 어시스턴트</span>
+          </div>
+          <p class="text-xs text-slate-600">
+            아래 가이드 질문에 단답형 수치나 핵심 키워드를 입력하시면, AI가 공고 평가 기준에 맞춰 필수 심사 요건 대응 체크포인트를 요약해 드립니다.
+          </p>
+
+          <div class="space-y-3" id="questionsContainer">
+            <!-- 질문 입력 필드가 동적으로 렌더링됨 -->
+          </div>
+
+          <div class="flex items-center justify-between pt-2">
+            <div class="text-xs text-slate-600">
+              <i class="fa-solid fa-bolt text-amber-500 mr-1"></i>Ollama 로컬 LLM / 고밀도 규칙 기반 하이브리드 엔진
+            </div>
+            <button id="generateBtn" onclick="generateSectionDraft()"
+                    class="bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs px-4 py-2.5 rounded-lg shadow-md transition flex items-center gap-2">
+              <i class="fa-solid fa-wand-magic-sparkles"></i>
+              <span>✨ 심사 기준별 대응 가이드 도출</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 3) 맞춤 대응 가이드 및 전략 메모 편집기 -->
+        <div class="space-y-2">
+          <div class="flex items-center justify-between">
+            <label class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+              <i class="fa-solid fa-pen-nib text-slate-600"></i> 공고 요건별 전략 메모 및 대응 가이드 (편집 가능)
+            </label>
+            <div class="flex items-center gap-3 text-xs">
+              <span class="text-slate-600 font-mono text-xs" id="charCount">0자</span>
+              <button onclick="copyDraftToClipboard()" class="text-slate-600 hover:text-purple-600 transition flex items-center gap-1">
+                <i class="fa-regular fa-copy"></i> 복사
+              </button>
+              <button onclick="clearCurrentDraft()" class="text-slate-600 hover:text-rose-600 transition flex items-center gap-1">
+                <i class="fa-solid fa-rotate-left"></i> 비우기
+              </button>
+            </div>
+          </div>
+
+          <textarea id="sectionDraftTextarea" oninput="updateCharCount()" rows="12"
+                    placeholder="우측의 버튼을 누르면 이 영역에 공고 맞춤형 대응 가이드가 요약됩니다. 전략 메모를 자유롭게 추가하세요."
+                    class="w-full text-xs p-4 rounded-xl border border-slate-300 focus:ring-2 focus:ring-purple-500 focus:outline-none bg-slate-50/30 leading-relaxed font-sans text-slate-800"></textarea>
+        </div>
+
+        <!-- 하단 섹션 이동 버튼 바 -->
+        <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+          <button onclick="navigateSection(-1)" class="px-3.5 py-2 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-50 text-xs font-medium transition flex items-center gap-1.5">
+            <i class="fa-solid fa-chevron-left text-xs"></i> 이전 문항
+          </button>
+          
+          <div class="flex items-center gap-2">
+            <button onclick="saveAndNextSection()" class="px-4 py-2 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold shadow transition flex items-center gap-1.5">
+              <span>저장 후 다음 문항</span>
+              <i class="fa-solid fa-chevron-right text-xs"></i>
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ========================================================================= -->
+<!-- 3. 전체 취합 공고 요건 대응 전략서 미리보기 & 다운로드 모달 -->
+<!-- ========================================================================= -->
+<div id="fullPreviewModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+    <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-file-invoice text-purple-400 text-lg"></i>
+        <h3 class="font-bold text-base">공고별 요건 분석 및 지원 전략서 취합본 미리보기</h3>
+      </div>
+      <button onclick="closeFullPreviewModal()" class="text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <div class="p-6 flex-1 overflow-y-auto space-y-4">
+      <div class="flex items-center justify-between bg-purple-50 p-3 rounded-xl border border-purple-100 text-xs text-purple-900">
+        <div>
+          <strong>적용 양식:</strong> K-Startup PSST 표준 창업사업계획서 | <strong>아이템:</strong> 체계적인 전국구 온라인 심리상담 플랫폼
+        </div>
+        <div class="font-mono text-xs text-purple-700 font-semibold" id="modalProgressText">
+          분석 진행률: 0 / 8 완료
+        </div>
+      </div>
+
+      <textarea id="fullDocTextarea" rows="18" readonly
+                class="w-full text-xs p-4 rounded-xl border border-slate-300 bg-slate-50 leading-relaxed font-mono text-slate-800 focus:outline-none"></textarea>
+    </div>
+
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3">
+      <button onclick="copyFullDoc()" class="px-4 py-2 rounded-lg bg-white border border-slate-300 text-slate-700 hover:bg-slate-100 text-xs font-semibold transition flex items-center gap-1.5 shadow-sm">
+        <i class="fa-regular fa-copy"></i> 전체 클립보드 복사
+      </button>
+      <div class="flex items-center gap-2">
+        <button onclick="downloadFullDoc('md')" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-download"></i> 마크다운 (.md) 다운로드
+        </button>
+        <button onclick="closeFullPreviewModal()" class="px-4 py-2 rounded-lg bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-medium transition">
+          닫기
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========================================================================= -->
+<!-- 스크립트: 상태 관리 및 비동기 API 통신 -->
+<!-- ========================================================================= -->
+<script>
+  // 템플릿 및 갭 분석 원본 데이터 주입
+  const currentItem = {"company_specs": {}, "id": "20261026_ChoRong", "keywords": ["\uc2ec\ub9ac \uc0c1\ub2f4", "\uc628\ub77c\uc778 \uc0c1\ub2f4", "\uccad\ub144 \ucc3d\uc5c5", "\uc2ec\ub9ac \uac80\uc0ac"], "name": "\uccb4\uacc4\uc801\uc778 \uc804\uad6d\uad6c \uc628\ub77c\uc778 \uc2ec\ub9ac\uc0c1\ub2f4 \ud50c\ub7ab\ud3fc", "proposal_text": "\uae30\uc874\uc758 \uc2ec\ub9ac \uc0c1\ub2f4\uc740 \uace0\uac1d\uacfc\uc758 \uc811\uadfc\uc131\uc774 \uc27d\uc9c0\uac00 \uc54a\uc558\ub2e4. \ub0b4\ubc29\uc744 \ud574\uc11c \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ud574\uc57c \ud558\ub294 \ubc88\uac70\ub85c\uc6c0\uc774 \uc874\uc7ac\ud558\uc600\uace0, \uc774\ub97c \ud574\uacb0\ud558\uae30 \uc704\ud574 \uc628\ub77c\uc778 \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ud558\ub294 \uc5c5\uccb4\ub4e4\uc774 \uc0dd\uae30\uace0 \uc788\uc9c0\ub9cc, \uccb4\uacc4\uc801\uc774\uc9c0 \uc54a\uc740 \uc6b4\uc601\uc73c\ub85c \uc2ec\ub9ac\uc0c1\ub2f4 \uccb4\uacc4\uac00 \uc57d\ud574\uc9c0\uace0 \uc788\ub2e4. \uc774\ub7ec\ud55c \ub2e8\uc810\ub4e4\uc744 \uadf9\ubcf5\ud560 \uc218 \uc788\ub294 \uc804\uad6d\uad6c\ub85c \uc2ec\ub9ac\uc0c1\ub2f4\uac00\ub4e4\uc758 \uccb4\uacc4\uc801\uc778 \uc870\uc9c1 \uc6b4\uc601 \uccb4\uacc4\ub97c \uad6c\ucd95\ud558\uc5ec \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ubcf4\ub2e4 \ub354 \ud3b8\ub9ac\ud558\uace0, \uc81c\ub300\ub85c \ub41c \uc2ec\ub9ac \uc0c1\ub2f4 \uccb4\uacc4\uac00 \uc774\ub8e8\uc5b4 \uc9c8 \uc218 \uc788\uac8c \ud558\ub294 \uc0ac\uc5c5\ud654\uc774\ub2e4.", "summary": "", "target_stage": "\ucd08\uae30\ucc3d\uc5c5", "trl": 6};
+  const currentTemplate = {"description": "\uad6d\ub0b4 \ucc3d\uc5c5\uc9c0\uc6d0\uc0ac\uc5c5\uc758 80% \uc774\uc0c1\uc774 \ucc44\ud0dd\ud558\ub294 \ud45c\uc900 \uc591\uc2dd(\ubb38\uc81c\uc778\uc2dd-\uc2e4\ud604\uac00\ub2a5\uc131-\uc131\uc7a5\uc804\ub7b5-\ud300\uad6c\uc131). \uace0\uac1d \ubbf8\ucda9\uc871 \uc218\uc694\uc640 \uc2dc\uc7a5\uc131 \uc911\uc2ec \ud3c9\uac00.", "name": "K-Startup PSST \ud45c\uc900 \ucc3d\uc5c5\uc0ac\uc5c5\uacc4\ud68d\uc11c", "sections": [{"category_name": "1. \ubb38\uc81c\uc778\uc2dd (Problem)", "default_master_keys": ["problem", "summary", "keywords"], "description": "\ucc3d\uc5c5 \uc544\uc774\ud15c\uc744 \uc65c \uac1c\ubc1c\ud558\uac8c \ub418\uc5c8\ub294\uc9c0 \ubc30\uacbd\uacfc \uc2dc\uc7a5\uc758 \uae30\uc874 \ubb38\uc81c\uc810(\ubbf8\ucda9\uc871 \uc218\uc694)\uc744 \uc11c\uc220\ud569\ub2c8\ub2e4.", "evaluation_focus": "\uac1c\ubc1c \ub3d9\uae30\uc758 \uc9c4\uc815\uc131, \uc2dc\uc7a5 \ub0b4 \ud398\uc778\ud3ec\uc778\ud2b8\uc758 \uad6c\uccb4\uc131 \ubc0f \uc2dc\uc7a5 \uc218\uc694\uc758 \uac1d\uad00\uc801 \uadfc\uac70", "guiding_questions": ["\uae30\uc874 \uc2dc\uc7a5 \uc81c\ud488\uc774\ub098 \uc194\ub8e8\uc158\uc758 \uac00\uc7a5 \uce58\uba85\uc801\uc778 \ud55c\uacc4 \ub610\ub294 \uace0\uac1d \ubd88\ub9cc\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\ub300\ud45c\ub2d8\uaed8\uc11c \uc774 \ubb38\uc81c\ub97c \uc9c1\uc811 \uacaa\uc73c\uc168\uac70\ub098 \ud574\uacb0\ud574\uc57c\uaca0\ub2e4\uace0 \uacb0\uc2ec\ud55c \uacb0\uc815\uc801 \uacc4\uae30\uac00 \uc788\uc73c\uc2e0\uac00\uc694?"], "recommended_pages": "1~2\ud398\uc774\uc9c0", "section_id": "1-1", "title": "1-1. \ucc3d\uc5c5\uc544\uc774\ud15c\uc758 \uac1c\ubc1c \ubc30\uacbd \ubc0f \ud544\uc694\uc131"}, {"category_name": "1. \ubb38\uc81c\uc778\uc2dd (Problem)", "default_master_keys": ["target_customers", "market_size", "summary"], "description": "\ubaa9\ud45c\ub85c \ud558\ub294 \ud0c0\uae43 \uace0\uac1d\uad70(\ud398\ub974\uc18c\ub098)\uc758 \ud2b9\uc131\uacfc \uc2dc\uc7a5 \uaddc\ubaa8, \uace0\uac1d \uac80\uc99d \uacb0\uacfc\ub97c \uc81c\uc2dc\ud569\ub2c8\ub2e4.", "evaluation_focus": "\ud0c0\uae43 \uace0\uac1d\uc758 \uba85\ud655\uc131, \uc0ac\uc804 \uace0\uac1d \uc778\ud130\ubdf0/\uc124\ubb38/POC \ub4f1 \uc815\ub7c9\uc801 \uac80\uc99d \uc2e4\uc801", "guiding_questions": ["\uc8fc\uc694 \ud0c0\uae43 \uace0\uac1d\uce35(\uc5f0\ub839, \uc131\ubcc4, B2B \uae30\uc5c5\uad70 \ub4f1)\uc740 \ub204\uad6c\uc774\uba70, \uc2e4\uc81c \uc778\ud130\ubdf0\ub098 \uc124\ubb38\uc870\uc0ac\ub97c \uc9c4\ud589\ud55c \uc801\uc774 \uc788\ub098\uc694?", "\ud0c0\uae43 \uace0\uac1d\uc774 \ubcf8 \uc194\ub8e8\uc158\uc5d0 \uc2e4\uc81c\ub85c \uc9c0\ubd88\ud560 \uc758\uc0ac\uac00 \uc788\ub294 \uc801\uc815 \uac00\uaca9\ub300\ub294 \uc5bc\ub9c8\uc778\uac00\uc694?"], "recommended_pages": "1\ud398\uc774\uc9c0 \ub0b4\uc678", "section_id": "1-2", "title": "1-2. \ubaa9\ud45c \uc2dc\uc7a5 \ubc0f \uace0\uac1d \ubd84\uc11d (\uace0\uac1d \uac80\uc99d)"}, {"category_name": "2. \uc2e4\ud604\uac00\ub2a5\uc131 (Solution)", "default_master_keys": ["solution", "tech_stack", "trl", "features"], "description": "\uc544\uc774\ud15c\uc758 \ud575\uc2ec \uae30\ub2a5, \uae30\uc220\uc801 \uad6c\ud604 \ubc29\uc548, \ud604\uc7ac \uac1c\ubc1c \uc9c4\ucc99\ub3c4(\uc2dc\uc81c\ud488/MVP \uc5ec\ubd80)\ub97c \uc11c\uc220\ud569\ub2c8\ub2e4.", "evaluation_focus": "\uac1c\ubc1c \uc2e4\ud604 \uac00\ub2a5\uc131, \uae30\uc220\uc801 \uc644\uc131\ub3c4, TRL \ub2ec\uc131 \uc218\uc900, \ud611\uc57d \uae30\uac04 \ub0b4 \uc81c\uc791 \uc644\ub8cc \uac00\ub2a5 \uc5ec\ubd80", "guiding_questions": ["\ud604\uc7ac \uac1c\ubc1c \ub2e8\uacc4(\uc544\uc774\ub514\uc5b4 \uad6c\uc0c1 / \uc640\uc774\uc5b4\ud504\ub808\uc784 / \uc2dc\uc81c\ud488 \uc81c\uc791 \uc644\ub8cc \ub4f1)\ub294 \uc5b4\ub514\uae4c\uc9c0 \uc9c4\ud589\ub418\uc5c8\ub098\uc694?", "\ud611\uc57d \uae30\uac04 \ub3d9\uc548 \uad6c\ud604\ud560 \ud575\uc2ec \uae30\ub2a5 2~3\uac00\uc9c0\ub294 \ubb34\uc5c7\uc778\uac00\uc694?"], "recommended_pages": "2~3\ud398\uc774\uc9c0", "section_id": "2-1", "title": "2-1. \ucc3d\uc5c5\uc544\uc774\ud15c\uc758 \uac1c\ubc1c \ubc29\uc548 \ubc0f \uad6c\uccb4\ud654 \ud604\ud669"}, {"category_name": "2. \uc2e4\ud604\uac00\ub2a5\uc131 (Solution)", "default_master_keys": ["differentiation", "competitors", "patents"], "description": "\uad6d\ub0b4\uc678 \uc8fc\uc694 \uacbd\uc7c1\uc0ac \ub300\ube44 \uc790\uc0ac \uc81c\ud488\ub9cc\uc758 \ub3c5\ucc3d\uc801\uc778 \ucc28\ubcc4\uc810 \ubc0f \uc9c4\uc785\uc7a5\ubcbd\uc744 \ube44\uad50 \uc81c\uc2dc\ud569\ub2c8\ub2e4.", "evaluation_focus": "\uacbd\uc7c1\uc0ac \ub300\ube44 \uc131\ub2a5/\uac00\uaca9/\uc0ac\uc6a9\uc131 \uce21\uba74\uc758 \uc6b0\uc704\uc131, \uc9c0\uc2dd\uc7ac\uc0b0\uad8c(\ud2b9\ud5c8) \ud655\ubcf4 \uac00\ub2a5\uc131", "guiding_questions": ["\uae30\uc874 1\uc704 \uacbd\uc7c1\uc0ac(\ub610\ub294 \ub300\uccb4\uc81c)\uc640 \ube44\uad50\ud588\uc744 \ub54c \uc790\uc0ac\ub9cc\uc758 \uc555\ub3c4\uc801\uc778 \ucc28\ubcc4\uc810\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\uacbd\uc7c1\uc0ac\uac00 \uc27d\uac8c \ubaa8\ubc29\ud558\uc9c0 \ubabb\ud558\ub3c4\ub85d \ubc29\uc5b4\ud560 \uc218 \uc788\ub294 \uc9c4\uc785\uc7a5\ubcbd(\ud2b9\ud5c8, \ub370\uc774\ud130, \ub178\ud558\uc6b0 \ub4f1)\uc774 \uc788\ub098\uc694?"], "recommended_pages": "1~2\ud398\uc774\uc9c0 (\ube44\uad50 \ud14c\uc774\ube14 \uad8c\uc7a5)", "section_id": "2-2", "title": "2-2. \uacbd\uc7c1\uc0ac \ubd84\uc11d \ubc0f \ucc28\ubcc4\ud654 \uacbd\uc7c1\uc6b0\uc704"}, {"category_name": "3. \uc131\uc7a5\uc804\ub7b5 (Scale-up)", "default_master_keys": ["funding_plan", "budget", "specs"], "description": "\uc815\ubd80\uc9c0\uc6d0\uae08 \uc0ac\uc6a9 \uacc4\ud68d(\uc778\uac74\ube44, \uc678\uc8fc\uc6a9\uc5ed\ube44, \ub9c8\ucf00\ud305\ube44 \ub4f1)\uacfc \uc790\uccb4 \uc790\uae08 \ud655\ubcf4 \ubc29\uc548\uc744 \uc791\uc131\ud569\ub2c8\ub2e4.", "evaluation_focus": "\uc608\uc0b0 \ubc30\ubd84\uc758 \uc801\uc815\uc131, \uc790\ubd80\ub2f4\uae08 \uc870\ub2ec\uc758 \uc548\uc815\uc131, \uc0ac\uc5c5\ube44 \uc9d1\ud589\uc758 \uad6c\uccb4\uc131", "guiding_questions": ["\uc9c0\uc6d0\ubc1b\uace0\uc790 \ud558\ub294 \uc815\ubd80\uc9c0\uc6d0\uae08\uc758 \uc8fc\uc694 \uc0ac\uc6a9\ucc98(\uc2dc\uc81c\ud488 \uc81c\uc791\ube44, \ub9c8\ucf00\ud305\ube44, \uc778\uac74\ube44 \ub4f1) \ube44\uc911\uc740 \uc5b4\ub5bb\uac8c \ub418\ub098\uc694?", "\uc815\ubd80\uc9c0\uc6d0\uae08 \uc678\uc5d0 \uae30\uc5c5 \uc790\ubd80\ub2f4\uae08\uc774\ub098 \uc678\ubd80 \ud22c\uc790 \uc720\uce58 \uacc4\ud68d\uc774 \uc788\uc73c\uc2e0\uac00\uc694?"], "recommended_pages": "1\ud398\uc774\uc9c0 \ub0b4\uc678 (\uc18c\uc694\uc608\uc0b0 \ud45c \ud3ec\ud568)", "section_id": "3-1", "title": "3-1. \uc790\uae08\uc18c\uc694 \ubc0f \uc870\ub2ec \uacc4\ud68d"}, {"category_name": "3. \uc131\uc7a5\uc804\ub7b5 (Scale-up)", "default_master_keys": ["business_model", "sales_channel", "marketing"], "description": "\uc218\uc775 \ubaa8\ub378(BM), \uace0\uac1d \ud68d\ub4dd \ucc44\ub110, \ub2e8\uacc4\ubcc4 \ud310\ub85c \uac1c\ucc99 \ubc0f \ud574\uc678 \uc9c4\ucd9c \ub85c\ub4dc\ub9f5\uc744 \uc11c\uc220\ud569\ub2c8\ub2e4.", "evaluation_focus": "\ube44\uc988\ub2c8\uc2a4 \ubaa8\ub378(BM)\uc758 \uc218\uc775\uc131, \uad6c\uccb4\uc801 \uace0\uac1d \ud68d\ub4dd \ube44\uc6a9(CAC) \uc808\uac10 \ubc29\uc548, \uae00\ub85c\ubc8c \ud655\uc7a5\uc131", "guiding_questions": ["\uc8fc\uc694 \uc218\uc775 \ubaa8\ub378(\uad6c\ub3c5\ub8cc, \uac74\ub2f9 \uc218\uc218\ub8cc, \uc644\uc81c\ud488 \ud310\ub9e4 \ub4f1)\uacfc \uac00\uaca9 \ucc45\uc815 \uc804\ub7b5\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\ucd08\uae30 \uace0\uac1d 100\uba85(\ub610\ub294 10\uac1c \uae30\uc5c5)\uc744 \uc720\uce58\ud558\uae30 \uc704\ud55c \uad6c\uccb4\uc801\uc778 \ub9c8\ucf00\ud305 \ucc44\ub110\uc740 \ubb34\uc5c7\uc778\uac00\uc694?"], "recommended_pages": "2\ud398\uc774\uc9c0 \ub0b4\uc678", "section_id": "3-2", "title": "3-2. \uc2dc\uc7a5\uc9c4\uc785 \ubc0f \uae00\ub85c\ubc8c \ub9c8\ucf00\ud305 \uc804\ub7b5"}, {"category_name": "4. \ud300\uad6c\uc131 (Team)", "default_master_keys": ["team", "founder_career", "company_specs"], "description": "\ub300\ud45c\uc790\uc758 \uad00\ub828 \uc804\uacf5/\uacbd\ub825, \ud300\uc6d0\uc758 \uc804\ubb38\uc131, \uc544\uc774\ud15c \uac1c\ubc1c \uc218\ud589 \uc801\ud569\uc131\uc744 \uc11c\uc220\ud569\ub2c8\ub2e4.", "evaluation_focus": "\ucc3d\uc5c5\uc790\uc758 \uc2e4\ud589\ub825, \ud300\uc6d0\uc758 \uae30\uc220/\uc601\uc5c5 \uc804\ubb38\uc131, \uc774\uc804 \ucc3d\uc5c5 \ub610\ub294 \uc2e4\ubb34 \uc131\uacf5 \uacbd\ud5d8", "guiding_questions": ["\ub300\ud45c\uc790\ub2d8\uc758 \uc804\uacf5\uc774\ub098 \uc2e4\ubb34 \uacbd\ub825 \uc911 \uc774\ubc88 \uc544\uc774\ud15c\uacfc \uc9c1\uacb0\ub418\ub294 \ud575\uc2ec \uac15\uc810\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\ud575\uc2ec \ud300\uc6d0(\uac1c\ubc1c, \uae30\ud68d, \ub514\uc790\uc778 \ub4f1)\uc758 \uc8fc\uc694 \uc774\ub825\uc774\ub098 \ubcf4\uc720 \uae30\uc220 \uc5ed\ub7c9\uc740 \uc5b4\ub5bb\uac8c \ub418\ub098\uc694?"], "recommended_pages": "1~2\ud398\uc774\uc9c0", "section_id": "4-1", "title": "4-1. \ub300\ud45c\uc790 \ubc0f \ud300\uc6d0\uc758 \ubcf4\uc720 \uc5ed\ub7c9"}, {"category_name": "4. \ud300\uad6c\uc131 (Team)", "default_master_keys": ["hiring_plan", "esg", "company_specs"], "description": "\ud611\uc57d \uae30\uac04 \ub0b4 \uc2e0\uaddc \uc778\ub825 \ucc44\uc6a9 \uacc4\ud68d, \uccad\ub144 \uace0\uc6a9, ESG \ubc0f \uc9c0\uc5ed\uc0ac\ud68c \uae30\uc5ec \ubc29\uc548\uc744 \uc11c\uc220\ud569\ub2c8\ub2e4.", "evaluation_focus": "\uace0\uc6a9 \ucc3d\ucd9c \ud6a8\uacfc\uc758 \ud604\uc2e4\uc131, \uadfc\ub85c \uc870\uac74 \ubc0f \uc131\uacfc\uacf5\uc720\uc81c \ub3c4\uc785 \uc758\uc9c0", "guiding_questions": ["\uc62c\ud574 \ud639\uc740 \ud611\uc57d \uae30\uac04 \ub0b4 \uc2e0\uaddc \ucc44\uc6a9 \uc608\uc815\uc778 \uc778\uc6d0(\uc9c1\uad70, \uc778\uc6d0\uc218)\uc740 \uba87 \uba85\uc778\uac00\uc694?", "\uce5c\ud658\uacbd, \ucde8\uc57d\uacc4\uce35 \uace0\uc6a9, \uc9c0\uc5ed\uc0ac\ud68c \uacf5\ud5cc \ub4f1 \uc2e4\ucc9c \uac00\ub2a5\ud55c \uc0ac\ud68c\uc801 \uac00\uce58\uac00 \uc788\ub098\uc694?"], "recommended_pages": "1\ud398\uc774\uc9c0 \ub0b4\uc678", "section_id": "4-2", "title": "4-2. \uc2e0\uaddc \uace0\uc6a9 \ubc0f \uc0ac\ud68c\uc801 \uac00\uce58 \uc2e4\ucc9c \uacc4\ud68d"}], "target_agency": "\uc911\uc18c\ubca4\ucc98\uae30\uc5c5\ubd80 / \ucc3d\uc5c5\uc9c4\ud765\uc6d0", "target_programs": "\uc608\ube44\ucc3d\uc5c5\ud328\ud0a4\uc9c0, \ucd08\uae30\ucc3d\uc5c5\ud328\ud0a4\uc9c0, \ucc3d\uc5c5\ub3c4\uc57d\ud328\ud0a4\uc9c0, \uccad\ub144\ucc3d\uc5c5\uc0ac\uad00\ud559\uad50", "template_id": "PSST", "tone_directive": "\uace0\uac1d\uc758 \ubb38\uc81c(Pain Point), \uc2dc\uc7a5\uc131 \ubc0f \uc9c0\ubd88\uc758\uc0ac \uac80\uc99d \uc0ac\ub840, \uad6c\uccb4\uc801 \ub9e4\ucd9c \ucc3d\ucd9c \ud30c\uc774\ud504\ub77c\uc778, \ub300\ud45c\uc790 \ubc0f \ud300\uc6d0\uc758 \uc2e4\ud589\ub825\uc744 \ucd5c\uc6b0\uc120 \uac15\uc870\ud560 \uac83. \uc9c0\ub098\uce58\uac8c \ub09c\ud574\ud55c \ud559\uc220\uc801 \uc6a9\uc5b4\ub294 \ud53c\ud558\uace0 \ube44\uc988\ub2c8\uc2a4 \uc784\ud329\ud2b8\uc5d0 \uc9d1\uc911\ud560 \uac83."};
+  const gapAnalysis = {"adapt_count": 0, "deficient_count": 8, "direct_count": 0, "readiness_score": 0, "sections": [{"category_name": "1. \ubb38\uc81c\uc778\uc2dd (Problem)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\uae30\uc874 \uc2dc\uc7a5 \uc81c\ud488\uc774\ub098 \uc194\ub8e8\uc158\uc758 \uac00\uc7a5 \uce58\uba85\uc801\uc778 \ud55c\uacc4 \ub610\ub294 \uace0\uac1d \ubd88\ub9cc\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\ub300\ud45c\ub2d8\uaed8\uc11c \uc774 \ubb38\uc81c\ub97c \uc9c1\uc811 \uacaa\uc73c\uc168\uac70\ub098 \ud574\uacb0\ud574\uc57c\uaca0\ub2e4\uace0 \uacb0\uc2ec\ud55c \uacb0\uc815\uc801 \uacc4\uae30\uac00 \uc788\uc73c\uc2e0\uac00\uc694?"], "matched_master_text": "\ud575\uc2ec \ud0a4\uc6cc\ub4dc: \uc2ec\ub9ac \uc0c1\ub2f4 \uc628\ub77c\uc778 \uc0c1\ub2f4 \uccad\ub144 \ucc3d\uc5c5 \uc2ec\ub9ac \uac80\uc0ac\n\uae30\uc874\uc758 \uc2ec\ub9ac \uc0c1\ub2f4\uc740 \uace0\uac1d\uacfc\uc758 \uc811\uadfc\uc131\uc774 \uc27d\uc9c0\uac00 \uc54a\uc558\ub2e4. \ub0b4\ubc29\uc744 \ud574\uc11c \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ud574\uc57c \ud558\ub294 \ubc88\uac70\ub85c\uc6c0\uc774 \uc874\uc7ac\ud558\uc600\uace0, \uc774\ub97c \ud574\uacb0\ud558\uae30 \uc704\ud574 \uc628\ub77c\uc778 \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ud558\ub294 \uc5c5\uccb4\ub4e4\uc774 \uc0dd\uae30\uace0 \uc788\uc9c0\ub9cc, \uccb4\uacc4\uc801\uc774\uc9c0 \uc54a\uc740 \uc6b4\uc601\uc73c\ub85c \uc2ec\ub9ac\uc0c1\ub2f4 \uccb4\uacc4\uac00 \uc57d\ud574\uc9c0\uace0 \uc788\ub2e4. \uc774\ub7ec\ud55c \ub2e8\uc810\ub4e4\uc744 \uadf9\ubcf5\ud560 \uc218 \uc788\ub294 \uc804\uad6d\uad6c\ub85c \uc2ec\ub9ac\uc0c1\ub2f4\uac00\ub4e4\uc758 \uccb4\uacc4\uc801\uc778 \uc870\uc9c1 \uc6b4\uc601 \uccb4\uacc4\ub97c \uad6c\ucd95\ud558\uc5ec \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ubcf4\ub2e4 \ub354 \ud3b8\ub9ac\ud558\uace0, \uc81c\ub300\ub85c \ub41c \uc2ec\ub9ac \uc0c1\ub2f4 \uccb4\uacc4\uac00 \uc774\ub8e8\uc5b4 \uc9c8 \uc218 \uc788\uac8c \ud558\ub294 \uc0ac\uc5c5\ud654\uc774\ub2e4.", "section_id": "1-1", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "1-1. \ucc3d\uc5c5\uc544\uc774\ud15c\uc758 \uac1c\ubc1c \ubc30\uacbd \ubc0f \ud544\uc694\uc131"}, {"category_name": "1. \ubb38\uc81c\uc778\uc2dd (Problem)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\uc8fc\uc694 \ud0c0\uae43 \uace0\uac1d\uce35(\uc5f0\ub839, \uc131\ubcc4, B2B \uae30\uc5c5\uad70 \ub4f1)\uc740 \ub204\uad6c\uc774\uba70, \uc2e4\uc81c \uc778\ud130\ubdf0\ub098 \uc124\ubb38\uc870\uc0ac\ub97c \uc9c4\ud589\ud55c \uc801\uc774 \uc788\ub098\uc694?", "\ud0c0\uae43 \uace0\uac1d\uc774 \ubcf8 \uc194\ub8e8\uc158\uc5d0 \uc2e4\uc81c\ub85c \uc9c0\ubd88\ud560 \uc758\uc0ac\uac00 \uc788\ub294 \uc801\uc815 \uac00\uaca9\ub300\ub294 \uc5bc\ub9c8\uc778\uac00\uc694?"], "matched_master_text": "\ud575\uc2ec \ud0a4\uc6cc\ub4dc: \uc2ec\ub9ac \uc0c1\ub2f4 \uc628\ub77c\uc778 \uc0c1\ub2f4 \uccad\ub144 \ucc3d\uc5c5 \uc2ec\ub9ac \uac80\uc0ac\n\uae30\uc874\uc758 \uc2ec\ub9ac \uc0c1\ub2f4\uc740 \uace0\uac1d\uacfc\uc758 \uc811\uadfc\uc131\uc774 \uc27d\uc9c0\uac00 \uc54a\uc558\ub2e4. \ub0b4\ubc29\uc744 \ud574\uc11c \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ud574\uc57c \ud558\ub294 \ubc88\uac70\ub85c\uc6c0\uc774 \uc874\uc7ac\ud558\uc600\uace0, \uc774\ub97c \ud574\uacb0\ud558\uae30 \uc704\ud574 \uc628\ub77c\uc778 \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ud558\ub294 \uc5c5\uccb4\ub4e4\uc774 \uc0dd\uae30\uace0 \uc788\uc9c0\ub9cc, \uccb4\uacc4\uc801\uc774\uc9c0 \uc54a\uc740 \uc6b4\uc601\uc73c\ub85c \uc2ec\ub9ac\uc0c1\ub2f4 \uccb4\uacc4\uac00 \uc57d\ud574\uc9c0\uace0 \uc788\ub2e4. \uc774\ub7ec\ud55c \ub2e8\uc810\ub4e4\uc744 \uadf9\ubcf5\ud560 \uc218 \uc788\ub294 \uc804\uad6d\uad6c\ub85c \uc2ec\ub9ac\uc0c1\ub2f4\uac00\ub4e4\uc758 \uccb4\uacc4\uc801\uc778 \uc870\uc9c1 \uc6b4\uc601 \uccb4\uacc4\ub97c \uad6c\ucd95\ud558\uc5ec \uc2ec\ub9ac\uc0c1\ub2f4\uc744 \ubcf4\ub2e4 \ub354 \ud3b8\ub9ac\ud558\uace0, \uc81c\ub300\ub85c \ub41c \uc2ec\ub9ac \uc0c1\ub2f4 \uccb4\uacc4\uac00 \uc774\ub8e8\uc5b4 \uc9c8 \uc218 \uc788\uac8c \ud558\ub294 \uc0ac\uc5c5\ud654\uc774\ub2e4.", "section_id": "1-2", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "1-2. \ubaa9\ud45c \uc2dc\uc7a5 \ubc0f \uace0\uac1d \ubd84\uc11d (\uace0\uac1d \uac80\uc99d)"}, {"category_name": "2. \uc2e4\ud604\uac00\ub2a5\uc131 (Solution)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\ud604\uc7ac \uac1c\ubc1c \ub2e8\uacc4(\uc544\uc774\ub514\uc5b4 \uad6c\uc0c1 / \uc640\uc774\uc5b4\ud504\ub808\uc784 / \uc2dc\uc81c\ud488 \uc81c\uc791 \uc644\ub8cc \ub4f1)\ub294 \uc5b4\ub514\uae4c\uc9c0 \uc9c4\ud589\ub418\uc5c8\ub098\uc694?", "\ud611\uc57d \uae30\uac04 \ub3d9\uc548 \uad6c\ud604\ud560 \ud575\uc2ec \uae30\ub2a5 2~3\uac00\uc9c0\ub294 \ubb34\uc5c7\uc778\uac00\uc694?"], "matched_master_text": "\ud604\uc7ac \uae30\uc220\uc131\uc219\ub3c4(TRL): 6\ub2e8\uacc4", "section_id": "2-1", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "2-1. \ucc3d\uc5c5\uc544\uc774\ud15c\uc758 \uac1c\ubc1c \ubc29\uc548 \ubc0f \uad6c\uccb4\ud654 \ud604\ud669"}, {"category_name": "2. \uc2e4\ud604\uac00\ub2a5\uc131 (Solution)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\uae30\uc874 1\uc704 \uacbd\uc7c1\uc0ac(\ub610\ub294 \ub300\uccb4\uc81c)\uc640 \ube44\uad50\ud588\uc744 \ub54c \uc790\uc0ac\ub9cc\uc758 \uc555\ub3c4\uc801\uc778 \ucc28\ubcc4\uc810\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\uacbd\uc7c1\uc0ac\uac00 \uc27d\uac8c \ubaa8\ubc29\ud558\uc9c0 \ubabb\ud558\ub3c4\ub85d \ubc29\uc5b4\ud560 \uc218 \uc788\ub294 \uc9c4\uc785\uc7a5\ubcbd(\ud2b9\ud5c8, \ub370\uc774\ud130, \ub178\ud558\uc6b0 \ub4f1)\uc774 \uc788\ub098\uc694?"], "matched_master_text": "\ud604\uc7ac \uae30\uc220\uc131\uc219\ub3c4(TRL): 6\ub2e8\uacc4", "section_id": "2-2", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "2-2. \uacbd\uc7c1\uc0ac \ubd84\uc11d \ubc0f \ucc28\ubcc4\ud654 \uacbd\uc7c1\uc6b0\uc704"}, {"category_name": "3. \uc131\uc7a5\uc804\ub7b5 (Scale-up)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\uc9c0\uc6d0\ubc1b\uace0\uc790 \ud558\ub294 \uc815\ubd80\uc9c0\uc6d0\uae08\uc758 \uc8fc\uc694 \uc0ac\uc6a9\ucc98(\uc2dc\uc81c\ud488 \uc81c\uc791\ube44, \ub9c8\ucf00\ud305\ube44, \uc778\uac74\ube44 \ub4f1) \ube44\uc911\uc740 \uc5b4\ub5bb\uac8c \ub418\ub098\uc694?", "\uc815\ubd80\uc9c0\uc6d0\uae08 \uc678\uc5d0 \uae30\uc5c5 \uc790\ubd80\ub2f4\uae08\uc774\ub098 \uc678\ubd80 \ud22c\uc790 \uc720\uce58 \uacc4\ud68d\uc774 \uc788\uc73c\uc2e0\uac00\uc694?"], "matched_master_text": "(\uae30\ubcf8 \uacc4\ud68d\uc11c \ub0b4 \uc77c\uce58\ud558\ub294 \ud56d\ubaa9\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uc9c8\ubb38\uc744 \ud1b5\ud574 \ud329\ud2b8\ub97c \uc785\ub825\ud574 \uc8fc\uc138\uc694.)", "section_id": "3-1", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "3-1. \uc790\uae08\uc18c\uc694 \ubc0f \uc870\ub2ec \uacc4\ud68d"}, {"category_name": "3. \uc131\uc7a5\uc804\ub7b5 (Scale-up)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\uc8fc\uc694 \uc218\uc775 \ubaa8\ub378(\uad6c\ub3c5\ub8cc, \uac74\ub2f9 \uc218\uc218\ub8cc, \uc644\uc81c\ud488 \ud310\ub9e4 \ub4f1)\uacfc \uac00\uaca9 \ucc45\uc815 \uc804\ub7b5\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\ucd08\uae30 \uace0\uac1d 100\uba85(\ub610\ub294 10\uac1c \uae30\uc5c5)\uc744 \uc720\uce58\ud558\uae30 \uc704\ud55c \uad6c\uccb4\uc801\uc778 \ub9c8\ucf00\ud305 \ucc44\ub110\uc740 \ubb34\uc5c7\uc778\uac00\uc694?"], "matched_master_text": "(\uae30\ubcf8 \uacc4\ud68d\uc11c \ub0b4 \uc77c\uce58\ud558\ub294 \ud56d\ubaa9\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uc9c8\ubb38\uc744 \ud1b5\ud574 \ud329\ud2b8\ub97c \uc785\ub825\ud574 \uc8fc\uc138\uc694.)", "section_id": "3-2", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "3-2. \uc2dc\uc7a5\uc9c4\uc785 \ubc0f \uae00\ub85c\ubc8c \ub9c8\ucf00\ud305 \uc804\ub7b5"}, {"category_name": "4. \ud300\uad6c\uc131 (Team)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\ub300\ud45c\uc790\ub2d8\uc758 \uc804\uacf5\uc774\ub098 \uc2e4\ubb34 \uacbd\ub825 \uc911 \uc774\ubc88 \uc544\uc774\ud15c\uacfc \uc9c1\uacb0\ub418\ub294 \ud575\uc2ec \uac15\uc810\uc740 \ubb34\uc5c7\uc778\uac00\uc694?", "\ud575\uc2ec \ud300\uc6d0(\uac1c\ubc1c, \uae30\ud68d, \ub514\uc790\uc778 \ub4f1)\uc758 \uc8fc\uc694 \uc774\ub825\uc774\ub098 \ubcf4\uc720 \uae30\uc220 \uc5ed\ub7c9\uc740 \uc5b4\ub5bb\uac8c \ub418\ub098\uc694?"], "matched_master_text": "(\uae30\ubcf8 \uacc4\ud68d\uc11c \ub0b4 \uc77c\uce58\ud558\ub294 \ud56d\ubaa9\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uc9c8\ubb38\uc744 \ud1b5\ud574 \ud329\ud2b8\ub97c \uc785\ub825\ud574 \uc8fc\uc138\uc694.)", "section_id": "4-1", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "4-1. \ub300\ud45c\uc790 \ubc0f \ud300\uc6d0\uc758 \ubcf4\uc720 \uc5ed\ub7c9"}, {"category_name": "4. \ud300\uad6c\uc131 (Team)", "gap_reason": "\uae30\ubcf8 \uacc4\ud68d\uc11c\uc5d0 \ud574\ub2f9 \ub0b4\uc6a9\uc774 \ubd80\uc7ac\ud569\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uac00\uc774\ub4dc \uc9c8\ubb38\uc5d0 \ub2f5\ubcc0\ud558\uc5ec \ud329\ud2b8\ub97c \ubcf4\uac15\ud574 \uc8fc\uc138\uc694.", "guiding_questions": ["\uc62c\ud574 \ud639\uc740 \ud611\uc57d \uae30\uac04 \ub0b4 \uc2e0\uaddc \ucc44\uc6a9 \uc608\uc815\uc778 \uc778\uc6d0(\uc9c1\uad70, \uc778\uc6d0\uc218)\uc740 \uba87 \uba85\uc778\uac00\uc694?", "\uce5c\ud658\uacbd, \ucde8\uc57d\uacc4\uce35 \uace0\uc6a9, \uc9c0\uc5ed\uc0ac\ud68c \uacf5\ud5cc \ub4f1 \uc2e4\ucc9c \uac00\ub2a5\ud55c \uc0ac\ud68c\uc801 \uac00\uce58\uac00 \uc788\ub098\uc694?"], "matched_master_text": "(\uae30\ubcf8 \uacc4\ud68d\uc11c \ub0b4 \uc77c\uce58\ud558\ub294 \ud56d\ubaa9\uc774 \uc5c6\uc2b5\ub2c8\ub2e4. \ucf54\ud30c\uc77c\ub7ff \uc9c8\ubb38\uc744 \ud1b5\ud574 \ud329\ud2b8\ub97c \uc785\ub825\ud574 \uc8fc\uc138\uc694.)", "section_id": "4-2", "status": "DEFICIENT", "status_color": "rose", "status_label": "\ud329\ud2b8 \ubcf4\uc644 \ud544\uc694", "title": "4-2. \uc2e0\uaddc \uace0\uc6a9 \ubc0f \uc0ac\ud68c\uc801 \uac00\uce58 \uc2e4\ucc9c \uacc4\ud68d"}], "target_programs": "\uc608\ube44\ucc3d\uc5c5\ud328\ud0a4\uc9c0, \ucd08\uae30\ucc3d\uc5c5\ud328\ud0a4\uc9c0, \ucc3d\uc5c5\ub3c4\uc57d\ud328\ud0a4\uc9c0, \uccad\ub144\ucc3d\uc5c5\uc0ac\uad00\ud559\uad50", "template_id": "PSST", "template_name": "K-Startup PSST \ud45c\uc900 \ucc3d\uc5c5\uc0ac\uc5c5\uacc4\ud68d\uc11c", "total_sections": 8};
+  
+  // 클라이언트 로컬 세션 대응 가이드 보관소 (section_id -> guide text)
+  const draftsStore = {};
+  let currentSectionIndex = 0;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // 첫 번째 문항 초기 로드
+    loadSectionData(0);
+  });
+
+  function switchItemOrTemplate() {
+    const itemId = document.getElementById('itemSelect').value;
+    const templateId = document.getElementById('templateSelect').value;
+    const annId = "";
+    let url = `/proposals/tailor?item_id=${encodeURIComponent(itemId)}&template_id=${encodeURIComponent(templateId)}`;
+    if (annId) url += `&announcement_id=${encodeURIComponent(annId)}`;
+    window.location.href = url;
+  }
+
+  function selectSection(secId) {
+    const idx = currentTemplate.sections.findIndex(s => s.section_id === secId);
+    if (idx !== -1) {
+      // 기존 대응 가이드 임시 저장
+      saveCurrentTextarea();
+      loadSectionData(idx);
+    }
+  }
+
+  function loadSectionData(idx) {
+    currentSectionIndex = idx;
+    const sec = currentTemplate.sections[idx];
+    const gapSec = gapAnalysis.sections.find(s => s.section_id === sec.section_id) || sec;
+
+    // 좌측 내비게이션 활성화 하이라이트
+    document.querySelectorAll('.sec-nav-item').forEach(el => {
+      if (el.getAttribute('data-sec-id') === sec.section_id) {
+        el.classList.add('bg-purple-50/70', 'border-purple-400', 'shadow-sm');
+        el.classList.remove('bg-slate-50/50');
+      } else {
+        el.classList.remove('bg-purple-50/70', 'border-purple-400', 'shadow-sm');
+        el.classList.add('bg-slate-50/50');
+      }
+    });
+
+    // 우측 메타데이터 업데이트
+    document.getElementById('currentCategoryText').innerText = sec.category_name;
+    document.getElementById('currentSectionTitle').innerText = sec.title;
+    document.getElementById('currentRecommendedPages').innerHTML = `<i class="fa-regular fa-file-lines text-slate-400 mr-1"></i>권장 분량: ${sec.recommended_pages}`;
+    document.getElementById('currentEvaluationFocus').innerText = sec.evaluation_focus;
+    document.getElementById('currentMasterText').innerText = gapSec.matched_master_text || "(마스터 원문 발췌 내용이 없습니다.)";
+
+    // 코파일럿 가이드 질문 렌더링
+    const qContainer = document.getElementById('questionsContainer');
+    qContainer.innerHTML = '';
+    const questions = sec.guiding_questions || [];
+    questions.forEach((q, qIdx) => {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'space-y-1';
+      qDiv.innerHTML = `
+        <label class="text-xs font-semibold text-slate-800 flex items-center gap-1.5">
+          <span class="w-4 h-4 rounded-full bg-purple-200 text-purple-900 text-xs flex items-center justify-center font-bold">${qIdx+1}</span>
+          ${q}
+        </label>
+        <input type="text" id="q_input_${qIdx}" placeholder="단답형 수치나 핵심 사실을 입력하세요 (예: 2명 채용, 85% 정확도 등)"
+               class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 bg-white focus:ring-2 focus:ring-purple-400 focus:outline-none">
+      `;
+      qContainer.appendChild(qDiv);
+    });
+
+    // 기존 보관된 대응 가이드가 있으면 복원
+    const existingDraft = draftsStore[sec.section_id] || '';
+    const textarea = document.getElementById('sectionDraftTextarea');
+    textarea.value = existingDraft;
+    updateCharCount();
+  }
+
+  function saveCurrentTextarea() {
+    const sec = currentTemplate.sections[currentSectionIndex];
+    if (sec) {
+      const text = document.getElementById('sectionDraftTextarea').value;
+      if (text.trim()) {
+        draftsStore[sec.section_id] = text;
+        const badge = document.getElementById(`badge_done_${sec.section_id}`);
+        if (badge) badge.classList.remove('hidden');
+      }
+    }
+  }
+
+  function updateCharCount() {
+    const len = document.getElementById('sectionDraftTextarea').value.length;
+    document.getElementById('charCount').innerText = `${len}자`;
+  }
+
+  async function generateSectionDraft() {
+    const sec = currentTemplate.sections[currentSectionIndex];
+    const btn = document.getElementById('generateBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 요건 분석 가이드 도출 중...';
+
+    // 질문 답변 수집
+    const userFacts = {};
+    const questions = sec.guiding_questions || [];
+    questions.forEach((q, qIdx) => {
+      const val = (document.getElementById(`q_input_${qIdx}`)?.value || '').trim();
+      if (val) userFacts[q] = val;
+    });
+
+    try {
+      const resp = await fetch('/api/proposals/generate-section', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          item_id: currentItem.id,
+          template_id: currentTemplate.template_id,
+          section_id: sec.section_id,
+          user_facts: userFacts,
+        }),
+      });
+      const data = await resp.json();
+      if (data.status === 'success' && data.draft) {
+        document.getElementById('sectionDraftTextarea').value = data.draft;
+        draftsStore[sec.section_id] = data.draft;
+        const badge = document.getElementById(`badge_done_${sec.section_id}`);
+        if (badge) badge.classList.remove('hidden');
+        updateCharCount();
+      } else {
+        alert('요건 분석 가이드 생성 실패: ' + (data.message || '알 수 없는 오류'));
+      }
+    } catch (e) {
+      alert('요건 분석 가이드 생성 중 통신 오류가 발생했습니다.');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles"></i> <span>✨ 심사 기준별 대응 가이드 도출</span>';
+    }
+  }
+
+  function copyDraftToClipboard() {
+    const text = document.getElementById('sectionDraftTextarea').value;
+    if (!text.trim()) {
+      alert('복사할 대응 가이드 내용이 없습니다.');
+      return;
+    }
+    navigator.clipboard.writeText(text).then(() => {
+      alert('클립보드에 복사되었습니다.');
+    });
+  }
+
+  function clearCurrentDraft() {
+    if (confirm('현재 작성된 대응 가이드 및 메모를 비우시겠습니까?')) {
+      document.getElementById('sectionDraftTextarea').value = '';
+      const sec = currentTemplate.sections[currentSectionIndex];
+      delete draftsStore[sec.section_id];
+      const badge = document.getElementById(`badge_done_${sec.section_id}`);
+      if (badge) badge.classList.add('hidden');
+      updateCharCount();
+    }
+  }
+
+  function navigateSection(delta) {
+    saveCurrentTextarea();
+    const newIdx = currentSectionIndex + delta;
+    if (newIdx >= 0 && newIdx < currentTemplate.sections.length) {
+      loadSectionData(newIdx);
+    }
+  }
+
+  function saveAndNextSection() {
+    saveCurrentTextarea();
+    if (currentSectionIndex + 1 < currentTemplate.sections.length) {
+      loadSectionData(currentSectionIndex + 1);
+    } else {
+      openFullPreviewModal();
+    }
+  }
+
+  async function openFullPreviewModal() {
+    saveCurrentTextarea();
+    const modal = document.getElementById('fullPreviewModal');
+    modal.classList.remove('hidden');
+
+    try {
+      const resp = await fetch('/api/proposals/export', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          item_id: currentItem.id,
+          template_id: currentTemplate.template_id,
+          section_drafts: draftsStore,
+        }),
+      });
+      const data = await resp.json();
+      if (data.status === 'success') {
+        document.getElementById('fullDocTextarea').value = data.content;
+        const doneCount = Object.keys(draftsStore).length;
+        document.getElementById('modalProgressText').innerText = 
+          `분석 진행률: ${doneCount} / ${currentTemplate.sections.length} 완료`;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function closeFullPreviewModal() {
+    document.getElementById('fullPreviewModal').classList.add('hidden');
+  }
+
+  function copyFullDoc() {
+    const text = document.getElementById('fullDocTextarea').value;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('전체 공고 대응 가이드가 클립보드에 복사되었습니다.');
+    });
+  }
+
+  function downloadFullDoc(ext) {
+    const text = document.getElementById('fullDocTextarea').value;
+    const blob = new Blob([text], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${currentItem.id}_${currentTemplate.template_id}_공고대응전략가이드.md`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+  </main>
+
+  <!-- 파이프라인 실행 결과 모달 -->
+  <div id="pipelineResultModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+          <h3 class="text-base font-bold">파이프라인 실행 완료</h3>
+        </div>
+        <button onclick="closePipelineModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+            <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
+          </div>
+        </div>
+        <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
+          </h4>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <a href="./matches.html" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
+          <i class="fa-solid fa-paper-plane"></i> 발송 이력 페이지(/matches)로 이동
+        </a>
+        <div class="flex items-center gap-2">
+          <button onclick="window.location.reload()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> 화면 새로고침
+          </button>
+          <button onclick="closePipelineModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
+  </footer>
+
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
+  <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineResultModal').classList.add('hidden');
+    }
+
+    async function triggerPipeline() {
+      const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
+      try {
+        const res = await fetch('/api/pipeline/run', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
+        }
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
+  </script>
+  
+
+  <!-- GitHub Pages Client-side Mock API Layer -->
+  <script src="./static/js/github_pages_mock_api.js"></script>
+</body>
+</html>

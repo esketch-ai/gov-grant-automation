@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>기업 지식 데이터 룸 &middot; 모두의 창업비서 (SSA : Startup Secretary for All)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="./static/css/k_horizon_2027.css?v=20261029_ssa">
+</head>
+<body class="min-h-screen flex flex-col" data-role="subscriber">
+  <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
+  <aside class="krds-gov-banner" role="banner" aria-label="정부 디지털 서비스 기준 안내">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-full">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-cyan-400 text-xs"></i>
+        <span>정부 표준 규격 준수 &middot; 기업 데이터 보안 암호화</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="kh-role-badge subscriber">
+          <i class="fa-solid fa-briefcase"></i>
+          <span>유료 사업자 전용 워크스페이스</span>
+        </span>
+        <span class="text-slate-300 hidden md:inline text-xs">맞춤 대시보드와 공고 요건 정밀 분석 공간</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- 단일 통합 64px 프리미엄 글로벌 내비게이션 바 (GNB) -->
+  <header class="kh-gnb text-white" role="navigation" aria-label="주요 서비스 내비게이션">
+    <div class="max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 flex items-center h-full">
+      
+      <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
+      <div class="kh-brand-box flex items-center shrink-0">
+        <a href="./biz_dashboard.html" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="./static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
+          </div>
+          <div class="flex items-center gap-1.5 whitespace-nowrap">
+            <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
+            <span class="text-xs font-black uppercase px-1.5 py-0.5 rounded bg-cyan-400/15 text-cyan-300 border border-cyan-400/30">SSA</span>
+          </div>
+        </a>
+      </div>
+
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
+        
+          
+          <a
+            href="./biz_dashboard.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="dashboard_biz"
+            data-nav-href="./biz_dashboard.html"
+          >
+            <i class="fa-solid fa-chart-pie text-xs opacity-75"></i>
+            <span>대시보드</span>
+          </a>
+          
+          <a
+            href="./items.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="items"
+            data-nav-href="./items.html"
+          >
+            <i class="fa-solid fa-id-card text-xs opacity-75"></i>
+            <span>사업 아이템</span>
+          </a>
+          
+          <a
+            href="./feedback_lounge.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="feedback_lounge"
+            data-nav-href="./feedback_lounge.html"
+          >
+            <i class="fa-solid fa-comments text-xs opacity-75"></i>
+            <span>피드백 라운지</span>
+          </a>
+          
+          <a
+            href="./vault.html"
+            class="kh-nav-item active"
+            aria-current="page"
+            data-nav-role="subscriber"
+            data-nav-page="vault"
+            data-nav-href="./vault.html"
+          >
+            <i class="fa-solid fa-vault text-xs opacity-75"></i>
+            <span>기업 금고</span>
+          </a>
+          
+          <a
+            href="./announcements.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="announcements"
+            data-nav-href="./announcements.html"
+          >
+            <i class="fa-solid fa-bullhorn text-xs opacity-75"></i>
+            <span>맞춤 공고</span>
+          </a>
+          
+          <a
+            href="./tailor.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="tailor"
+            data-nav-href="./tailor.html"
+          >
+            <i class="fa-solid fa-clipboard-check text-xs opacity-75"></i>
+            <span>요건 분석</span>
+          </a>
+          
+          <a
+            href="./projects.html"
+            class="kh-nav-item "
+            
+            data-nav-role="subscriber"
+            data-nav-page="projects"
+            data-nav-href="./projects.html"
+          >
+            <i class="fa-solid fa-bullseye text-xs opacity-75"></i>
+            <span>도전 과제</span>
+          </a>
+          
+        
+      </nav>
+
+      <!-- 3) 우측: ml-auto로 우측 끝에 완벽 고정된 350px 고정 제어 박스 (Zero Layout Shift) -->
+      <div class="kh-control-box ml-auto shrink-0">
+        
+        <!-- 권한 모드 전환 세그먼트 (고정 216px 너비) -->
+        <div class="kh-role-switcher" role="tablist" aria-label="서비스 권한 모드 전환">
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('visitor', './intro.html')"
+            class="kh-role-pill kh-role-visitor "
+            data-role-btn="visitor"
+            title="초기 방문자"
+          >
+            <i class="fa-solid fa-compass text-xs"></i>
+            <span>방문자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="true"
+            onclick="switchServiceRole('subscriber', './biz_dashboard.html')"
+            class="kh-role-pill kh-role-subscriber active"
+            data-role-btn="subscriber"
+            title="유료 사업자"
+          >
+            <i class="fa-solid fa-briefcase text-xs"></i>
+            <span>사업자</span>
+          </button>
+          
+          <button
+            type="button"
+            role="tab"
+            aria-selected="false"
+            onclick="switchServiceRole('admin', './admin_platform.html')"
+            class="kh-role-pill kh-role-admin "
+            data-role-btn="admin"
+            title="플랫폼 관리자"
+          >
+            <i class="fa-solid fa-shield-halved text-xs"></i>
+            <span>관리자</span>
+          </button>
+          
+        </div>
+
+        <!-- E2E 자동 감사 및 접근성 정합성용 구조화 컨테이너 (시각적 레이아웃 비간섭) -->
+        <div class="sr-only" aria-hidden="true">
+          <button id="runBtn" type="button" onclick="triggerPipeline()">파이프라인 수동 실행</button>
+          <a href="./dashboard.html">대시보드</a>
+        </div>
+
+        <!-- 역할별 주요 전환 CTA 버튼 (고정 124px 너비) -->
+        
+        <a
+          href="./announcements.html"
+          class="kh-btn-cta emerald hidden sm:inline-flex"
+        >
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>맞춤 공고 탐색</span>
+        </a>
+        
+
+        <!-- 모바일 햄버거 토글 버튼 (36px 고정) -->
+        <button
+          type="button"
+          onclick="toggleMobileNav()"
+          class="kh-btn-mobile md:hidden"
+          aria-label="모바일 메뉴 열기"
+          aria-expanded="false"
+          id="mobileMenuBtn"
+        >
+          <i class="fa-solid fa-bars text-sm"></i>
+        </button>
+
+      </div>
+    </div>
+
+    <!-- 모바일 드롭다운 메뉴 (MD 미만 전용) -->
+    <div id="mobileNavMenu" class="hidden md:hidden border-t border-slate-800 bg-slate-900/98 backdrop-blur-xl px-4 py-3 space-y-1 shadow-2xl">
+      <div class="pb-2 mb-2 border-b border-slate-800/80 flex items-center justify-between">
+        <span class="text-xs font-semibold text-slate-400">서비스 메뉴</span>
+        <span class="kh-role-badge subscriber">
+          유료 사업자 전용 워크스페이스
+        </span>
+      </div>
+      
+        
+        <a
+          href="./biz_dashboard.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="dashboard_biz"
+          data-mobile-nav-href="./biz_dashboard.html"
+        >
+          <i class="fa-solid fa-chart-pie text-xs w-4 text-center"></i>
+          <span>대시보드</span>
+        </a>
+        
+        <a
+          href="./items.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="items"
+          data-mobile-nav-href="./items.html"
+        >
+          <i class="fa-solid fa-id-card text-xs w-4 text-center"></i>
+          <span>사업 아이템</span>
+        </a>
+        
+        <a
+          href="./feedback_lounge.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="feedback_lounge"
+          data-mobile-nav-href="./feedback_lounge.html"
+        >
+          <i class="fa-solid fa-comments text-xs w-4 text-center"></i>
+          <span>피드백 라운지</span>
+        </a>
+        
+        <a
+          href="./vault.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition bg-blue-600/20 text-cyan-300 font-semibold border border-cyan-400/30"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="vault"
+          data-mobile-nav-href="./vault.html"
+        >
+          <i class="fa-solid fa-vault text-xs w-4 text-center"></i>
+          <span>기업 금고</span>
+        </a>
+        
+        <a
+          href="./announcements.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="announcements"
+          data-mobile-nav-href="./announcements.html"
+        >
+          <i class="fa-solid fa-bullhorn text-xs w-4 text-center"></i>
+          <span>맞춤 공고</span>
+        </a>
+        
+        <a
+          href="./tailor.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="tailor"
+          data-mobile-nav-href="./tailor.html"
+        >
+          <i class="fa-solid fa-clipboard-check text-xs w-4 text-center"></i>
+          <span>요건 분석</span>
+        </a>
+        
+        <a
+          href="./projects.html"
+          onclick="toggleMobileNav()"
+          class="flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium transition text-slate-300 hover:bg-slate-800 hover:text-white"
+          data-mobile-nav-role="subscriber"
+          data-mobile-nav-page="projects"
+          data-mobile-nav-href="./projects.html"
+        >
+          <i class="fa-solid fa-bullseye text-xs w-4 text-center"></i>
+          <span>도전 과제</span>
+        </a>
+        
+      
+      <div class="pt-2 border-t border-slate-800 flex flex-col gap-2">
+        
+        <a href="./announcements.html" onclick="toggleMobileNav()" class="kh-btn-cta emerald w-full justify-center">
+          <i class="fa-solid fa-bolt text-xs"></i>
+          <span>맞춤 공고 탐색</span>
+        </a>
+        
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 컨텐츠 영역 -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    
+<div class="space-y-6">
+
+  <!-- ========================================================================= -->
+  <!-- 1. 상단 기업 프로필 & 데이터 룸 준비도 배너 -->
+  <!-- ========================================================================= -->
+  <section class="kh-page-hero tone-indigo reveal mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+      
+      <!-- 기업 및 계정 정보 -->
+      <div class="space-y-2">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-1">
+            <i class="fa-solid fa-building-shield text-indigo-400"></i> 테넌트 격리 데이터룸
+            <span class="sr-only">Company Vault</span>
+          </span>
+          <span class="bg-emerald-500/20 text-emerald-300 border border-emerald-400/30 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+            <i class="fa-solid fa-crown text-amber-400 mr-1"></i>PRO 구독 플랜
+          </span>
+          <span class="bg-slate-700/50 text-slate-300 text-xs px-2.5 py-0.5 rounded-full font-mono">
+            사업자번호: 123-45-67890
+          </span>
+        </div>
+
+        <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
+          (주)초롱소프트 / SSHAI
+          <span class="text-xs text-indigo-300 font-normal">(홍길동 대표)</span>
+        </h1>
+        <p class="text-xs text-slate-300/80 max-w-2xl leading-relaxed">
+          기업의 <strong>사업소개서, IR 발표자료, 재무/예산 파일, 특허·인증 자산</strong>을 한 번만 등록해 두면,
+          모든 지원사업 공고의 <strong>자격 자동 판정 및 맞춤형 공고 요건 분석(요건대조·자격진단·예산가이드)</strong>의 원천 데이터로 안전하게 활용됩니다.
+        </p>
+      </div>
+
+      <!-- 계정 전환 및 매칭 바로가기 CTA -->
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+        <button onclick="openLoginModal()" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-medium border border-white/15 transition flex items-center justify-center gap-1.5 backdrop-blur-sm">
+          <i class="fa-solid fa-arrow-right-to-bracket text-indigo-300"></i> 소셜 계정 전환
+        </button>
+        <a href="./announcements.html" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-bullseye"></i>
+          <span>맞춤 공고 매칭하기</span>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- 데이터 룸 적재 준비도 게이지 -->
+    <div class="mt-6 pt-5 border-t border-indigo-800/40 grid grid-cols-1 md:grid-cols-4 gap-4 items-center">
+      <div class="md:col-span-2 space-y-1.5">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-indigo-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-database text-indigo-400"></i> 기업 데이터룸 지식 완성도
+          </span>
+          <span class="font-mono font-bold text-white text-sm" id="vaultScoreText">0점 / 100점</span>
+        </div>
+        <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden p-0.5 border border-indigo-800/50">
+          <div class="h-full bg-gradient-to-r from-amber-400 via-indigo-400 to-emerald-400 rounded-full transition-all duration-500"
+               style="width: 0%"></div>
+        </div>
+      </div>
+
+      <div class="md:col-span-2 flex items-center justify-start md:justify-end gap-2.5 text-xs flex-wrap">
+        <span class="inline-flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg text-slate-200 text-xs font-medium">
+          📄 사업소개서 <strong>0</strong>건
+        </span>
+        <span class="inline-flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg text-slate-200 text-xs font-medium">
+          🎤 발표자료 <strong>0</strong>건
+        </span>
+        <span class="inline-flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg text-slate-200 text-xs font-medium">
+          💰 재무/예산 <strong>0</strong>건
+        </span>
+        <span class="inline-flex items-center gap-1 bg-white/10 px-2 py-1 rounded-lg text-slate-200 text-xs font-medium">
+          📜 특허/인증 <strong>0</strong>건
+        </span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================= -->
+  <!-- 2. 4대 기업 자산 업로드 및 보관함 (Vault 4-Quadrant) -->
+  <!-- ========================================================================= -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+    <!-- 자산 1: 사업소개서 / IR 요약본 -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4 hover:border-indigo-300 transition">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-file-lines"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">1. 사업소개서 / IR 요약본</h3>
+            <p class="text-xs text-slate-600">기업 및 아이템 소개서 (.hwpx, .docx, .pdf, .txt)</p>
+          </div>
+        </div>
+        <button onclick="triggerUpload('PROPOSAL')" class="px-2.5 py-1 bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-plus text-xs"></i> 파일 추가
+        </button>
+      </div>
+
+      <!-- 드래그앤드롭 업로드 박스 -->
+      <div onclick="triggerUpload('PROPOSAL')" class="border-2 border-dashed border-slate-200 hover:border-indigo-400 bg-slate-50 hover:bg-indigo-50/40 rounded-xl p-4 text-center cursor-pointer transition space-y-1">
+        <i class="fa-solid fa-cloud-arrow-up text-indigo-400 text-xl"></i>
+        <div class="text-xs font-semibold text-slate-700">사업소개서 파일을 끌어다 놓거나 클릭하세요</div>
+        <div class="text-xs text-slate-600">HWPX, HWP, DOCX, PDF, TXT 자동 텍스트 & TRL 추출</div>
+      </div>
+
+      <!-- 업로드된 파일 목록 -->
+      <div class="space-y-2">
+        
+        <div class="py-4 text-center text-slate-400 text-xs italic">
+          등록된 사업소개서가 없습니다.
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- 자산 2: IR 발표자료 & 피치덱 -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4 hover:border-indigo-300 transition">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-display"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">2. IR 발표자료 & 피치덱</h3>
+            <p class="text-xs text-slate-600">슬라이드 피칭덱 (.pptx, .pdf)</p>
+          </div>
+        </div>
+        <button onclick="triggerUpload('PITCH_DECK')" class="px-2.5 py-1 bg-purple-50 hover:bg-purple-100 text-purple-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-plus text-xs"></i> 파일 추가
+        </button>
+      </div>
+
+      <div onclick="triggerUpload('PITCH_DECK')" class="border-2 border-dashed border-slate-200 hover:border-purple-400 bg-slate-50 hover:bg-purple-50/40 rounded-xl p-4 text-center cursor-pointer transition space-y-1">
+        <i class="fa-solid fa-cloud-arrow-up text-purple-400 text-xl"></i>
+        <div class="text-xs font-semibold text-slate-700">IR 발표자료/피치덱을 끌어다 놓으세요</div>
+        <div class="text-xs text-slate-600">발표평가 핵심 슬라이드 분석 및 심사위원 예상 질의 체크포인트 도출에 활용</div>
+      </div>
+
+      <div class="space-y-2">
+        
+        <div class="py-4 text-center text-slate-400 text-xs italic">
+          등록된 IR 발표자료가 없습니다.
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- 자산 3: 재무 및 예산 계획 -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4 hover:border-indigo-300 transition">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-calculator"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">3. 재무제표 & 예산 계획</h3>
+            <p class="text-xs text-slate-600">재무제표, 매출 추정, 예산안 (.xlsx, .csv)</p>
+          </div>
+        </div>
+        <button onclick="triggerUpload('BUDGET')" class="px-2.5 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-plus text-xs"></i> 파일 추가
+        </button>
+      </div>
+
+      <div onclick="triggerUpload('BUDGET')" class="border-2 border-dashed border-slate-200 hover:border-emerald-400 bg-slate-50 hover:bg-emerald-50/40 rounded-xl p-4 text-center cursor-pointer transition space-y-1">
+        <i class="fa-solid fa-cloud-arrow-up text-emerald-400 text-xl"></i>
+        <div class="text-xs font-semibold text-slate-700">재무제표 및 추정 예산안을 업로드하세요</div>
+        <div class="text-xs text-slate-600">정부지원금 비목별(인건비/시제품비) 한도 계산기에 자동 연동</div>
+      </div>
+
+      <div class="space-y-2">
+        
+        <div class="py-4 text-center text-slate-400 text-xs italic">
+          등록된 재무/예산 파일이 없습니다.
+        </div>
+        
+      </div>
+    </div>
+
+    <!-- 자산 4: 특허 및 기업 인증서 -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-5 space-y-4 hover:border-indigo-300 transition">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-sm">
+            <i class="fa-solid fa-award"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">4. 특허·인증·연구원 증빙</h3>
+            <p class="text-xs text-slate-600">특허증, 벤처기업확인서, 연구소인증 (.pdf, 이미지)</p>
+          </div>
+        </div>
+        <button onclick="triggerUpload('CERT_PATENT')" class="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 font-semibold text-xs rounded-lg transition flex items-center gap-1">
+          <i class="fa-solid fa-plus text-xs"></i> 파일 추가
+        </button>
+      </div>
+
+      <div onclick="triggerUpload('CERT_PATENT')" class="border-2 border-dashed border-slate-200 hover:border-amber-400 bg-slate-50 hover:bg-amber-50/40 rounded-xl p-4 text-center cursor-pointer transition space-y-1">
+        <i class="fa-solid fa-cloud-arrow-up text-amber-400 text-xl"></i>
+        <div class="text-xs font-semibold text-slate-700">특허증 및 각종 가점 인증서를 업로드하세요</div>
+        <div class="text-xs text-slate-600">우대 가점(1~5점) 및 공고별 결격사유 사전 비행점검에 반영</div>
+      </div>
+
+      <div class="space-y-2">
+        
+        <div class="py-4 text-center text-slate-400 text-xs italic">
+          등록된 특허/인증 서류가 없습니다.
+        </div>
+        
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- 숨김 파일 업로드 인풋 -->
+<input type="file" id="vaultFileInput" class="hidden" onchange="handleFileUpload(event)">
+
+<!-- ========================================================================= -->
+<!-- 3. 소셜 로그인 & 계정 전환 모달 -->
+<!-- ========================================================================= -->
+<div id="loginModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200">
+    <div class="px-6 py-5 bg-slate-900 text-white flex justify-between items-center">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-shield-halved text-indigo-400"></i>
+        <h3 class="font-bold text-base">모두의 창업비서 (SSA) 로그인</h3>
+      </div>
+      <button onclick="closeLoginModal()" class="text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <div class="p-6 space-y-4">
+      <p class="text-xs text-slate-600 leading-relaxed">
+        소셜 계정 또는 기업 계정으로 로그인하여 <strong>자사만의 독립 데이터 룸<span class="sr-only">(Vault)</span></strong>을 안전하게 관리하세요.
+      </p>
+
+      <!-- 카카오 로그인 버튼 -->
+      <button onclick="doSocialLogin('kakao')"
+              class="w-full py-2.5 px-4 bg-[#FEE500] hover:bg-[#FDD835] text-[#3C1E1E] font-bold text-xs rounded-xl shadow-sm transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-comment text-sm"></i>
+        <span>카카오로 1초 시작하기</span>
+      </button>
+
+      <!-- 구글 로그인 버튼 -->
+      <button onclick="doSocialLogin('google')"
+              class="w-full py-2.5 px-4 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl border border-slate-300 shadow-sm transition flex items-center justify-center gap-2">
+        <i class="fa-brands fa-google text-rose-500"></i>
+        <span>구글 계정으로 로그인</span>
+      </button>
+
+      <div class="relative flex py-2 items-center">
+        <div class="flex-grow border-t border-slate-200"></div>
+        <span class="flex-shrink mx-3 text-slate-600 text-xs font-semibold uppercase">또는 빠른 데모</span>
+        <div class="flex-grow border-t border-slate-200"></div>
+      </div>
+
+      <!-- 빠른 데모 계정 로그인 -->
+      <div class="space-y-2">
+        <input type="text" id="demoCompanyName" placeholder="회사명 입력 (예: (주)알파솔루션)"
+               class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <input type="text" id="demoBizNo" placeholder="사업자번호 (예: 220-81-12345)"
+               class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+        <button onclick="doDemoLogin()"
+                class="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-building-user"></i>
+          <span>새 사업자로 데이터룸 열기</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  let activeUploadCategory = 'PROPOSAL';
+
+  function triggerUpload(category) {
+    activeUploadCategory = category;
+    const fileInput = document.getElementById('vaultFileInput');
+    fileInput.value = '';
+    fileInput.click();
+  }
+
+  async function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('category', activeUploadCategory);
+
+    try {
+      const resp = await fetch('/api/vault/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await resp.json();
+      if (data.status === 'success') {
+        alert(`자산 등록 완료: ${file.name}\n(AI 텍스트 및 스펙 추출이 완료되었습니다.)`);
+        window.location.reload();
+      } else {
+        alert('업로드 실패: ' + (data.message || '알 수 없는 오류'));
+      }
+    } catch (e) {
+      alert('업로드 중 통신 오류가 발생했습니다.');
+    }
+  }
+
+  async function deleteAsset(assetId) {
+    if (!confirm('해당 자산을 데이터룸에서 삭제하시겠습니까?')) return;
+    try {
+      const resp = await fetch(`/api/vault/assets/${assetId}`, { method: 'DELETE' });
+      const data = await resp.json();
+      if (data.status === 'success') {
+        window.location.reload();
+      } else {
+        alert('삭제 실패: ' + (data.message || ''));
+      }
+    } catch (e) {
+      alert('통신 오류');
+    }
+  }
+
+  function openLoginModal() {
+    document.getElementById('loginModal').classList.remove('hidden');
+  }
+
+  function closeLoginModal() {
+    document.getElementById('loginModal').classList.add('hidden');
+  }
+
+  async function doSocialLogin(provider) {
+    const email = provider === 'kakao' ? 'kakao_user@kakao.com' : 'google_user@gmail.com';
+    const name = provider === 'kakao' ? '카카오 사업자' : '구글 사업자';
+    const company = prompt('기업명을 입력해 주세요:', '(주)미래테크');
+    if (!company) return;
+
+    try {
+      const resp = await fetch('/api/auth/social-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: provider,
+          email: email,
+          name: name,
+          company_name: company,
+          biz_reg_no: '123-88-99999',
+        }),
+      });
+      const data = await resp.json();
+      if (data.status === 'success') {
+        window.location.reload();
+      }
+    } catch (e) {
+      alert('로그인 오류');
+    }
+  }
+
+  async function doDemoLogin() {
+    const company = (document.getElementById('demoCompanyName').value || '').trim() || '(주)신규스타트업';
+    const bizNo = (document.getElementById('demoBizNo').value || '').trim() || '220-81-00001';
+
+    try {
+      const resp = await fetch('/api/auth/social-login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          provider: 'demo',
+          email: `ceo_${Date.now()}@biz.kr`,
+          name: '대표자',
+          company_name: company,
+          biz_reg_no: bizNo,
+        }),
+      });
+      const data = await resp.json();
+      if (data.status === 'success') {
+        window.location.reload();
+      }
+    } catch (e) {
+      alert('로그인 오류');
+    }
+  }
+</script>
+
+  </main>
+
+  <!-- 파이프라인 실행 결과 모달 -->
+  <div id="pipelineResultModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[85vh] flex flex-col overflow-hidden border border-slate-200">
+      <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+          <h3 class="text-base font-bold">파이프라인 실행 완료</h3>
+        </div>
+        <button onclick="closePipelineModal()" class="text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="p-6 overflow-y-auto space-y-4">
+        <div class="grid grid-cols-3 gap-3 text-center">
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <span class="text-xs text-blue-600 font-semibold block mb-0.5">분석 아이템</span>
+            <span id="pipeResItems" class="text-xl font-bold text-blue-900 kh-tabular">0</span>
+          </div>
+          <div class="bg-slate-50 border border-slate-200 rounded-lg p-3">
+            <span class="text-xs text-slate-500 font-semibold block mb-0.5">평가 공고 풀</span>
+            <span id="pipeResEvaluated" class="text-xl font-bold text-slate-800 kh-tabular">0</span>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+            <span class="text-xs text-emerald-600 font-semibold block mb-0.5">적합 공고 발견</span>
+            <span id="pipeResMatched" class="text-xl font-bold text-emerald-700 kh-tabular">0</span>
+          </div>
+        </div>
+        <p id="pipeResMessage" class="text-xs text-slate-600 bg-slate-100 p-2.5 rounded-lg border border-slate-200 font-medium"></p>
+        <div>
+          <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <i class="fa-solid fa-list-check text-slate-500"></i> 아이템별 매칭 세부 내역
+          </h4>
+          <div id="pipeResDetails" class="space-y-2 text-xs"></div>
+        </div>
+      </div>
+
+      <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex justify-between items-center">
+        <a href="./matches.html" class="text-xs font-semibold text-blue-600 hover:text-blue-800 flex items-center gap-1 transition">
+          <i class="fa-solid fa-paper-plane"></i> 발송 이력 페이지(/matches)로 이동
+        </a>
+        <div class="flex items-center gap-2">
+          <button onclick="window.location.reload()" class="text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold px-3 py-1.5 rounded transition">
+            <i class="fa-solid fa-rotate-right mr-1"></i> 화면 새로고침
+          </button>
+          <button onclick="closePipelineModal()" class="text-xs bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-1.5 rounded transition">
+            닫기
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 푸터 -->
+  <footer class="bg-slate-900 border-t border-slate-800 text-xs text-slate-400 py-5 mt-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-wrap justify-between items-center gap-2">
+      <span>정부지원사업 맞춤형 AI 코파일럿 플랫폼</span>
+      <span class="text-emerald-400 font-medium"><i class="fa-solid fa-lock mr-1"></i>안전한 로컬 보안 암호화 · 데이터 보호 체계 준수</span>
+    </div>
+  </footer>
+
+  <div class="krds-toast-wrap" id="krdsToastWrap" aria-live="polite"></div>
+
+  <script>
+    function toggleMobileNav() {
+      const menu = document.getElementById('mobileNavMenu');
+      const btn = document.getElementById('mobileMenuBtn');
+      if (menu) {
+        menu.classList.toggle('hidden');
+        const isExpanded = !menu.classList.contains('hidden');
+        if (btn) btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+      }
+    }
+
+    async function switchServiceRole(roleKey, targetUrl) {
+      try {
+        await fetch('/api/auth/role', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ role: roleKey })
+        });
+      } catch (e) {}
+      window.location.href = targetUrl + (targetUrl.includes('?') ? '&' : '?') + 'role=' + roleKey;
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineResultModal').classList.add('hidden');
+    }
+
+    async function triggerPipeline() {
+      const btn = document.getElementById('runBtn');
+      const origHtml = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 파이프라인 실행 중...';
+      try {
+        const res = await fetch('/api/pipeline/run', { method: 'POST' });
+        const data = await res.json();
+        document.getElementById('pipeResItems').textContent = data.items_processed ?? 0;
+        document.getElementById('pipeResEvaluated').textContent = data.announcements_evaluated ?? 0;
+        document.getElementById('pipeResMatched').textContent = data.total_matched ?? 0;
+        document.getElementById('pipeResMessage').textContent = data.message || '완료되었습니다.';
+        const detailsContainer = document.getElementById('pipeResDetails');
+        detailsContainer.innerHTML = '';
+        if (Array.isArray(data.item_details) && data.item_details.length > 0) {
+          data.item_details.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'p-3 rounded-lg border border-slate-200 bg-slate-50';
+            card.innerHTML = `<div class="font-bold text-slate-800">${item.item_name} (${item.matched_count}건)</div>`;
+            detailsContainer.appendChild(card);
+          });
+        }
+        document.getElementById('pipelineResultModal').classList.remove('hidden');
+      } catch (e) {
+        alert('실행 중 오류가 발생했습니다: ' + e);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = origHtml;
+      }
+    }
+
+    window.showToast = function(msg, type) {
+      const wrap = document.getElementById('krdsToastWrap');
+      if (!wrap) return;
+      const t = document.createElement('div');
+      t.className = 'krds-toast show ' + (type || '');
+      t.textContent = msg;
+      wrap.appendChild(t);
+      setTimeout(() => { t.classList.remove('show'); setTimeout(() => t.remove(), 300); }, 2800);
+    };
+
+    document.addEventListener('DOMContentLoaded', () => {
+      constels = document.querySelectorAll('.reveal');
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+        }, { threshold: 0.08 });
+        constels.forEach(el => io.observe(el));
+      } else {
+        constels.forEach(el => el.classList.add('in'));
+      }
+    });
+  </script>
+  
+
+  <!-- GitHub Pages Client-side Mock API Layer -->
+  <script src="./static/js/github_pages_mock_api.js"></script>
+</body>
+</html>

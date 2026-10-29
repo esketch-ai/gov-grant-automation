@@ -42,7 +42,7 @@ BASE_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BASE_DIR.parent.parent
 TEMPLATES_DIR = BASE_DIR / "templates"
 
-app = FastAPI(title="정부지원사업 맞춤형 관리 플랫폼", version="1.5.1")
+app = FastAPI(title="모두의 창업비서 (SSA : Startup Secretary for All)", version="1.5.1")
 
 # REQ-030: 보안 헤더 미들웨어 (최은정 통제)
 @app.middleware("http")

@@ -64,7 +64,7 @@ def create_event_block(notice: Dict[str, Any], include_alarms: bool = True) -> O
     ]
     if url:
         desc_lines.append(f"원문상세: {url}")
-    desc_lines.append("시스템: SSHAI-CWA 2026 정부지원사업 자동화")
+    desc_lines.append("시스템: 모두의 창업비서 (SSA : Startup Secretary for All) 2026 정부지원사업 자동화")
 
     description = escape_ical_text("\n".join(desc_lines))
     summary = escape_ical_text(f"[과제마감] {title}")
@@ -114,7 +114,7 @@ def export_single_notice_ics(notice: Dict[str, Any]) -> str:
     header = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//SSHAI-CWA//GovGrantAutomation 2026//KO",
+        "PRODID:-//SSA//Startup Secretary for All 2026//KO",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         f"X-WR-CALNAME:{cal_name}",
@@ -137,7 +137,7 @@ def export_bundle_calendar_ics(
     header = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//SSHAI-CWA//GovGrantAutomation 2026//KO",
+        "PRODID:-//SSA//Startup Secretary for All 2026//KO",
         "CALSCALE:GREGORIAN",
         "METHOD:PUBLISH",
         f"X-WR-CALNAME:{escape_ical_text(calendar_name)}",

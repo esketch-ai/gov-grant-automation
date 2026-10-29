@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 scripts/generate_core_value_video.py
-과제비서 AI 기본 플랫폼 순기능(탐색 피로 해소, 자동 수집, 자격 사전 진단, 맞춤 매칭, D-day 일정 관제)
+모두의 창업비서 (SSA : Startup Secretary for All) 기본 플랫폼 순기능(탐색 피로 해소, 자동 수집, 자격 사전 진단, 맞춤 매칭, D-day 일정 관제)
 시네마틱 영상물 자동 생성 엔진 (Pillow + FFmpeg 파이프라인)
 """
 import os
@@ -80,9 +80,9 @@ SCENES = [
         "image": "hero_fatigue_vs_winning_edge.jpg",
         "duration": 4.0,
         "zoom_dir": "in",
-        "badge": "대한민국 창업가를 위한 과제비서",
+        "badge": "Startup Secretary for All (SSA)",
         "badge_color": (6, 182, 212),  # Cyan
-        "title": "모두의 창업 과제비서 AI",
+        "title": "모두의 창업비서 (SSA)",
         "subtitle": "정부지원사업 맞춤형 공고 매칭 & 지원 자격 진단",
     },
 ]
@@ -176,7 +176,7 @@ def render_scene_frame(
     draw.text((sx, sy), sub_text, font=font_sub, fill=(226, 232, 240, 255))
 
     # 6. Top Bar Branding
-    brand_text = "과제비서 AI  |  정부지원사업 공고 매칭 & 자격 진단"
+    brand_text = "모두의 창업비서 (SSA)  |  Startup Secretary for All"
     draw.text((62, 32), brand_text, font=font_sub, fill=(0, 0, 0, 160))
     draw.text((60, 30), brand_text, font=font_sub, fill=(148, 163, 184, 255))
 
@@ -184,7 +184,7 @@ def render_scene_frame(
 
 
 def main():
-    print("🎬 과제비서 AI 순기능 시네마틱 영상물 생성 시작...")
+    print("🎬 모두의 창업비서 (SSA) 순기능 시네마틱 영상물 생성 시작...")
     font_badge = get_font(18, bold=True)
     font_title = get_font(34, bold=True)
     font_sub = get_font(20, bold=False)

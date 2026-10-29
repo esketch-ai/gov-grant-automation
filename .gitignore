@@ -27,5 +27,8 @@ storage/qqaqc_*_report.*
 # Local agent tooling (machine-specific symlink, not committed)
 .agents/
 
+# Build artifacts
+dist/
+
 # OS
 .DS_Store

@@ -221,7 +221,23 @@ class GrantDatabase:
                     total_budget INTEGER DEFAULT 100000,
                     completed_testers INTEGER DEFAULT 0,
                     status TEXT DEFAULT 'ACTIVE',
-                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    request_type TEXT DEFAULT 'PAID',
+                    category TEXT DEFAULT '일반',
+                    target_goal TEXT DEFAULT '',
+                    payment_status TEXT DEFAULT 'COMPLETED',
+                    payment_id TEXT DEFAULT '',
+                    is_featured INTEGER DEFAULT 0
+                );
+                CREATE TABLE IF NOT EXISTS prototype_payments (
+                    payment_id TEXT PRIMARY KEY,
+                    campaign_id TEXT NOT NULL,
+                    item_id TEXT NOT NULL,
+                    tenant_id TEXT NOT NULL,
+                    amount INTEGER NOT NULL,
+                    payment_method TEXT NOT NULL,
+                    payment_status TEXT NOT NULL,
+                    paid_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
                 CREATE TABLE IF NOT EXISTS prototype_sessions (
                     id TEXT PRIMARY KEY,
@@ -250,8 +266,77 @@ class GrantDatabase:
                     reward_status TEXT DEFAULT 'PAID',
                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
                 );
+                CREATE UNIQUE INDEX IF NOT EXISTS idx_campaign_tester_unique ON prototype_feedbacks (campaign_id, tester_id);
+                CREATE TABLE IF NOT EXISTS notebook_sync_logs (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    synced_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    notebook_id TEXT NOT NULL,
+                    status TEXT NOT NULL,
+                    added_count INTEGER DEFAULT 0,
+                    updated_count INTEGER DEFAULT 0,
+                    total_count INTEGER DEFAULT 0,
+                    sync_hash TEXT,
+                    message TEXT,
+                    payload_snapshot TEXT
+                );
+                CREATE TABLE IF NOT EXISTS dynamic_global_grants (
+                    program_id TEXT PRIMARY KEY,
+                    country TEXT NOT NULL,
+                    country_code TEXT,
+                    city_hub TEXT,
+                    program_name TEXT NOT NULL,
+                    program_name_en TEXT,
+                    supervising_entity TEXT,
+                    operating_entity TEXT,
+                    specialized_fields TEXT,
+                    support_type TEXT,
+                    financial_benefit TEXT,
+                    visa_benefit TEXT,
+                    space_facility_benefit TEXT,
+                    mentoring_network TEXT,
+                    target_qualifications TEXT,
+                    selection_scale TEXT,
+                    source_portal TEXT,
+                    detail_url TEXT,
+                    inquiry_contact TEXT,
+                    case_studies TEXT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    version INTEGER DEFAULT 1
+                );
+                CREATE TABLE IF NOT EXISTS dynamic_master_grants (
+                    program_id TEXT PRIMARY KEY,
+                    program_name TEXT NOT NULL,
+                    category TEXT,
+                    supervising_ministry TEXT,
+                    operating_agency TEXT,
+                    region_scope TEXT,
+                    target_stage TEXT,
+                    target_qualifications TEXT,
+                    expected_period TEXT,
+                    expected_month INTEGER DEFAULT 0,
+                    support_scale TEXT,
+                    support_details TEXT,
+                    inquiry_contact TEXT,
+                    source_portal TEXT,
+                    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                    version INTEGER DEFAULT 1
+                );
                 """
                 )
+                # prototype_campaigns 컬럼 동적 마이그레이션 (기존 DB 호환)
+                for col_name, col_type in [
+                    ("request_type", "TEXT DEFAULT 'PAID'"),
+                    ("category", "TEXT DEFAULT '일반'"),
+                    ("target_goal", "TEXT DEFAULT ''"),
+                    ("payment_status", "TEXT DEFAULT 'COMPLETED'"),
+                    ("payment_id", "TEXT DEFAULT ''"),
+                    ("is_featured", "INTEGER DEFAULT 0"),
+                ]:
+                    try:
+                        conn.execute(f"ALTER TABLE prototype_campaigns ADD COLUMN {col_name} {col_type}")
+                    except Exception:
+                        pass
+
                 # company_profile 단일행(id=1) 기본행 확보(프로필 부재 시 빈 상태 반환 방지)
                 conn.execute("INSERT OR IGNORE INTO company_profile (id) VALUES (1);")
                 # 기본 테넌트 및 데모 사용자 시드 (하위 호환성 유지)
@@ -263,31 +348,103 @@ class GrantDatabase:
                 INSERT OR IGNORE INTO users (id, tenant_id, email, name, auth_provider, role)
                 VALUES ('user_default', 'tenant_default', 'ceo@chorong.ai', '홍길동 대표', 'local_demo', 'OWNER');
                 """)
-                # REQ-047 데모 바이브코딩 검증 캠페인 시드
+                # REQ-047 데모 바이브코딩 검증 캠페인 시드 (유료 보증 + 무료 품앗이 듀얼 트랙)
                 conn.execute("""
                 INSERT OR IGNORE INTO prototype_campaigns (
                     id, item_id, tenant_id, prototype_url, title, description,
                     target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
-                    completed_testers, status, created_at
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
                 ) VALUES (
                     'camp_01_carbon_dmrv', 'item_01_carbon_dmrv', 'tenant_default',
                     'https://carbon-dmrv-demo.vibecoding.app',
                     '2026 탄소배출권 디지털 MRV 및 에너지 AX 웹앱',
                     '센서 데이터 자동 집계 및 온실가스 배출량 인증 보고서 생성 프로토타입 실사용 검증',
-                    50, 2000, 1400, 600, 100000, 34, 'ACTIVE', '2026-10-27 10:00:00'
+                    50, 2000, 1400, 600, 100000, 34, 'ACTIVE', '2026-10-27 10:00:00',
+                    'PAID', '기후/에너지', '사업계획서 시장 검증 증빙', 'PAID', 1
                 );
                 """)
                 conn.execute("""
                 INSERT OR IGNORE INTO prototype_campaigns (
                     id, item_id, tenant_id, prototype_url, title, description,
                     target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
-                    completed_testers, status, created_at
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
                 ) VALUES (
                     'camp_02_voice_ai', 'item_02_voice_ai', 'tenant_default',
                     'https://ondevice-voice-ai.vibecoding.app',
                     '초경량 온디바이스 음성인식 AI 컨트롤러',
                     '네트워크 단절 환경에서의 산업용 음성 커맨드 제어 반응속도 및 오인식률 테스트',
-                    30, 2000, 1400, 600, 60000, 12, 'ACTIVE', '2026-10-27 14:00:00'
+                    30, 2000, 1400, 600, 60000, 12, 'ACTIVE', '2026-10-27 14:00:00',
+                    'PAID', 'AI/딥테크', '현장 음성인식 UX 검증', 'PAID', 1
+                );
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
+                ) VALUES (
+                    'camp_03_local_fnb', 'item_03_local_fnb', 'tenant_default',
+                    'https://local-fnb-order.figma.site',
+                    '로컬 골목상권 단골 리워드 & 테이블오더 기획안 (Figma)',
+                    '소상공인 매장용 QR 테이블오더 주문 동선 및 단골 스탬프 UI/UX 품앗이 피드백을 구합니다.',
+                    10, 0, 0, 0, 0, 7, 'ACTIVE', '2026-10-28 11:00:00',
+                    'FREE', '로컬/F&B', '주문 플로우 및 UI 편의성 검증', 'FREE', 0
+                );
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
+                ) VALUES (
+                    'camp_04_saas_crm', 'item_04_saas_crm', 'tenant_default',
+                    'https://b2b-lead-crm.app',
+                    'B2B 영업 리드 파이프라인 자동화 SaaS',
+                    '중소기업 맞춤 견적서 자동 생성 및 계약 전환율 개선 기능 실사용 테스터 모집',
+                    50, 2000, 1400, 600, 100000, 28, 'ACTIVE', '2026-10-28 13:30:00',
+                    'PAID', 'SaaS/플랫폼', 'B2B 결제전환율 측정', 'PAID', 1
+                );
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
+                ) VALUES (
+                    'camp_05_edu_vr', 'item_05_edu_vr', 'tenant_default',
+                    'https://edu-metaverse-demo.web.app',
+                    '직업계고 실습용 인터랙티브 가상 시뮬레이터',
+                    '위험 산업설비 안전교육 가상체험 시뮬레이터 학생 몰입도 및 UX 동료 평가 요청',
+                    15, 0, 0, 0, 0, 9, 'ACTIVE', '2026-10-28 15:00:00',
+                    'FREE', '문화/콘텐츠', '몰입도 및 인터랙션 평가', 'FREE', 0
+                );
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
+                ) VALUES (
+                    'camp_06_health_ai', 'item_06_health_ai', 'tenant_default',
+                    'https://smart-vital-care.app',
+                    '시니어 웨어러블 바이탈 이상징후 조기감지 케어앱',
+                    '보호자 안심 알림 및 긴급호출 인터페이스 50명 실사용 검증 (정부지원사업 제출용)',
+                    50, 2000, 1400, 600, 100000, 41, 'ACTIVE', '2026-10-28 16:20:00',
+                    'PAID', '바이오/헬스', '정부과제 시장반응 증빙', 'PAID', 1
+                );
+                """)
+                conn.execute("""
+                INSERT OR IGNORE INTO prototype_campaigns (
+                    id, item_id, tenant_id, prototype_url, title, description,
+                    target_testers, fee_per_test, tester_reward, platform_fee, total_budget,
+                    completed_testers, status, created_at, request_type, category, target_goal, payment_status, is_featured
+                ) VALUES (
+                    'camp_07_creator_pay', 'item_07_creator_pay', 'tenant_default',
+                    'https://creator-settle.notion.site',
+                    '1인 크리에이터 간편 정산 및 세무 증빙 노션 기획안',
+                    '복잡한 외주 정산 및 부가세 신고 자동 매칭 기획안에 대한 초기 프리랜서 피드백',
+                    10, 0, 0, 0, 0, 4, 'ACTIVE', '2026-10-28 17:00:00',
+                    'FREE', '핀테크/금융', '초기 기획안 논리 및 편의성 검증', 'FREE', 0
                 );
                 """)
                 # REQ-047 데모 피드백 시드
@@ -1105,9 +1262,16 @@ class GrantDatabase:
             logger.warning("delete_grant_project 실패: %s", e)
             return False
 
-    # ------------------------------------------------------------------ REQ-047 프로토타입 검증 & 리워드 경제
+    # ------------------------------------------------------------------ REQ-047 프로토타입 검증 & 리워드 경제 (무료/유료 듀얼 트랙)
     def create_prototype_campaign(self, campaign: dict) -> bool:
-        """신규 프로토타입 검증 캠페인 생성."""
+        """신규 프로토타입 검증 캠페인 생성 (무료 품앗이 / 유료 보증 트랙 지원)."""
+        payload = dict(campaign)
+        payload.setdefault("request_type", "PAID")
+        payload.setdefault("category", "일반")
+        payload.setdefault("target_goal", "")
+        payload.setdefault("payment_status", "COMPLETED" if payload.get("request_type") == "PAID" else "FREE")
+        payload.setdefault("payment_id", "")
+        payload.setdefault("is_featured", 1 if payload.get("request_type") == "PAID" else 0)
         try:
             with self._connect() as conn:
                 conn.execute(
@@ -1115,14 +1279,16 @@ class GrantDatabase:
                     INSERT INTO prototype_campaigns (
                         id, item_id, tenant_id, prototype_url, title, description,
                         target_testers, fee_per_test, tester_reward, platform_fee,
-                        total_budget, completed_testers, status, created_at
+                        total_budget, completed_testers, status, created_at,
+                        request_type, category, target_goal, payment_status, payment_id, is_featured
                     ) VALUES (
                         :id, :item_id, :tenant_id, :prototype_url, :title, :description,
                         :target_testers, :fee_per_test, :tester_reward, :platform_fee,
-                        :total_budget, :completed_testers, :status, :created_at
+                        :total_budget, :completed_testers, :status, :created_at,
+                        :request_type, :category, :target_goal, :payment_status, :payment_id, :is_featured
                     )
                     """,
-                    campaign,
+                    payload,
                 )
                 return True
         except Exception as e:
@@ -1142,9 +1308,14 @@ class GrantDatabase:
             return None
 
     def list_prototype_campaigns(
-        self, status: Optional[str] = None, item_id: Optional[str] = None
+        self,
+        status: Optional[str] = None,
+        item_id: Optional[str] = None,
+        request_type: Optional[str] = None,
+        category: Optional[str] = None,
+        limit: Optional[int] = None,
     ) -> List[dict]:
-        """프로토타입 검증 캠페인 목록 조회."""
+        """프로토타입 검증 캠페인 목록 조회 (유형별/분야별 필터 및 limit 지원)."""
         try:
             with self._connect() as conn:
                 query = "SELECT * FROM prototype_campaigns WHERE 1=1"
@@ -1155,7 +1326,15 @@ class GrantDatabase:
                 if item_id:
                     query += " AND item_id = ?"
                     params.append(item_id)
-                query += " ORDER BY created_at DESC"
+                if request_type and request_type != "ALL":
+                    query += " AND request_type = ?"
+                    params.append(request_type)
+                if category and category != "ALL":
+                    query += " AND category = ?"
+                    params.append(category)
+                query += " ORDER BY is_featured DESC, created_at DESC"
+                if limit and limit > 0:
+                    query += f" LIMIT {int(limit)}"
                 cur = conn.execute(query, params)
                 return [dict(r) for r in cur.fetchall()]
         except Exception as e:
@@ -1284,6 +1463,22 @@ class GrantDatabase:
         except Exception as e:
             logger.warning("list_prototype_feedbacks 실패: %s", e)
             return []
+
+    def has_prototype_feedback(self, campaign_id: str, tester_id: str) -> bool:
+        """특정 테스터가 해당 캠페인에 이미 피드백을 완료했는지 확인 (중복 참여 원천 방지)."""
+        if not tester_id:
+            return False
+        try:
+            with self._connect() as conn:
+                cur = conn.execute(
+                    "SELECT COUNT(*) FROM prototype_feedbacks WHERE campaign_id = ? AND tester_id = ?",
+                    (campaign_id, tester_id),
+                )
+                row = cur.fetchone()
+                return bool(row and row[0] > 0)
+        except Exception as e:
+            logger.warning("has_prototype_feedback 실패: %s", e)
+            return False
 
     def get_tester_rewards_summary(self, tester_id: str) -> dict:
         """특정 테스터의 누적 리워드 요약."""

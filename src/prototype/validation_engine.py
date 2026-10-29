@@ -10,6 +10,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 import time
 import uuid
 from datetime import datetime
@@ -71,52 +72,106 @@ class PrototypeValidationEngine:
         fee_per_test: Optional[int] = None,
         fee_per_tester: Optional[int] = None,
         description: str = "",
+        request_type: str = "PAID",
+        category: str = "일반",
+        target_goal: str = "",
+        target_testers: Optional[int] = None,
+        payment_status: Optional[str] = None,
+        payment_id: str = "",
     ) -> Dict[str, Any]:
-        """신규 프로토타입 검증 캠페인 개설 (예산 기반 선착순 인원 및 7:3 요금 확정)."""
-        b_amount = budget if budget is not None else (total_budget if total_budget is not None else 100000)
-        fee = fee_per_tester if fee_per_tester is not None else (fee_per_test if fee_per_test is not None else 2000)
-        split = self.calculate_split(fee_per_test=fee)
-        target_testers = max(1, b_amount // split["fee_per_test"])
-        actual_total_budget = target_testers * split["fee_per_test"]
-
+        """신규 기획·웹·앱 검증 캠페인 개설 (무료 품앗이 / 유료 보증 듀얼 트랙 지원)."""
         campaign_id = f"camp_{uuid.uuid4().hex[:12]}"
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        camp_title = title.strip() or f"{item_id} 검증 캠페인"
+        req_type = request_type.upper() if request_type else "PAID"
 
-        campaign_data = {
-            "id": campaign_id,
-            "item_id": item_id,
-            "tenant_id": tenant_id,
-            "prototype_url": prototype_url.strip(),
-            "title": camp_title,
-            "description": description.strip() or f"{camp_title} 바이브코딩 프로토타입 실사용 검증",
-            "target_testers": target_testers,
-            "fee_per_test": split["fee_per_test"],
-            "tester_reward": split["tester_reward"],
-            "platform_fee": split["platform_fee"],
-            "total_budget": actual_total_budget,
-            "completed_testers": 0,
-            "status": "ACTIVE",
-            "created_at": now_str,
-        }
+        if req_type == "FREE":
+            # 1. 무료 요청: 결제 없음, 리워드 0원, 기본 10명 목표 상호 품앗이
+            t_testers = target_testers if (target_testers and target_testers > 0) else 10
+            camp_title = title.strip() or f"{item_id} 무료 품앗이 피드백"
+            campaign_data = {
+                "id": campaign_id,
+                "item_id": item_id,
+                "tenant_id": tenant_id,
+                "prototype_url": prototype_url.strip(),
+                "title": camp_title,
+                "description": description.strip() or f"{camp_title} 동료 창업자 커뮤니티 품앗이 피드백",
+                "target_testers": t_testers,
+                "fee_per_test": 0,
+                "tester_reward": 0,
+                "platform_fee": 0,
+                "total_budget": 0,
+                "completed_testers": 0,
+                "status": "ACTIVE",
+                "request_type": "FREE",
+                "category": category or "일반",
+                "target_goal": target_goal or "초기 사용성 및 버그 피드백",
+                "payment_status": "FREE",
+                "payment_id": "",
+                "is_featured": 0,
+                "created_at": now_str,
+            }
+        else:
+            # 2. 유료 요청: 목표 및 결제 기반, 보증 리워드 지급
+            b_amount = budget if budget is not None else (total_budget if total_budget is not None else 100000)
+            fee = fee_per_tester if fee_per_tester is not None else (fee_per_test if fee_per_test is not None else 2000)
+            split = self.calculate_split(fee_per_test=fee)
+            calc_testers = target_testers if (target_testers and target_testers > 0) else max(1, b_amount // split["fee_per_test"])
+            actual_total_budget = calc_testers * split["fee_per_test"]
+            camp_title = title.strip() or f"{item_id} 검증 캠페인"
+
+            campaign_data = {
+                "id": campaign_id,
+                "item_id": item_id,
+                "tenant_id": tenant_id,
+                "prototype_url": prototype_url.strip(),
+                "title": camp_title,
+                "description": description.strip() or f"{camp_title} 실사용자 유료 보증 검증",
+                "target_testers": calc_testers,
+                "fee_per_test": split["fee_per_test"],
+                "tester_reward": split["tester_reward"],
+                "platform_fee": split["platform_fee"],
+                "total_budget": actual_total_budget,
+                "completed_testers": 0,
+                "status": "ACTIVE",
+                "request_type": "PAID",
+                "category": category or "일반",
+                "target_goal": target_goal or "사업계획서 시장 반응(Traction) 증빙",
+                "payment_status": payment_status or "PAID",
+                "payment_id": payment_id or f"pay_{uuid.uuid4().hex[:10]}",
+                "is_featured": 1,
+                "created_at": now_str,
+            }
 
         if self.db:
             self.db.create_prototype_campaign(campaign_data)
 
         logger.info(
-            "프로토타입 검증 캠페인 개설: %s (목표=%d명, 테스터수당=%d원, 수수료=%d원)",
+            "피드백 캠페인 개설 완료: %s (트랙=%s, 목표=%d명, 리워드=%d원)",
             campaign_id,
-            target_testers,
-            split["tester_reward"],
-            split["platform_fee"],
+            campaign_data["request_type"],
+            campaign_data["target_testers"],
+            campaign_data["tester_reward"],
         )
         return campaign_data
 
-    def list_campaigns(self, status: Optional[str] = None, item_id: Optional[str] = None) -> List[Dict[str, Any]]:
-        """캠페인 목록 조회."""
+    def list_campaigns(
+        self,
+        status: Optional[str] = None,
+        item_id: Optional[str] = None,
+        request_type: Optional[str] = None,
+        category: Optional[str] = None,
+        limit: Optional[int] = None,
+    ) -> List[Dict[str, Any]]:
+        """캠페인 목록 조회 (유형별/분야별 필터 및 limit 지원)."""
         if not self.db:
             return []
-        return self.db.list_prototype_campaigns(status=status, item_id=item_id)
+        return self.db.list_prototype_campaigns(
+            status=status,
+            item_id=item_id,
+            request_type=request_type,
+            category=category,
+            limit=limit,
+        )
 
     def get_campaign(self, campaign_id: str) -> Optional[Dict[str, Any]]:
         """캠페인 단건 조회."""
@@ -133,6 +188,9 @@ class PrototypeValidationEngine:
     # ------------------------------------------------------------------ 2. Page Visibility 하트비트 세션
     def start_session(self, campaign_id: str, tester_id: str) -> Dict[str, Any]:
         """테스터 실사용 체험 세션 발급."""
+        if self.db and self.db.has_prototype_feedback(campaign_id, tester_id):
+            raise ValueError("이미 본 검증 캠페인에 참여하여 피드백을 제출하셨습니다. 중복 참여는 불가합니다.")
+
         session_id = f"sess_{uuid.uuid4().hex[:12]}"
         now_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
@@ -241,18 +299,24 @@ class PrototypeValidationEngine:
         if campaign["completed_testers"] >= campaign["target_testers"]:
             raise ValueError("선착순 테스터 모집 정원이 이미 마감되었습니다.")
 
+        # 중복 피드백 제출 차단 (동일 캠페인 1인 1회 한정)
+        if self.db.has_prototype_feedback(campaign_id, tester_id):
+            raise ValueError("이미 본 검증 캠페인에 참여하여 피드백을 제출하셨습니다. 중복 참여는 불가합니다.")
+
         # 1. 체류 시간 60초 미만 체리피커 차단
         if sess["active_seconds"] < 60:
             raise ValueError(
                 f"최소 60초 이상 실사용 체험 후에 피드백을 제출할 수 있습니다. (현재 {sess['active_seconds']}초)"
             )
 
-        # 2. 정성 의견 15자 이상 구체성 검증
+        # 2. 정성 의견 15자 이상 구체성 검증 및 불성실 반복문자 꼼수 차단
         cleaned_feedback = q_text.strip()
         if len(cleaned_feedback) < 15:
             raise ValueError(
                 f"심사위원 대응용 정성 의견은 15자 이상 구체적으로 작성해야 합니다. (현재 {len(cleaned_feedback)}자)"
             )
+        if re.search(r'(.)\1{3,}', cleaned_feedback):
+            raise ValueError("불성실한 반복 문자가 감지되었습니다. 실제 사용 후기를 구체적으로 작성해 주세요.")
 
         # 3. 점수 범위 유효성 검증
         ux_val = max(1, min(5, int(ux_score)))
@@ -332,6 +396,9 @@ class PrototypeValidationEngine:
                 "blocker_distribution": {},
                 "top_blockers": [],
                 "feedbacks": [],
+                "pitch_pack": {"headline": "피드백 수집 진행 중", "wtp_ratio": 0.0, "promoter_ratio": 0.0, "highlight_quotes": [], "core_metrics_summary": []},
+                "audit_pack": {"compliance_status": "검증 진행 중", "sample_validity_rate": "0.0%", "remediation_plan": []},
+                "roadmap_pack": {"priority_backlog": []},
                 "audit_hash": hashlib.sha256(f"{campaign_id}:empty".encode("utf-8")).hexdigest(),
                 "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             }
@@ -388,6 +455,64 @@ class PrototypeValidationEngine:
 
         completion_rate = round((n / max(1, campaign["target_testers"])) * 100.0, 1)
 
+        # 3대 활용 목적별 맞춤형 팩 합성
+        wtp_positive_count = sum(1 for f in feedbacks if f["willingness_to_pay"] >= 3)
+        wtp_ratio = round((wtp_positive_count / n) * 100.0, 1)
+        promoter_ratio = round((promoters / n) * 100.0, 1)
+
+        # 1. 과제 발표·선정용 트랙션 팩 (Pitch Deck Pack)
+        highlight_quotes = [
+            f["qualitative_feedback"]
+            for f in feedbacks
+            if f.get("nps_recommend_score", 0) >= 8 and len(f.get("qualitative_feedback", "")) >= 15
+        ][:3]
+        if not highlight_quotes and feedbacks:
+            highlight_quotes = [f["qualitative_feedback"] for f in feedbacks[:3]]
+
+        pitch_pack = {
+            "headline": f"타깃 사용자 {n}명 실증: 종합 만족도 {overall_sat}점, 유료 전환 의향 {wtp_ratio}% 확보",
+            "wtp_ratio": wtp_ratio,
+            "promoter_ratio": promoter_ratio,
+            "highlight_quotes": highlight_quotes,
+            "core_metrics_summary": [
+                {"label": "전반적 만족도", "val": f"{overall_sat}점", "sub": "100점 환산"},
+                {"label": "유료 지불 용의율", "val": f"{wtp_ratio}%", "sub": "긍정 의향 3점 이상"},
+                {"label": "NPS 추천 지수", "val": f"{'+' if nps_score > 0 else ''}{nps_score}", "sub": "순추천 지수"},
+            ],
+        }
+
+        # 2. 정부과제 협약 감리/결과보고용 팩 (Audit Compliance Pack)
+        remediation_plan = [
+            {
+                "category": b["category"],
+                "frequency": f"{b['count']}건 ({b['ratio']}%)",
+                "action_item": b["action_item"],
+                "responsible_unit": "주관기관 연구개발팀",
+                "schedule": "협약 2차 스프린트 내 조치 완료",
+            }
+            for b in top_blockers
+        ]
+        audit_pack = {
+            "compliance_status": "적합 (최소 체류시간 100% 충족 및 1인 1계정 인증 전수 통과)",
+            "sample_validity_rate": "100.0%",
+            "remediation_plan": remediation_plan,
+        }
+
+        # 3. 기업 실무 제품 개선 & 스프린트 백로그 팩 (Product Iteration Pack)
+        priority_backlog = []
+        for b in top_blockers:
+            cat = b["category"]
+            p_level = "P0 (긴급 결함)" if "오류" in cat or "버그" in cat else ("P1 (UX 개선)" if "UI" in cat or "가독성" in cat else "P2 (성능 개선)")
+            priority_backlog.append({
+                "priority": p_level,
+                "category": cat,
+                "task": f"[{cat}] {b['action_item']}",
+                "affected_users": f"{b['count']}명 제보 ({b['ratio']}%)",
+            })
+        roadmap_pack = {
+            "priority_backlog": priority_backlog,
+        }
+
         # 무결성 보증 SHA-256 감사 해시 날인
         hash_seed = f"{campaign_id}|{campaign['title']}|N={n}|sat={overall_sat}|nps={nps_score}|dwell={total_dwell}"
         audit_hash = hashlib.sha256(hash_seed.encode("utf-8")).hexdigest()
@@ -412,6 +537,9 @@ class PrototypeValidationEngine:
             "blocker_distribution": blocker_counts,
             "top_blockers": top_blockers,
             "feedbacks": feedbacks,
+            "pitch_pack": pitch_pack,
+            "audit_pack": audit_pack,
+            "roadmap_pack": roadmap_pack,
             "audit_hash": audit_hash,
             "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         }

@@ -1060,6 +1060,10 @@ async def portals_view(request: Request):
     global_programs = gg_service.get_all_programs()
     global_summary = gg_service.get_summary_by_country()
 
+    from src.collector.notebooklm_sync import NotebookLMSyncService
+    nl_service = NotebookLMSyncService(db=_get_db())
+    notebook_sync_status = nl_service.get_sync_status()
+
     return templates.TemplateResponse(
         request=request,
         name="portals.html",
@@ -1071,6 +1075,7 @@ async def portals_view(request: Request):
             "local_centers": local_centers,
             "global_programs": global_programs,
             "global_summary": global_summary,
+            "notebook_sync_status": notebook_sync_status,
         },
     )
 
@@ -1227,6 +1232,109 @@ async def get_global_grants_summary_api():
     return {
         "status": "success",
         "summary": gg_service.get_summary_by_country(),
+    }
+
+
+# --------------------------------------------------------------------------
+# Google NotebookLM 지속 동기화 (국내외 지원사업 자동 수집/수정/반영) API
+# --------------------------------------------------------------------------
+@app.get("/api/portals/notebooklm/status")
+async def get_notebooklm_sync_status_api():
+    """NotebookLM 노트북 연동 상태 및 최근 동기화 통계 조회 API."""
+    from src.collector.notebooklm_sync import NotebookLMSyncService
+    service = NotebookLMSyncService(db=_get_db())
+    return {
+        "status": "success",
+        "sync_status": service.get_sync_status(),
+    }
+
+
+@app.post("/api/portals/notebooklm/sync")
+async def trigger_notebooklm_sync_api(request: Request):
+    """NotebookLM 노트북으로부터 국내외 과제 최신 데이터를 수집하여 포털에 자동 반영."""
+    payload = {}
+    try:
+        payload = await request.json()
+    except Exception:
+        pass
+
+    from src.collector.notebooklm_sync import NotebookLMSyncService
+    service = NotebookLMSyncService(db=_get_db())
+    notebook_id = (payload or {}).get("notebook_id") or service.notebook_id
+
+    raw_content = (payload or {}).get("raw_content")
+    if raw_content:
+        parsed_items = service.parse_raw_content(raw_content)
+        result = service.reconcile_and_persist(parsed_items, target_notebook_id=notebook_id)
+        return {
+            "status": "success",
+            "message": "원시 데이터를 파싱하여 과제 포털에 즉시 동기화했습니다.",
+            "sync_result": result,
+        }
+
+    status_info = service.get_sync_status()
+    return {
+        "status": "success",
+        "message": "NotebookLM 동기화 상태가 확인되었습니다.",
+        "sync_status": status_info,
+    }
+
+
+@app.post("/api/portals/notebooklm/import")
+async def import_notebooklm_data_api(request: Request):
+    """NotebookLM에서 내보낸 과제 데이터(JSON/Markdown/Text)를 즉시 파싱하여
+    국내외 포털 및 마스터 데이터베이스에 추가/수정(Reconcile) 반영.
+    """
+    try:
+        payload = await request.json()
+    except Exception:
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": "유효한 JSON 요청 본문이 필요합니다."},
+        )
+
+    if not isinstance(payload, dict):
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": "JSON 객체 형태의 페이로드가 필요합니다."},
+        )
+
+    raw_content = payload.get("raw_content") or payload.get("data") or payload.get("programs")
+    if not raw_content:
+        return JSONResponse(
+            status_code=400,
+            content={"status": "error", "message": "동기화할 raw_content 데이터가 제공되지 않았습니다."},
+        )
+
+    from src.collector.notebooklm_sync import NotebookLMSyncService
+    service = NotebookLMSyncService(db=_get_db())
+    target_notebook_id = payload.get("notebook_id") or service.notebook_id
+    parsed_items = service.parse_raw_content(raw_content)
+
+    if not parsed_items:
+        return JSONResponse(
+            status_code=422,
+            content={"status": "error", "message": "입력 데이터에서 유효한 과제 항목을 파싱하지 못했습니다. JSON 또는 Markdown 형식을 확인해 주세요."},
+        )
+
+    result = service.reconcile_and_persist(parsed_items, target_notebook_id=target_notebook_id)
+    return {
+        "status": "success",
+        "message": f"동기화 완료: 신규 {result['added_count']}건 추가, 기존 {result['updated_count']}건 수정 반영",
+        "result": result,
+    }
+
+
+@app.get("/api/portals/notebooklm/history")
+async def get_notebooklm_history_api(limit: int = 15):
+    """NotebookLM 동기화 감사 로그 이력 조회 API."""
+    from src.collector.notebooklm_sync import NotebookLMSyncService
+    service = NotebookLMSyncService(db=_get_db())
+    history = service.get_sync_history(limit=limit)
+    return {
+        "status": "success",
+        "count": len(history),
+        "history": history,
     }
 
 
@@ -1907,10 +2015,11 @@ async def api_status():
 
 @app.get("/intro", response_class=HTMLResponse)
 async def intro(request: Request):
-    """REQ-034 /intro: 인트로 페이지 렌더링 (모두를 위한 바이브코딩 프로토타입 체험 라운지 포함)."""
+    """REQ-034 /intro: 인트로 페이지 렌더링 (동료 창업자 기획·웹·앱 라운지 큐레이션 6선 포함)."""
     db = _get_db()
     db.ensure_schema()
-    active_campaigns = db.list_prototype_campaigns(status="ACTIVE")
+    all_active = db.list_prototype_campaigns(status="ACTIVE")
+    active_campaigns = all_active[:6]  # 인트로 화면에는 엄선된 6개만 큐레이션 노출
     tester_summary = db.get_tester_rewards_summary(tester_id="tester_default")
     return templates.TemplateResponse(
         request=request,
@@ -1918,7 +2027,50 @@ async def intro(request: Request):
         context={
             "active_page": "intro",
             "active_campaigns": active_campaigns,
+            "total_campaigns_count": len(all_active),
             "tester_summary": tester_summary,
+        },
+    )
+
+
+@app.get("/feedback-lounge", response_class=HTMLResponse)
+@app.get("/prototypes", response_class=HTMLResponse)
+async def feedback_lounge_view(
+    request: Request,
+    type: Optional[str] = None,
+    category: Optional[str] = None,
+):
+    """독립 단독 메뉴: 동료 창업자 기획·웹·앱 체험 & 피드백 라운지 (무료/유료 듀얼 트랙)."""
+    db = _get_db()
+    db.ensure_schema()
+    req_type = type if type and type in ("FREE", "PAID") else None
+    cat = category if category and category != "ALL" else None
+    campaigns = db.list_prototype_campaigns(
+        status="ACTIVE",
+        request_type=req_type,
+        category=cat,
+    )
+    tester_summary = db.get_tester_rewards_summary(tester_id="tester_default")
+    all_camps = db.list_prototype_campaigns(status=None)
+    total_projects = len(all_camps)
+    total_testers = sum(c.get("completed_testers", 0) for c in all_camps)
+    total_rewards_paid = sum(
+        c.get("completed_testers", 0) * c.get("tester_reward", 0) for c in all_camps
+    )
+    return templates.TemplateResponse(
+        request=request,
+        name="feedback_lounge.html",
+        context={
+            "active_page": "feedback_lounge",
+            "campaigns": campaigns,
+            "tester_summary": tester_summary,
+            "selected_type": type or "ALL",
+            "selected_category": category or "ALL",
+            "stats": {
+                "total_projects": total_projects,
+                "total_testers": total_testers,
+                "total_rewards_paid": total_rewards_paid,
+            },
         },
     )
 
@@ -1928,7 +2080,8 @@ async def pricing(request: Request):
     """REQ-034 /pricing: 요금제 페이지 렌더링."""
     db = _get_db()
     db.ensure_schema()
-    active_campaigns = db.list_prototype_campaigns(status="ACTIVE")
+    all_active = db.list_prototype_campaigns(status="ACTIVE")
+    active_campaigns = all_active[:6]
     tester_summary = db.get_tester_rewards_summary(tester_id="tester_default")
     return templates.TemplateResponse(
         request=request,
@@ -1936,6 +2089,7 @@ async def pricing(request: Request):
         context={
             "active_page": "pricing",
             "active_campaigns": active_campaigns,
+            "total_campaigns_count": len(all_active),
             "tester_summary": tester_summary,
         },
     )
@@ -2014,22 +2168,26 @@ def _get_prototype_engine() -> Any:
     return PrototypeValidationEngine(db)
 
 
-# ---------------------------------------------------------------------- REQ-047 바이브코딩 검증 엔진 & 7:3 리워드 경제 API
+# ---------------------------------------------------------------------- REQ-047 기획·웹·앱 검증 엔진 & 피드백 라운지 API (무료/유료 트랙)
 @app.post("/api/prototype/campaigns")
 async def api_create_prototype_campaign(request: Request):
-    """신규 바이브코딩 검증 캠페인 개설."""
+    """신규 기획·웹·앱 검증 캠페인 개설 (무료 품앗이 및 유료 보증 트랙 지원)."""
     data = await request.json()
     item_id = str(data.get("item_id", "")).strip()
     prototype_url = str(data.get("prototype_url", "")).strip()
     title = str(data.get("title", data.get("item_name", item_id))).strip()
     description = str(data.get("description", "")).strip()
+    request_type = str(data.get("request_type", "PAID")).upper()
+    category = str(data.get("category", "일반")).strip()
+    target_goal = str(data.get("target_goal", "")).strip()
     total_budget = int(data.get("total_budget", data.get("budget", 100000)))
     fee_per_test = int(data.get("fee_per_test", data.get("fee_per_tester", 2000)))
+    target_testers = int(data.get("target_testers", 0)) if data.get("target_testers") else None
 
     if not item_id or not prototype_url:
         return JSONResponse(
             status_code=400,
-            content={"status": "error", "message": "아이템 ID와 프로토타입 URL은 필수 입력입니다."},
+            content={"status": "error", "message": "아이템 ID와 기획안/프로토타입 URL은 필수 입력입니다."},
         )
 
     engine = _get_prototype_engine()
@@ -2042,16 +2200,32 @@ async def api_create_prototype_campaign(request: Request):
         total_budget=total_budget,
         fee_per_test=fee_per_test,
         description=description,
+        request_type=request_type,
+        category=category,
+        target_goal=target_goal,
+        target_testers=target_testers,
     )
     return {"status": "success", "campaign": campaign}
 
 
 @app.get("/api/prototype/campaigns")
-async def api_list_prototype_campaigns(status: Optional[str] = None, item_id: Optional[str] = None):
-    """프로토타입 검증 캠페인 목록 조회."""
+async def api_list_prototype_campaigns(
+    status: Optional[str] = None,
+    item_id: Optional[str] = None,
+    request_type: Optional[str] = None,
+    category: Optional[str] = None,
+    limit: Optional[int] = None,
+):
+    """프로토타입 검증 캠페인 목록 조회 (트랙별/분야별 필터링)."""
     db = _get_db()
     db.ensure_schema()
-    campaigns = db.list_prototype_campaigns(status=status, item_id=item_id)
+    campaigns = db.list_prototype_campaigns(
+        status=status,
+        item_id=item_id,
+        request_type=request_type,
+        category=category,
+        limit=limit,
+    )
     return {"status": "success", "count": len(campaigns), "campaigns": campaigns}
 
 
@@ -2077,8 +2251,11 @@ async def api_start_prototype_session(request: Request):
         return JSONResponse(status_code=400, content={"status": "error", "message": "campaign_id는 필수입니다."})
 
     engine = _get_prototype_engine()
-    session = engine.start_session(campaign_id=campaign_id, tester_id=tester_id)
-    return {"status": "success", "session_id": session["id"], "session": session}
+    try:
+        session = engine.start_session(campaign_id=campaign_id, tester_id=tester_id)
+        return {"status": "success", "session_id": session["id"], "session": session}
+    except ValueError as e:
+        return JSONResponse(status_code=400, content={"status": "error", "message": str(e)})
 
 
 @app.post("/api/prototype/sessions/heartbeat")

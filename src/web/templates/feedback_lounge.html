@@ -1,0 +1,714 @@
+{% extends "base.html" %}
+{% import "components/kh_macros.html" as kh %}
+
+{% block title %}동료 창업자 기획·웹·앱 체험 & 피드백 라운지 &middot; 과제비서 AI{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+  <!-- 1. 상단 메인 히어로 배너 -->
+  <section class="kh-page-hero tone-violet reveal">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
+      <div class="space-y-2 max-w-3xl">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge violet">
+            <i class="fa-solid fa-comments mr-1"></i>실시간 상호 검증 라운지
+          </span>
+          <span class="kh-badge emerald">
+            <i class="fa-solid fa-gift mr-1"></i>참여 테스터 리워드
+          </span>
+          <span class="kh-badge cyan">
+            <i class="fa-solid fa-file-shield mr-1"></i>사업계획서 첨부용 설문 보고서
+          </span>
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          동료 창업자 기획·웹·앱 체험 &amp; 피드백 라운지
+        </h1>
+        <p class="text-purple-200 text-xs sm:text-sm leading-relaxed">
+          동료 창업자의 혁신적인 아이디어를 직접 써보고 솔직한 개선 의견을 남기거나, 
+          내가 만든 기획안(피그마/노션), 웹, 앱을 등록하여 <strong>사업계획서 시장 반응(Traction)</strong> 목차에 바로 넣을 수 있는 객관적 설문 데이터를 확보하세요.
+        </p>
+      </div>
+
+      <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+        <button type="button" onclick="openRegistrationModal()" class="kh-btn-cta primary text-xs py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white shadow-lg">
+          <i class="fa-solid fa-plus mr-1.5"></i>내 기획·앱 피드백 요청하기
+        </button>
+        <div class="p-3 rounded-xl bg-white/10 border border-white/15 backdrop-blur-sm text-right">
+          <span class="text-xs text-purple-200 block">나의 테스터 수당</span>
+          <span class="text-base font-extrabold text-white kh-tabular">
+            {{ tester_summary.total_reward if tester_summary and tester_summary.total_reward is defined else 0 }}원
+            <span class="text-xs font-normal text-purple-300 ml-1">({{ tester_summary.completed_count if tester_summary and tester_summary.completed_count is defined else 0 }}건 완료)</span>
+          </span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 라운지 핵심 실적 KPI 카드 -->
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    {{ kh.kh_kpi_card('kpi-lounge-projects', stats.total_projects|string + '개', '누적 등록 프로젝트', '무료 품앗이 및 유료 보증 캠페인', '창업 아이템', 'violet') }}
+    {{ kh.kh_kpi_card('kpi-lounge-testers', stats.total_testers|string + '명', '누적 참여 테스터', '최소 테스트 시간 검증 통과 인원', '진성 사용자 피드백', 'emerald') }}
+    {{ kh.kh_kpi_card('kpi-lounge-rewards', stats.total_rewards_paid|string + '원', '누적 정산 리워드', '성실 피드백 참여 창업자 지급액', '상호 상생 리워드', 'cyan') }}
+  </div>
+
+  <!-- 3. 필터 및 탭 컨트롤 바 -->
+  <div class="krds-card p-4 space-y-4">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-slate-100">
+      <!-- 트랙 선택 탭 -->
+      <div class="flex items-center gap-2">
+        <a href="/feedback-lounge?type=ALL{% if selected_category and selected_category != 'ALL' %}&category={{ selected_category }}{% endif %}" 
+           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if selected_type == 'ALL' or not selected_type %}bg-purple-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+          전체 프로젝트
+        </a>
+        <a href="/feedback-lounge?type=PAID{% if selected_category and selected_category != 'ALL' %}&category={{ selected_category }}{% endif %}" 
+           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {% if selected_type == 'PAID' %}bg-purple-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+          <i class="fa-solid fa-gem text-amber-300"></i> 유료 보증 검증
+        </a>
+        <a href="/feedback-lounge?type=FREE{% if selected_category and selected_category != 'ALL' %}&category={{ selected_category }}{% endif %}" 
+           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {% if selected_type == 'FREE' %}bg-purple-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+          <i class="fa-solid fa-seedling text-emerald-500"></i> 무료 커뮤니티 품앗이
+        </a>
+      </div>
+
+      <!-- 카테고리 셀렉터 -->
+      <div class="flex items-center gap-2 text-xs">
+        <span class="text-slate-500 font-medium">분야:</span>
+        <select onchange="location.href='/feedback-lounge?type={{ selected_type }}&category=' + this.value" class="border border-slate-200 rounded-lg p-1.5 bg-white text-slate-700 text-xs">
+          <option value="ALL" {% if selected_category == 'ALL' or not selected_category %}selected{% endif %}>전체 분야</option>
+          <option value="AI/딥테크" {% if selected_category == 'AI/딥테크' %}selected{% endif %}>AI / 딥테크</option>
+          <option value="SaaS/플랫폼" {% if selected_category == 'SaaS/플랫폼' %}selected{% endif %}>SaaS / 플랫폼</option>
+          <option value="로컬/F&B" {% if selected_category == '로컬/F&B' %}selected{% endif %}>로컬 / F&B</option>
+          <option value="기후/에너지" {% if selected_category == '기후/에너지' %}selected{% endif %}>기후 / 에너지</option>
+          <option value="바이오/헬스" {% if selected_category == '바이오/헬스' %}selected{% endif %}>바이오 / 헬스</option>
+          <option value="문화/콘텐츠" {% if selected_category == '문화/콘텐츠' %}selected{% endif %}>문화 / 콘텐츠</option>
+          <option value="핀테크/금융" {% if selected_category == '핀테크/금융' %}selected{% endif %}>핀테크 / 금융</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 4. 캠페인 카드 그리드 -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {% for c in campaigns %}
+      <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-purple-300 hover:shadow-md transition flex flex-col justify-between space-y-3">
+        <div class="space-y-2">
+          <div class="flex justify-between items-start gap-2">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              {% if c.request_type == 'FREE' %}
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-50 text-emerald-800 border border-emerald-200 flex items-center gap-1">
+                <i class="fa-solid fa-seedling text-emerald-600"></i>커뮤니티 품앗이
+              </span>
+              {% else %}
+              <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-50 text-purple-800 border border-purple-200 flex items-center gap-1">
+                <i class="fa-solid fa-gem text-purple-600"></i>유료 보증 검증
+              </span>
+              {% endif %}
+              <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ c.category or '일반' }}</span>
+            </div>
+
+            {% if c.tester_reward and c.tester_reward > 0 %}
+            <span class="text-xs font-bold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-lg shrink-0">
+              건당 {{ c.tester_reward }}원
+            </span>
+            {% else %}
+            <span class="text-xs text-slate-500 bg-slate-50 border border-slate-200 px-2 py-0.5 rounded-lg shrink-0">
+              품앗이 피드백
+            </span>
+            {% endif %}
+          </div>
+
+          <h4 class="text-sm font-bold text-slate-900 leading-snug line-clamp-1">
+            {{ c.title or c.item_id }}
+          </h4>
+          
+          <p class="text-xs text-slate-600 line-clamp-2 leading-relaxed min-h-[32px]">
+            {{ c.description or '기획안 및 프로토타입 실사용 피드백 요청' }}
+          </p>
+
+          <p class="text-xs text-slate-400 truncate font-mono bg-slate-50 p-1.5 rounded border border-slate-100">
+            <i class="fa-solid fa-link text-slate-400 mr-1"></i>{{ c.prototype_url }}
+          </p>
+
+          <div class="space-y-1 pt-1">
+            <div class="flex justify-between text-xs text-slate-600">
+              <span>참여 진척</span>
+              <span class="font-bold kh-tabular">{{ c.completed_testers }} / {{ c.target_testers }}명 ({{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%)</span>
+            </div>
+            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div class="bg-purple-600 h-1.5 rounded-full" style="width: {{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <a href="/prototype/report/{{ c.id }}" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
+            <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+          </a>
+          <button type="button" onclick="openTesterModal('{{ c.id }}', '{{ c.title or c.item_id }}', '{{ c.prototype_url }}', {{ c.tester_reward or 0 }})" 
+                  class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow-sm">
+            <i class="fa-solid fa-play mr-1"></i>직접 체험 &amp; 의견 남기기
+          </button>
+        </div>
+      </div>
+      {% else %}
+      <div class="col-span-3 text-center py-12 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+        선택하신 조건에 해당하는 동료 창업자 피드백 캠페인이 없습니다.
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- 5. 신규 피드백 요청 등록 모달 (무료/유료 듀얼 트랙 위저드) -->
+<!-- ====================================================================== -->
+<div id="registrationModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 text-xs text-slate-700 my-8 max-h-[90vh] overflow-y-auto">
+    <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+      <div>
+        <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
+          <i class="fa-solid fa-rocket text-purple-600"></i> 내 기획·웹·앱 피드백 요청 등록
+        </h3>
+        <p class="text-xs text-slate-500 mt-0.5">상황과 목적에 맞춰 무료 품앗이 또는 유료 보증 검증을 선택하세요.</p>
+      </div>
+      <button type="button" onclick="closeRegistrationModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+    </div>
+
+    <form id="loungeRegistrationForm" onsubmit="submitLoungeRegistration(event)" class="space-y-4 mt-4">
+      <!-- Step 1: 요청 트랙 선택 (카드 선택형) -->
+      <div>
+        <label class="block font-bold text-slate-800 mb-2">1. 요청 방식 선택</label>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label class="p-3.5 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between" id="track-free-label" onclick="selectTrack('FREE')">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-seedling text-emerald-500"></i> 무료 요청
+                </span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-emerald-100 text-emerald-800">결제 없음</span>
+              </div>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                창업자 간 상호 품앗이 피드백. 결제 없이 바로 등록하여 동료들의 의견을 모읍니다 (기본 10명 목표).
+              </p>
+            </div>
+            <input type="radio" name="req_track" value="FREE" class="hidden" id="track-free-radio" checked>
+          </label>
+
+          <label class="p-3.5 rounded-xl border-2 cursor-pointer transition flex flex-col justify-between" id="track-paid-label" onclick="selectTrack('PAID')">
+            <div>
+              <div class="flex items-center justify-between mb-1">
+                <span class="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                  <i class="fa-solid fa-gem text-purple-600"></i> 유료 요청
+                </span>
+                <span class="text-xs font-bold px-2 py-0.5 rounded bg-purple-100 text-purple-800">목표 보증</span>
+              </div>
+              <p class="text-slate-500 text-xs leading-relaxed">
+                테스터 리워드 보증 지급 & 빠른 모수 확보. 사업계획서 제출용 SHA-256 날인 설문 보고서 발급.
+              </p>
+            </div>
+            <input type="radio" name="req_track" value="PAID" class="hidden" id="track-paid-radio">
+          </label>
+        </div>
+      </div>
+
+      <!-- Step 2: 기본 프로젝트 정보 -->
+      <div class="space-y-3 pt-2 border-t border-slate-100">
+        <label class="block font-bold text-slate-800">2. 프로젝트 기본 정보</label>
+        <div>
+          <label class="block font-semibold mb-1">사업 아이템 / 프로젝트 명칭 *</label>
+          <input type="text" id="reg_title" required placeholder="예: 시니어 스마트 케어앱 MVP" class="w-full border rounded-lg p-2.5 bg-white text-xs">
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">기획안 / 웹 / 앱 프로토타입 URL *</label>
+          <input type="url" id="reg_url" required placeholder="https://my-service.com 또는 피그마/노션 공유 링크" class="w-full border rounded-lg p-2.5 bg-white text-xs font-mono">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-semibold mb-1">특화 분야 *</label>
+            <select id="reg_category" class="w-full border rounded-lg p-2.5 bg-white text-xs">
+              <option value="AI/딥테크">AI / 딥테크</option>
+              <option value="SaaS/플랫폼" selected>SaaS / 플랫폼</option>
+              <option value="로컬/F&B">로컬 / F&B</option>
+              <option value="기후/에너지">기후 / 에너지</option>
+              <option value="바이오/헬스">바이오 / 헬스</option>
+              <option value="문화/콘텐츠">문화 / 콘텐츠</option>
+              <option value="핀테크/금융">핀테크 / 금융</option>
+              <option value="일반">기타 / 일반</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-semibold mb-1">검증 목표</label>
+            <input type="text" id="reg_goal" placeholder="예: 사업계획서 시장반응 증빙, UX 개선점" class="w-full border rounded-lg p-2.5 bg-white text-xs">
+          </div>
+        </div>
+        <div>
+          <label class="block font-semibold mb-1">테스터에게 남길 요청 사항 (상세 설명)</label>
+          <textarea id="reg_desc" rows="2" placeholder="어떤 화면이나 기능 위주로 테스트를 원하는지 구체적으로 작성해 주시면 양질의 피드백을 받으실 수 있습니다." class="w-full border rounded-lg p-2.5 bg-white text-xs"></textarea>
+        </div>
+      </div>
+
+      <!-- Step 3: 유료 선택 시 활성화되는 목표 및 결제 패키지 블록 -->
+      <div id="paidPackageSection" class="hidden space-y-3 pt-3 border-t border-purple-100 bg-purple-50/50 p-3.5 rounded-xl border">
+        <div class="flex items-center justify-between">
+          <label class="font-bold text-purple-950 flex items-center gap-1.5">
+            <i class="fa-solid fa-credit-card text-purple-700"></i> 3. 검증 모수 및 결제 패키지
+          </label>
+          <span class="text-xs text-purple-700 font-semibold">모두 완료 시 설문 보고서 발급</span>
+        </div>
+
+        <div class="grid grid-cols-3 gap-2">
+          <label class="p-2.5 rounded-lg border bg-white cursor-pointer text-center hover:border-purple-500 transition">
+            <input type="radio" name="paid_pkg" value="60000" class="mr-1">
+            <div class="font-bold text-xs text-slate-800">30명 빠른 검증</div>
+            <div class="text-xs text-purple-700 font-bold mt-0.5">60,000원</div>
+          </label>
+          <label class="p-2.5 rounded-lg border-2 border-purple-600 bg-white cursor-pointer text-center">
+            <input type="radio" name="paid_pkg" value="100000" checked class="mr-1">
+            <div class="font-bold text-xs text-slate-800">50명 표준 검증</div>
+            <div class="text-xs text-purple-700 font-bold mt-0.5">100,000원</div>
+          </label>
+          <label class="p-2.5 rounded-lg border bg-white cursor-pointer text-center hover:border-purple-500 transition">
+            <input type="radio" name="paid_pkg" value="200000" class="mr-1">
+            <div class="font-bold text-xs text-slate-800">100명 대규모</div>
+            <div class="text-xs text-purple-700 font-bold mt-0.5">200,000원</div>
+          </label>
+        </div>
+
+        <div class="text-xs text-slate-500 leading-relaxed">
+          * 결제 완료 즉시 라운지 상단에 '보증 리워드' 배지로 우선 노출되며, 성실 테스트 시간을 충족한 실제 테스터들에게 리워드가 정산됩니다.
+        </div>
+      </div>
+
+      <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+        <button type="button" onclick="closeRegistrationModal()" class="px-3 py-2 rounded-lg border text-slate-600 hover:bg-slate-50">취소</button>
+        <button type="submit" id="btnSubmitRegistration" class="px-5 py-2 rounded-lg bg-purple-600 text-white font-bold hover:bg-purple-700 shadow-md flex items-center gap-1.5">
+          <i class="fa-solid fa-paper-plane"></i> <span id="btnSubmitText">무료로 즉시 등록하기</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ====================================================================== -->
+<!-- 6. 프로토타입 실사용 체험 및 피드백 모달 (테스터 모달) -->
+<!-- ====================================================================== -->
+<div id="testerModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-6 text-xs text-slate-700 my-8 max-h-[90vh] overflow-y-auto flex flex-col justify-between">
+    <div>
+      <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="kh-badge violet">실사용자 평가</span>
+            <h3 class="text-sm font-bold text-slate-900" id="testerModalTitle">실사용 피드백 체험</h3>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5" id="testerRewardNotice">
+            기능을 충분히 체험하신 후 솔직한 의견을 남겨주시면 테스터 리워드가 정산됩니다.
+          </p>
+        </div>
+        <button type="button" onclick="closeTesterModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+      </div>
+
+      <div class="my-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="space-y-1 text-center sm:text-left">
+          <span class="text-xs text-purple-900 font-bold block">1단계: 실제 서비스 체험하기</span>
+          <p class="text-xs text-slate-600 max-w-md">
+            새 창에서 열리는 기획안/프로토타입을 충분히 테스트해 보세요. 최소 사용 테스트 시간을 충족하면 아래 피드백 작성이 활성화됩니다.
+          </p>
+        </div>
+        <button type="button" id="btnLaunchApp" onclick="launchPrototypeWindow()" class="krds-btn primary text-xs py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white shrink-0 shadow">
+          <i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i>새 창으로 열기 &amp; 테스트 시작
+        </button>
+      </div>
+
+      <div class="flex items-center justify-between p-3 rounded-lg bg-slate-100 border border-slate-200 text-xs mb-4">
+        <div class="flex items-center gap-2">
+          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" id="dwellStatusDot"></span>
+          <span class="font-bold text-slate-700" id="dwellStatusText">테스트 시작 전</span>
+        </div>
+        <div class="font-mono text-xs">
+          <span class="text-slate-500">실사용 체류: </span>
+          <span class="font-bold text-purple-700 kh-tabular" id="activeSecondsDisplay">0초</span>
+          <span class="text-slate-400"> (최소 60초 필요)</span>
+        </div>
+      </div>
+
+      <!-- 30초 실사용 인터랙션 확인 체크포인트 (창 방치/잠수 꼼수 방지) -->
+      <div id="checkpointBox" class="hidden p-3.5 bg-amber-50 border border-amber-300 rounded-xl mb-4 space-y-2">
+        <div class="flex items-center justify-between text-xs">
+          <span class="font-bold text-amber-900 flex items-center gap-1.5">
+            <i class="fa-solid fa-hand text-amber-600 animate-bounce"></i>실시간 체험 인터랙션 확인 (중간 체크포인트)
+          </span>
+          <span class="text-xs text-amber-700 bg-amber-200/60 px-2 py-0.5 rounded font-semibold">진성 참여 검증</span>
+        </div>
+        <p class="text-xs text-amber-800 leading-relaxed">
+          새 창에서 현재 주로 탐색 중인 영역을 선택해 주세요. (선택 시 잔여 테스트 시간이 자동으로 이어집니다)
+        </p>
+        <div class="flex items-center gap-2 flex-wrap pt-1">
+          <button type="button" onclick="confirmCheckpoint('UI/화면 레이아웃 탐색')" class="px-2.5 py-1.5 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-xs text-slate-800 font-medium transition shadow-sm">
+            🎨 UI/화면 구성 둘러보는 중
+          </button>
+          <button type="button" onclick="confirmCheckpoint('핵심 기능 버튼 클릭/동작')" class="px-2.5 py-1.5 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-xs text-slate-800 font-medium transition shadow-sm">
+            ⚙️ 핵심 기능 클릭/동작 확인 중
+          </button>
+          <button type="button" onclick="confirmCheckpoint('로딩 및 반응 속도 체감')" class="px-2.5 py-1.5 rounded-lg bg-white border border-amber-300 hover:bg-amber-100 text-xs text-slate-800 font-medium transition shadow-sm">
+            ⚡ 로딩 및 반응 속도 체감 중
+          </button>
+        </div>
+      </div>
+
+      <form id="testerFeedbackForm" onsubmit="submitTesterFeedback(event)" class="space-y-4">
+        <input type="hidden" id="fb_campaign_id">
+        <input type="hidden" id="fb_session_id">
+
+        <div class="space-y-3">
+          <span class="text-xs font-bold text-slate-800 block">2단계: 사업계획서 첨부용 실사용자 피드백</span>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+              <label class="block font-semibold">1) 사용 편의성 (UX/UI)</label>
+              <select id="score_ux" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 - 매우 직관적이고 편함</option>
+                <option value="4" selected>4점 - 대체로 편리함</option>
+                <option value="3">3점 - 보통</option>
+                <option value="2">2점 - 다소 불편/어려움</option>
+                <option value="1">1점 - 매우 불편함</option>
+              </select>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+              <label class="block font-semibold">2) 핵심 기능 완성도</label>
+              <select id="score_func" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5" selected>5점 - 기대 이상 완성도</option>
+                <option value="4">4점 - 안정적 작동</option>
+                <option value="3">3점 - 기본 기능 수준</option>
+                <option value="2">2점 - 오류/미완성 빈번</option>
+                <option value="1">1점 - 작동 불가 수준</option>
+              </select>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+              <label class="block font-semibold">3) 유료 지불 용의성 (WTP)</label>
+              <select id="score_wtp" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="5">5점 - 출시 시 즉시 결제 의향 있음</option>
+                <option value="4">4점 - 가격 합리적이면 구매 의향</option>
+                <option value="3" selected>3점 - 무료면 사용 의향</option>
+                <option value="2">2점 - 구매 의향 낮음</option>
+                <option value="1">1점 - 전혀 없음</option>
+              </select>
+            </div>
+            <div class="p-3 bg-slate-50 rounded-lg border border-slate-200 space-y-1">
+              <label class="block font-semibold">4) NPS 순추천 지수 (0~10점)</label>
+              <select id="score_nps" class="w-full border rounded p-1.5 bg-white text-xs">
+                <option value="10" selected>10점 - 적극 추천</option>
+                <option value="9">9점 - 추천</option>
+                <option value="8">8점 - 긍정적</option>
+                <option value="7">7점 - 보통</option>
+                <option value="5">5점 - 중립</option>
+                <option value="3">3점 - 비추천</option>
+                <option value="1">1점 - 절대 비추천</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-semibold">개선 필요 항목 / 장애 요소</label>
+          <select id="score_blocker" class="w-full border rounded p-2 bg-white text-xs">
+            <option value="NONE" selected>특별한 장애 없음 (원활)</option>
+            <option value="기능오류/버그">기능 오류 / 버그 발견</option>
+            <option value="UI깨짐/가독성">UI 깨짐 / 모바일 가독성 저하</option>
+            <option value="속도지연">로딩 및 반응 속도 지연</option>
+            <option value="설명부족">서비스 목적 및 사용 설명 부족</option>
+            <option value="기타">기타 개선점</option>
+          </select>
+        </div>
+
+        <div class="space-y-1">
+          <label class="block font-semibold">구체적인 사용자 의견 (최소 15자 이상) *</label>
+          <textarea id="feedback_text" rows="3" required minlength="15" placeholder="직접 사용해보시면서 느낀 실제 장점, 보완할 점, 느낀 점을 15자 이상 구체적으로 작성해 주세요." class="w-full border rounded p-2 bg-white text-xs leading-relaxed"></textarea>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+          <button type="button" onclick="closeTesterModal()" class="px-3 py-1.5 rounded border text-slate-600 hover:bg-slate-50">닫기</button>
+          <button type="submit" id="btnSubmitFeedback" disabled class="px-4 py-1.5 rounded bg-slate-300 text-slate-500 font-bold cursor-not-allowed">
+            <i class="fa-solid fa-check mr-1"></i>최소 사용 테스트 필요
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  let currentTrack = 'FREE';
+
+  function selectTrack(track) {
+    currentTrack = track;
+    const freeLabel = document.getElementById('track-free-label');
+    const paidLabel = document.getElementById('track-paid-label');
+    const paidSec = document.getElementById('paidPackageSection');
+    const btnText = document.getElementById('btnSubmitText');
+
+    if (track === 'FREE') {
+      freeLabel.className = 'p-3.5 rounded-xl border-2 border-emerald-500 bg-emerald-50/40 cursor-pointer transition flex flex-col justify-between';
+      paidLabel.className = 'p-3.5 rounded-xl border-2 border-slate-200 bg-white cursor-pointer transition flex flex-col justify-between';
+      paidSec.classList.add('hidden');
+      btnText.textContent = '무료로 즉시 등록하기';
+      document.getElementById('track-free-radio').checked = true;
+    } else {
+      freeLabel.className = 'p-3.5 rounded-xl border-2 border-slate-200 bg-white cursor-pointer transition flex flex-col justify-between';
+      paidLabel.className = 'p-3.5 rounded-xl border-2 border-purple-600 bg-purple-50/40 cursor-pointer transition flex flex-col justify-between';
+      paidSec.classList.remove('hidden');
+      btnText.textContent = '결제 후 검증 캠페인 개설';
+      document.getElementById('track-paid-radio').checked = true;
+    }
+  }
+
+  function openRegistrationModal() {
+    selectTrack('FREE');
+    document.getElementById('registrationModal').classList.remove('hidden');
+  }
+
+  function closeRegistrationModal() {
+    document.getElementById('registrationModal').classList.add('hidden');
+  }
+
+  async function submitLoungeRegistration(e) {
+    e.preventDefault();
+    const title = document.getElementById('reg_title').value.trim();
+    const url = document.getElementById('reg_url').value.trim();
+    const category = document.getElementById('reg_category').value;
+    const goal = document.getElementById('reg_goal').value.trim();
+    const desc = document.getElementById('reg_desc').value.trim();
+
+    const isPaid = (currentTrack === 'PAID');
+    let budget = 0;
+    let targetTesters = 10;
+
+    if (isPaid) {
+      const selectedPkg = document.querySelector('input[name="paid_pkg"]:checked');
+      budget = parseInt(selectedPkg ? selectedPkg.value : '100000', 10);
+      targetTesters = Math.floor(budget / 2000);
+    }
+
+    const payload = {
+      item_id: 'item_' + Date.now().toString(36),
+      title: title,
+      prototype_url: url,
+      category: category,
+      target_goal: goal,
+      description: desc,
+      request_type: currentTrack,
+      total_budget: budget,
+      target_testers: targetTesters,
+      payment_method: isPaid ? 'CARD' : 'NONE'
+    };
+
+    try {
+      const res = await fetch('/api/prototype/campaigns', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 'success') {
+        alert(isPaid ? '유료 보증 검증 캠페인이 성공적으로 등록되었습니다!' : '무료 커뮤니티 품앗이 캠페인이 성공적으로 등록되었습니다!');
+        location.reload();
+      } else {
+        alert('등록 실패: ' + (data.message || '오류가 발생했습니다.'));
+      }
+    } catch (err) {
+      alert('네트워크 오류: ' + err);
+    }
+  }
+
+  // 테스터 모달 로직
+  let activeSessionId = null;
+  let activeCampaignId = null;
+  let protoWindow = null;
+  let dwellTimer = null;
+  let activeSeconds = 0;
+  let checkpointPassed = false;
+  const MIN_DWELL = 60;
+
+  function openTesterModal(campId, campTitle, protoUrl, reward) {
+    activeCampaignId = campId;
+    activeSessionId = null;
+    activeSeconds = 0;
+    checkpointPassed = false;
+    if (dwellTimer) clearInterval(dwellTimer);
+
+    document.getElementById('fb_campaign_id').value = campId;
+    document.getElementById('testerModalTitle').textContent = campTitle;
+    document.getElementById('btnLaunchApp').setAttribute('data-url', protoUrl);
+    document.getElementById('checkpointBox').classList.add('hidden');
+    
+    const rewardNotice = document.getElementById('testerRewardNotice');
+    if (reward && reward > 0) {
+      rewardNotice.innerHTML = `기능을 충분히 체험하신 후 솔직한 의견을 남겨주시면 <strong class="text-purple-700">${reward.toLocaleString()}원</strong> 테스터 리워드가 정산됩니다.`;
+    } else {
+      rewardNotice.innerHTML = `동료 창업자를 위해 꼼꼼히 체험하신 후 솔직한 개선 의견을 남겨주세요. (품앗이 기여도 적립)`;
+    }
+
+    resetTesterUI();
+    document.getElementById('testerModal').classList.remove('hidden');
+  }
+
+  function closeTesterModal() {
+    if (dwellTimer) clearInterval(dwellTimer);
+    if (protoWindow && !protoWindow.closed) {
+      try { protoWindow.close(); } catch(e) {}
+    }
+    document.getElementById('testerModal').classList.add('hidden');
+  }
+
+  function resetTesterUI() {
+    activeSeconds = 0;
+    checkpointPassed = false;
+    document.getElementById('activeSecondsDisplay').textContent = '0초';
+    document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+    document.getElementById('dwellStatusText').textContent = '새 창 테스트 시작 대기 중';
+    const launchBtn = document.getElementById('btnLaunchApp');
+    launchBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i>새 창으로 열기 &amp; 테스트 시작';
+    launchBtn.className = 'krds-btn primary text-xs py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white shrink-0 shadow';
+
+    const btn = document.getElementById('btnSubmitFeedback');
+    btn.disabled = true;
+    btn.className = 'px-4 py-1.5 rounded bg-slate-300 text-slate-500 font-bold cursor-not-allowed';
+    btn.innerHTML = '<i class="fa-solid fa-check mr-1"></i>최소 사용 테스트 필요';
+  }
+
+  function confirmCheckpoint(actionTag) {
+    checkpointPassed = true;
+    document.getElementById('checkpointBox').classList.add('hidden');
+    document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
+    document.getElementById('dwellStatusText').textContent = `[${actionTag}] 확인 완료 · 잔여 시간 측정 재개`;
+  }
+
+  async function launchPrototypeWindow() {
+    const url = document.getElementById('btnLaunchApp').getAttribute('data-url');
+    if (!url) return;
+
+    if (!activeSessionId) {
+      try {
+        const res = await fetch('/api/prototype/sessions/start', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ campaign_id: activeCampaignId, tester_id: 'tester_default' })
+        });
+        const data = await res.json();
+        if (data.session_id) {
+          activeSessionId = data.session_id;
+          document.getElementById('fb_session_id').value = activeSessionId;
+        }
+      } catch (e) {
+        console.warn('Session start failed:', e);
+      }
+    }
+
+    protoWindow = window.open(url, '_blank');
+    const launchBtn = document.getElementById('btnLaunchApp');
+    launchBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i>테스트 창 열림 (체험 진행 중)';
+    launchBtn.className = 'krds-btn ghost text-xs py-2 px-4 border border-purple-300 text-purple-700 shrink-0';
+
+    document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
+    document.getElementById('dwellStatusText').textContent = '실사용 테스트 진행 중...';
+
+    if (dwellTimer) clearInterval(dwellTimer);
+    dwellTimer = setInterval(async () => {
+      // [보안 가드 1] 창 닫힘 실시간 감지 (새 창 열고 바로 닫는 꼼수 원천 차단)
+      if (!protoWindow || protoWindow.closed) {
+        document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse';
+        document.getElementById('dwellStatusText').textContent = '⚠️ 테스트 창이 닫혀 시간이 멈췄습니다';
+        launchBtn.innerHTML = '<i class="fa-solid fa-rotate-right mr-1.5"></i>테스트 창 다시 열기 (이어하기)';
+        launchBtn.className = 'krds-btn warning text-xs py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white shrink-0 shadow animate-bounce';
+        return; // 누적 중단
+      }
+
+      // [보안 가드 2] 30초 체크포인트 챌린지 (창 띄워놓고 딴짓/방치 꼼수 차단)
+      if (activeSeconds >= 30 && !checkpointPassed) {
+        document.getElementById('checkpointBox').classList.remove('hidden');
+        document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-bounce';
+        document.getElementById('dwellStatusText').textContent = '💡 30초 중간 인터랙션 확인 필요 (위 체크박스 선택)';
+        return; // 체크포인트 통과할 때까지 시간 누적 일시정지
+      }
+
+      activeSeconds += 1;
+      document.getElementById('activeSecondsDisplay').textContent = `${activeSeconds}초`;
+      document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
+      document.getElementById('dwellStatusText').textContent = '실사용 테스트 진행 중...';
+
+      if (activeSeconds >= MIN_DWELL) {
+        const btn = document.getElementById('btnSubmitFeedback');
+        btn.disabled = false;
+        btn.className = 'px-4 py-1.5 rounded bg-purple-600 text-white font-bold hover:bg-purple-700 shadow';
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i>피드백 제출 및 완료';
+        document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+        document.getElementById('dwellStatusText').textContent = '최소 테스트 시간 충족 (제출 가능)';
+      }
+
+      if (activeSeconds % 5 === 0 && activeSessionId) {
+        try {
+          await fetch('/api/prototype/sessions/heartbeat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              session_id: activeSessionId,
+              active_increment: 5,
+              visible_increment: 5
+            })
+          });
+        } catch (e) {}
+      }
+    }, 1000);
+  }
+
+  async function submitTesterFeedback(e) {
+    e.preventDefault();
+    if (activeSeconds < MIN_DWELL) {
+      alert(`성실한 검증을 위해 최소 ${MIN_DWELL}초 이상 기능을 테스트한 후 의견을 제출해 주세요.`);
+      return;
+    }
+
+    const qText = document.getElementById('feedback_text').value.trim();
+    if (qText.length < 20) {
+      alert('성실한 피드백을 위해 구체적인 사용 의견을 최소 20자 이상 작성해 주세요.');
+      return;
+    }
+
+    // 도배/자음연타/반복문자 꼼수 차단
+    if (/([ㄱ-ㅎㅏ-ㅣ가-힣a-zA-Z0-9])\1{3,}/.test(qText)) {
+      alert('동일 문자가 연속 반복되는 무성의한 내용은 제출할 수 없습니다. 실제 이용 후기를 작성해 주세요.');
+      return;
+    }
+
+    const payload = {
+      campaign_id: document.getElementById('fb_campaign_id').value,
+      session_id: document.getElementById('fb_session_id').value || activeSessionId,
+      tester_id: 'tester_default',
+      ux_score: parseInt(document.getElementById('score_ux').value, 10),
+      func_score: parseInt(document.getElementById('score_func').value, 10),
+      wtp_score: parseInt(document.getElementById('score_wtp').value, 10),
+      nps_score: parseInt(document.getElementById('score_nps').value, 10),
+      qualitative_text: qText,
+      blocker_category: document.getElementById('score_blocker').value
+    };
+
+    try {
+      const res = await fetch('/api/prototype/feedback/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      if (res.ok && data.status === 'success') {
+        alert(data.message || '피드백이 성공적으로 등록되었습니다!');
+        closeTesterModal();
+        location.reload();
+      } else {
+        alert('피드백 제출 실패: ' + (data.message || '오류가 발생했습니다.'));
+      }
+    } catch (err) {
+      alert('통신 오류: ' + err);
+    }
+  }
+</script>
+{% endblock %}

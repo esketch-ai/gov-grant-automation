@@ -1,0 +1,37 @@
+notebooklm_sync:
+  enabled: true
+  notebook_url: "https://notebook.google.com/notebook/cab8404e-d364-463e-a5a7-edfd8b3042ab"
+  notebook_id: "cab8404e-d364-463e-a5a7-edfd8b3042ab"
+  sync_interval_seconds: 14400  # 4시간 주기
+  auto_reconcile: true
+  source_format: "json"
+  target_catalogs:
+    - "global_grants"
+    - "master_grants"
+  prompt_template: |
+    현재 노트북에 수집 정리된 국내 및 해외 정부 지원사업과 유망 스타트업 유치 프로그램 전체 목록을 아래 JSON 형식의 배열로 추출해줘.
+    [
+      {
+        "program_id": "고유ID (예: UK-DBT-GEP-2026)",
+        "program_name": "국문 사업명",
+        "program_name_en": "영문 사업명 (선택)",
+        "country": "국가 (영국, 프랑스, 호주, UAE, 대한민국 등)",
+        "country_code": "국가코드 (GB, FR, AU, AE, KR)",
+        "city_hub": "거점 도시",
+        "category": "지원유형 (글로벌, 사업화, 기술개발, 멘토링 등)",
+        "supervising_entity": "주관 부처 / 정부",
+        "operating_entity": "운영 기관 / 파트너",
+        "specialized_fields": ["특화분야1", "특화분야2"],
+        "support_type": "지원 형태",
+        "financial_benefit": "재정 지원 내용 및 규모",
+        "visa_benefit": "비자 및 영주권 특혜",
+        "space_facility_benefit": "공간 및 연구 인프라",
+        "mentoring_network": "멘토링 및 파트너십",
+        "target_qualifications": "지원 자격 요건",
+        "selection_scale": "선발 규모",
+        "source_portal": "연계 포털 ID (uk_dbt_gep, fr_cite_stationf, au_austrade_landing, uae_hub71_adgm, kr_ksc_global, k_startup 등)",
+        "detail_url": "공식 상세 안내 URL",
+        "inquiry_contact": "문의처",
+        "case_studies": ["주요 사례 1", "주요 사례 2"]
+      }
+    ]

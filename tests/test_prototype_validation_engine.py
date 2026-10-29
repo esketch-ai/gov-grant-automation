@@ -128,6 +128,20 @@ class TestPrototypeValidationEngine:
                 qualitative_feedback="너무좋아요!",
             )
 
+        # 5-1. Submit feedback with repetitive spam characters -> Must be rejected
+        with pytest.raises(ValueError, match="불성실한 반복 문자"):
+            engine.submit_feedback(
+                session_id=sess_id,
+                tester_id="tester_user_a",
+                tester_alias="도배러",
+                ux_score=5,
+                functionality_score=5,
+                willingness_to_pay=4,
+                nps_recommend_score=9,
+                blocker_category="NONE",
+                qualitative_feedback="정말최고네요ㅋㅋㅋㅋㅋㅋ이거좋아요!",
+            )
+
         # 6. Submit valid feedback >= 60s and >= 15 chars -> Approved!
         res = engine.submit_feedback(
             session_id=sess_id,
@@ -191,6 +205,22 @@ class TestPrototypeValidationEngine:
         # Audit hash check: valid 64-char hex string
         assert len(report["audit_hash"]) == 64
         int(report["audit_hash"], 16)  # must not raise ValueError
+
+        # Verify 3 systematized report packs (REQ: 과제 발표, 협약 감리, 실무 고도화)
+        assert "pitch_pack" in report
+        assert "headline" in report["pitch_pack"]
+        assert report["pitch_pack"]["wtp_ratio"] > 0
+        assert len(report["pitch_pack"]["highlight_quotes"]) >= 1
+        assert len(report["pitch_pack"]["core_metrics_summary"]) == 3
+
+        assert "audit_pack" in report
+        assert "적합" in report["audit_pack"]["compliance_status"]
+        assert report["audit_pack"]["sample_validity_rate"] == "100.0%"
+        assert len(report["audit_pack"]["remediation_plan"]) >= 2
+
+        assert "roadmap_pack" in report
+        assert len(report["roadmap_pack"]["priority_backlog"]) >= 2
+        assert any("P0" in b["priority"] or "P1" in b["priority"] for b in report["roadmap_pack"]["priority_backlog"])
 
 
 class TestPrototypeWebAPIs:
@@ -295,33 +325,153 @@ class TestPrototypeWebAPIs:
         # 6. Fetch HTML report view
         html_res = client.get(f"/prototype/report/{camp_id}")
         assert html_res.status_code == 200
-        assert "고객 검증 및 실사용 피드백 보고서" in html_res.text
+        assert "기획·웹·앱 실사용자 피드백 &amp; 설문 검증 보고서" in html_res.text
         assert "SHA-256 SEAL" in html_res.text
         assert "kh-page-hero" in html_res.text
+        assert "모드 1: 과제 발표·선정용" in html_res.text
+        assert "모드 2: 협약 감리·결과보고용" in html_res.text
+        assert "모드 3: 실무 제품 개선 로드맵" in html_res.text
+        assert "전수 데이터 CSV" in html_res.text
+        assert "발표 요약 복사" in html_res.text
 
     def test_intro_page_includes_public_prototype_lounge(self, client):
         """GET /intro renders the public prototype lounge and tester modal for all visitors."""
         res = client.get("/intro")
         assert res.status_code == 200
         assert "prototype-lounge" in res.text
-        assert "동료 창업자 바이브코딩 프로토타입 체험" in res.text
-        assert "7:3 피드백 리워드 라운지" in res.text
+        assert "동료 창업자 기획·웹·앱 체험 &amp; 피드백 라운지" in res.text
+        assert "피드백" in res.text
         assert "testerModal" in res.text
         assert "나의 테스터 수당 현황" in res.text
-        assert "건당 70% 리워드 즉시 정산" in res.text
+        assert "참여 테스터 리워드 지급" in res.text
 
     def test_biz_dashboard_includes_prototype_lounge(self, client):
-        """GET /dashboard/biz renders the business prototype validation card and link to intro lounge."""
+        """GET /dashboard/biz renders the business prototype validation card and link to feedback lounge."""
         res = client.get("/dashboard/biz")
         assert res.status_code == 200
-        assert "AI 바이브코딩 프로토타입 고객 실증 및 심사위원 검증" in res.text
-        assert "/intro#prototype-lounge" in res.text
+        assert "내 기획·웹·앱 실사용자 피드백 & 설문 보고서" in res.text
+        assert "/feedback-lounge" in res.text
         assert "/items" in res.text
 
     def test_items_page_includes_prototype_url_and_campaign_modal(self, client):
         """GET /items renders prototype URL inputs and campaign creation modal."""
         res = client.get("/items")
         assert res.status_code == 200
-        assert "AI 바이브코딩 프로토타입 URL" in res.text
+        assert "기획안 / 웹 / 앱 프로토타입 URL" in res.text
         assert "campaignModal" in res.text
-        assert "7:3 피드백 리워드 정산 체계" in res.text
+        assert "참여 테스터 리워드 정산 체계" in res.text
+
+    def test_standalone_feedback_lounge_page(self, client):
+        """GET /feedback-lounge renders the standalone menu service with dual track filters."""
+        res = client.get("/feedback-lounge")
+        assert res.status_code == 200
+        assert "동료 창업자 기획·웹·앱 체험 &amp; 피드백 라운지" in res.text
+        assert "유료 보증 검증" in res.text
+        assert "무료 커뮤니티 품앗이" in res.text
+        assert "registrationModal" in res.text
+        assert "testerModal" in res.text
+
+    def test_free_vs_paid_campaign_dual_track_creation(self, client):
+        """POST /api/prototype/campaigns supports both FREE and PAID registration tracks."""
+        # 1. Free track: 0 budget, 0 fee, immediate registration
+        free_res = client.post(
+            "/api/prototype/campaigns",
+            json={
+                "item_id": "free_track_test",
+                "prototype_url": "https://figma.com/demo-free",
+                "title": "무료 커뮤니티 품앗이 기획안",
+                "request_type": "FREE",
+                "category": "로컬/F&B",
+                "target_testers": 10,
+            },
+        )
+        assert free_res.status_code == 200
+        free_camp = free_res.json()["campaign"]
+        assert free_camp["request_type"] == "FREE"
+        assert free_camp["total_budget"] == 0
+        assert free_camp["tester_reward"] == 0
+        assert free_camp["target_testers"] == 10
+        assert free_camp["status"] == "ACTIVE"
+
+        # 2. Paid track: target testers, budget calculation, guaranteed reward
+        paid_res = client.post(
+            "/api/prototype/campaigns",
+            json={
+                "item_id": "paid_track_test",
+                "prototype_url": "https://paid-app.com",
+                "title": "유료 보증 검증 앱",
+                "request_type": "PAID",
+                "category": "AI/딥테크",
+                "budget": 100000,
+            },
+        )
+        assert paid_res.status_code == 200
+        paid_camp = paid_res.json()["campaign"]
+        assert paid_camp["request_type"] == "PAID"
+        assert paid_camp["total_budget"] == 100000
+        assert paid_camp["tester_reward"] == 1400
+        assert paid_camp["target_testers"] == 50
+        assert paid_camp["status"] == "ACTIVE"
+
+    def test_anti_duplicate_validation_enforcement(self, client):
+        """동일 인증 사용자의 동일 캠페인 중복 참여 원천 차단 검증."""
+        # 1. 새 캠페인 생성
+        c_res = client.post(
+            "/api/prototype/campaigns",
+            json={
+                "item_id": "dup_test_item",
+                "prototype_url": "https://dup-test.app",
+                "title": "중복 방지 테스트 캠페인",
+                "request_type": "PAID",
+                "budget": 60000,
+            },
+        )
+        assert c_res.status_code == 200
+        camp_id = c_res.json()["campaign"]["id"]
+
+        # 2. 테스터 1차 정상 참여
+        tester_id = "kakao_user_unique_999"
+        s1 = client.post(
+            "/api/prototype/sessions/start",
+            json={"campaign_id": camp_id, "tester_id": tester_id},
+        )
+        assert s1.status_code == 200
+        sess1_id = s1.json()["session_id"]
+
+        client.post(
+            "/api/prototype/sessions/heartbeat",
+            json={"session_id": sess1_id, "active_increment": 65, "visible_increment": 65},
+        )
+
+        fb1 = client.post(
+            "/api/prototype/feedback/submit",
+            json={
+                "campaign_id": camp_id,
+                "session_id": sess1_id,
+                "tester_id": tester_id,
+                "ux_score": 5,
+                "func_score": 5,
+                "wtp_score": 4,
+                "nps_score": 10,
+                "qualitative_text": "첫 번째 정상적인 피드백 제출입니다. 매우 훌륭합니다.",
+                "blocker_category": "NONE",
+            },
+        )
+        assert fb1.status_code == 200
+        assert fb1.json()["status"] == "success"
+
+        # 3. 동일 테스터가 재참여(세션 시작) 시도 시 즉시 차단
+        s2 = client.post(
+            "/api/prototype/sessions/start",
+            json={"campaign_id": camp_id, "tester_id": tester_id},
+        )
+        assert s2.status_code == 400
+        assert "중복 참여는 불가" in s2.json()["message"]
+
+        # 4. 다른 테스터는 정상 참여 가능
+        diff_tester = "naver_user_diff_888"
+        s_diff = client.post(
+            "/api/prototype/sessions/start",
+            json={"campaign_id": camp_id, "tester_id": diff_tester},
+        )
+        assert s_diff.status_code == 200

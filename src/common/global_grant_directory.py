@@ -285,8 +285,85 @@ GLOBAL_GRANTS_CATALOG: List[GlobalGrantProgram] = [
 class GlobalGrantsService:
     """해외 특화 지원사업 검색 및 매칭 서비스."""
 
-    def __init__(self, catalog: Optional[List[GlobalGrantProgram]] = None) -> None:
-        self.catalog = catalog or GLOBAL_GRANTS_CATALOG
+    def __init__(
+        self,
+        catalog: Optional[List[GlobalGrantProgram]] = None,
+        db_path: Optional[str] = None,
+    ) -> None:
+        self.catalog = list(catalog if catalog is not None else GLOBAL_GRANTS_CATALOG)
+        self._load_dynamic_programs(db_path)
+
+    def _load_dynamic_programs(self, db_path: Optional[str] = None) -> None:
+        """SQLite dynamic_global_grants 테이블의 동적 추가/수정 과제 로드 및 카탈로그 병합."""
+        import json
+        import sqlite3
+        from pathlib import Path
+
+        if db_path is None:
+            candidate = Path(__file__).resolve().parent.parent.parent / "storage" / "grant_master.db"
+            if candidate.exists():
+                db_path = str(candidate)
+            else:
+                return
+
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='dynamic_global_grants'")
+                if not cur.fetchone():
+                    return
+                cur.execute("""
+                    SELECT program_id, country, country_code, city_hub, program_name,
+                           program_name_en, supervising_entity, operating_entity,
+                           specialized_fields, support_type, financial_benefit,
+                           visa_benefit, space_facility_benefit, mentoring_network,
+                           target_qualifications, selection_scale, source_portal,
+                           detail_url, inquiry_contact, case_studies
+                    FROM dynamic_global_grants
+                """)
+                rows = cur.fetchall()
+                for r in rows:
+                    try:
+                        fields = json.loads(r[8]) if r[8] else []
+                    except Exception:
+                        fields = [f.strip() for f in (r[8] or "").split(",") if f.strip()]
+                    try:
+                        cases = json.loads(r[19]) if r[19] else []
+                    except Exception:
+                        cases = [c.strip() for c in (r[19] or "").split(",") if c.strip()]
+
+                    prog = GlobalGrantProgram(
+                        program_id=r[0],
+                        country=r[1],
+                        country_code=r[2] or "KR",
+                        city_hub=r[3] or "",
+                        program_name=r[4],
+                        program_name_en=r[5] or "",
+                        supervising_entity=r[6] or "",
+                        operating_entity=r[7] or "",
+                        specialized_fields=fields,
+                        support_type=r[9] or "종합",
+                        financial_benefit=r[10] or "",
+                        visa_benefit=r[11] or "",
+                        space_facility_benefit=r[12] or "",
+                        mentoring_network=r[13] or "",
+                        target_qualifications=r[14] or "",
+                        selection_scale=r[15] or "수시",
+                        source_portal=r[16] or "notebooklm_sync",
+                        detail_url=r[17] or "",
+                        inquiry_contact=r[18] or "",
+                        case_studies=cases,
+                    )
+                    merged = False
+                    for idx, ex in enumerate(self.catalog):
+                        if ex.program_id == prog.program_id:
+                            self.catalog[idx] = prog
+                            merged = True
+                            break
+                    if not merged:
+                        self.catalog.append(prog)
+        except Exception:
+            pass
 
     def get_all_programs(
         self,

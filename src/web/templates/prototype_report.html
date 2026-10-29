@@ -1,41 +1,77 @@
 {% extends "base.html" %}
 {% import "components/kh_macros.html" as kh %}
-{% block title %}심사위원 제출용 바이브코딩 프로토타입 고객 검증 보고서 &middot; 과제비서 AI{% endblock %}
+{% block title %}사업계획서 첨부용 기획·웹·앱 실사용자 설문 검증 보고서 &middot; 과제비서 AI{% endblock %}
 
 {% block content %}
 <div class="space-y-6 max-w-5xl mx-auto">
-  <!-- 상단 요약 배너 (A4 인쇄 시에도 깔끔하게 유지) -->
+  <!-- 상단 요약 배너 및 액션 버튼 (A4 인쇄 시 숨김 처리 적용) -->
   <section class="kh-page-hero tone-violet reveal mb-6">
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
       <div class="space-y-1.5">
         <div class="flex items-center gap-2 flex-wrap">
           <span class="kh-badge violet">
-            <i class="fa-solid fa-file-shield mr-1"></i>공식 검증 보고서
+            <i class="fa-solid fa-file-shield mr-1"></i>3대 목적별 설문 검증 보고서
           </span>
           <span class="kh-badge emerald">
-            <i class="fa-solid fa-stamp mr-1"></i>무결성 보증 SHA-256 날인
+            <i class="fa-solid fa-stamp mr-1"></i>위변조 방지 SHA-256 날인
           </span>
-          <span class="text-xs text-purple-200">2026 모두의 창업 / 예비창업 과제 심사위원 제출용</span>
+          <span class="text-xs text-purple-200">사업계획서 Traction · 협약 감리 · 실무 고도화</span>
         </div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          AI 바이브코딩 프로토타입 고객 검증 및 실사용 피드백 보고서
+          기획·웹·앱 실사용자 피드백 &amp; 설문 검증 보고서
         </h1>
         <p class="text-purple-200 text-xs sm:text-sm leading-relaxed max-w-2xl">
-          실제 사용자 60초 이상 유효 체류 및 3단계 구조화 평가 기반 객관적 정량·정성 실증 통계
+          과제 발표용 시장 반응(Traction) 증빙, 협약 선정 후 감리 보고, 실무 제품 개선 백로그까지 3대 목적에 맞춰 체계화된 보고서입니다.
         </p>
       </div>
-      <div class="flex items-center gap-2 shrink-0">
-        <button onclick="window.print()" class="kh-btn-cta primary text-xs">
-          <i class="fa-solid fa-print mr-1"></i>A4 보고서 인쇄 / PDF 저장
+      <div class="flex items-center gap-2 shrink-0 flex-wrap print:hidden">
+        <button onclick="copyPitchSummary()" class="kh-btn-cta secondary text-xs" title="1슬라이드 발표용 요약 복사">
+          <i class="fa-solid fa-copy mr-1"></i>발표 요약 복사
         </button>
-        <a href="/dashboard/biz" class="kh-btn-cta ghost text-xs">
-          <i class="fa-solid fa-arrow-left mr-1"></i>워크스페이스
+        <button onclick="downloadFeedbackCSV()" class="kh-btn-cta ghost text-xs" title="전수 데이터 CSV 파일 다운로드">
+          <i class="fa-solid fa-file-csv mr-1"></i>전수 데이터 CSV
+        </button>
+        <button onclick="window.print()" class="kh-btn-cta primary text-xs" title="A4 공문 규격 인쇄 / PDF 저장">
+          <i class="fa-solid fa-print mr-1"></i>A4 인쇄 / PDF 저장
+        </button>
+        <a href="/feedback-lounge" class="kh-btn-cta ghost text-xs">
+          <i class="fa-solid fa-arrow-left mr-1"></i>라운지
         </a>
       </div>
     </div>
   </section>
 
-  <!-- 검증 대상 기본 정보 바 -->
+  <!-- 3대 활용 목적별 인터랙티브 뷰 모드 탭 (화면 전용, 인쇄 시 전체 표기) -->
+  <div class="krds-card reveal print:hidden">
+    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-3">
+      <div>
+        <h4 class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-sliders text-purple-600"></i>
+          <span>보고서 열람 모드 전환</span>
+        </h4>
+        <p class="text-xs text-slate-500 mt-0.5">필요한 용도에 따라 화면 구성을 즉시 전환하여 검토할 수 있습니다.</p>
+      </div>
+      <span class="text-xs text-purple-700 bg-purple-50 px-2.5 py-1 rounded-full font-semibold border border-purple-200">
+        현재 모드: <span id="currentModeLabel">전체 종합 보고서</span>
+      </span>
+    </div>
+    <div class="flex items-center gap-2 flex-wrap">
+      <button type="button" onclick="switchReportMode('all')" id="tabBtn-all" class="report-tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition-all border bg-purple-700 text-white border-purple-700 shadow-sm">
+        <i class="fa-solid fa-layer-group mr-1.5"></i>전체 종합 보고서
+      </button>
+      <button type="button" onclick="switchReportMode('pitch')" id="tabBtn-pitch" class="report-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100">
+        <i class="fa-solid fa-bullseye mr-1.5 text-purple-600"></i>모드 1: 과제 발표·선정용 (Traction)
+      </button>
+      <button type="button" onclick="switchReportMode('audit')" id="tabBtn-audit" class="report-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100">
+        <i class="fa-solid fa-stamp mr-1.5 text-emerald-600"></i>모드 2: 협약 감리·결과보고용 (Milestone)
+      </button>
+      <button type="button" onclick="switchReportMode('roadmap')" id="tabBtn-roadmap" class="report-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100">
+        <i class="fa-solid fa-rocket mr-1.5 text-blue-600"></i>모드 3: 실무 제품 개선 로드맵 (Sprint)
+      </button>
+    </div>
+  </div>
+
+  <!-- 검증 대상 기본 정보 바 (공통) -->
   <div class="krds-card reveal">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
       <div>
@@ -43,11 +79,16 @@
           <i class="fa-solid fa-circle-info text-purple-600"></i>
           <span>검증 대상 및 캠페인 메타데이터</span>
         </h3>
-        <p class="text-xs text-slate-500 mt-0.5">정부지원사업 심사위원 제출을 위한 검증 환경 기본 정보입니다.</p>
+        <p class="text-xs text-slate-500 mt-0.5">사업계획서 설문 조사 및 시장 반응(Traction) 증빙을 위한 공식 기본 정보입니다.</p>
       </div>
-      <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-        캠페인 ID: {{ campaign.id }}
-      </span>
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+          유형: {% if campaign.request_type == 'PAID' %}유료 보증 검증{% else %}무료 커뮤니티 품앗이{% endif %}
+        </span>
+        <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200 font-mono">
+          {{ campaign.id }}
+        </span>
+      </div>
     </div>
 
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs">
@@ -56,7 +97,7 @@
         <strong class="text-slate-800 text-sm font-bold">{{ campaign.title or campaign.item_name or campaign.item_id }}</strong>
       </div>
       <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80">
-        <span class="text-slate-400 block mb-0.5">바이브코딩 프로토타입 URL</span>
+        <span class="text-slate-400 block mb-0.5">기획안 / 웹 / 앱 URL</span>
         <a href="{{ campaign.prototype_url }}" target="_blank" rel="noopener noreferrer" class="text-blue-600 font-bold truncate block hover:underline">
           <i class="fa-solid fa-arrow-up-right-from-square mr-1 text-xs"></i>{{ campaign.prototype_url }}
         </a>
@@ -72,23 +113,67 @@
     </div>
   </div>
 
-  <!-- 4대 핵심 검증 KPI 카드 -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+  <!-- [모드 1 전용 블록]: 과제 발표·선정용 시장 반응(Traction) 패키지 -->
+  <div id="section-pitch" class="report-section space-y-4">
+    <div class="p-5 rounded-2xl bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-950 text-white shadow-lg space-y-3">
+      <div class="flex items-center justify-between border-b border-purple-700/60 pb-2.5">
+        <span class="text-xs font-bold text-purple-300 flex items-center gap-1.5 uppercase tracking-wider">
+          <i class="fa-solid fa-bullseye text-amber-400"></i>1-Slide Executive Traction Summary (과제 발표용)
+        </span>
+        <button onclick="copyPitchSummary()" class="text-xs bg-purple-800/80 hover:bg-purple-700 text-white px-2.5 py-1 rounded-lg border border-purple-600 transition-colors">
+          <i class="fa-solid fa-clipboard mr-1"></i>요약 복사
+        </button>
+      </div>
+      <h3 class="text-lg sm:text-xl font-extrabold leading-snug text-amber-200">
+        &ldquo;{{ report.pitch_pack.headline }}&rdquo;
+      </h3>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+        {% for m in report.pitch_pack.core_metrics_summary %}
+        <div class="bg-black/30 rounded-xl p-3 border border-purple-700/60">
+          <span class="text-xs text-purple-300 block mb-1">{{ m.label }}</span>
+          <div class="text-2xl font-black text-white kh-tabular">{{ m.val }}</div>
+          <span class="text-xs text-purple-400 block mt-0.5">{{ m.sub }}</span>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <!-- 고객 인용구 카드 -->
+    <div class="krds-card">
+      <h4 class="font-bold text-slate-900 text-sm flex items-center gap-2 mb-3">
+        <i class="fa-solid fa-quote-left text-purple-600"></i>
+        <span>과제 심사위원을 설득하는 핵심 고객 추천 목소리 (Key Traction Quotes)</span>
+      </h4>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        {% for q in report.pitch_pack.highlight_quotes %}
+        <div class="p-3.5 bg-purple-50/50 rounded-xl border border-purple-200/80 text-xs text-slate-800 space-y-2">
+          <i class="fa-solid fa-comment-dots text-purple-500 text-sm"></i>
+          <p class="italic leading-relaxed font-medium">&ldquo;{{ q }}&rdquo;</p>
+        </div>
+        {% else %}
+        <div class="col-span-3 text-center py-4 text-xs text-slate-400">수집된 추천 인용구가 없습니다.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- [공통 & 전체용]: 4대 핵심 검증 KPI 카드 -->
+  <div id="section-kpis" class="report-section grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
     {{ kh.kh_kpi_card('kpi-proto-testers', report.total_testers|string + '명', '총 검증 테스터 수', '목표 ' + report.target_testers|string + '명 중 ' + report.completion_rate|string + '% 달성', '선착순 실사용', 'violet') }}
-    {{ kh.kh_kpi_card('kpi-proto-dwell', report.avg_dwell_formatted, '평균 실사용 체류시간', '60초 체리피커 방지 기준 충족', '진성 사용자 측정', 'emerald') }}
+    {{ kh.kh_kpi_card('kpi-proto-dwell', report.avg_dwell_formatted, '평균 실사용 체류시간', '최소 테스트 시간 검증 통과', '진성 사용자 측정', 'emerald') }}
     {{ kh.kh_kpi_card('kpi-proto-nps', (('+' if report.nps_score > 0 else '') + report.nps_score|string), 'NPS 순추천 지수', '추천 ' + report.promoters_count|string + '명 · 비추천 ' + report.detractors_count|string + '명', '지인 추천 의향', 'gold') }}
     {{ kh.kh_kpi_card('kpi-proto-sat', report.overall_satisfaction_score|string + '점', '전반적 만족도 종합', '100점 만점 환산 지수', 'UX·기능·지불 통합', 'cyan') }}
   </div>
 
-  <!-- 5대 심사 평가 척도 방사형/게이지 카드 -->
-  <div class="krds-card reveal">
+  <!-- [공통 & 전체용]: 5대 심사 평가 척도 방사형/게이지 카드 -->
+  <div id="section-radar" class="report-section krds-card reveal">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
       <div>
         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
           <i class="fa-solid fa-chart-simple text-purple-600"></i>
           <span>5대 정량 검증 지표 분석 (5.0점 만점 척도)</span>
         </h3>
-        <p class="text-xs text-slate-500 mt-0.5">심사위원이 검토하는 사용 편의성, 기능 완성도, 지불 용의성, 추천도, 체류 몰입도 5대 척도입니다.</p>
+        <p class="text-xs text-slate-500 mt-0.5">사용 편의성, 기능 완성도, 지불 용의성, 추천도, 체류 몰입도 5대 척도 분석입니다.</p>
       </div>
       <span class="kh-badge violet text-xs">정량 신뢰도 98.4%</span>
     </div>
@@ -114,47 +199,154 @@
     </div>
   </div>
 
-  <!-- 핵심 개선 블로커 및 심사위원 대응 방안 -->
-  <div class="krds-card reveal">
+  <!-- [모드 2 전용 블록]: 정부과제 협약 감리 & 실증 결과보고서 패키지 -->
+  <div id="section-audit" class="report-section space-y-4">
+    <div class="krds-card border-l-4 border-l-emerald-600">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-stamp text-emerald-600"></i>
+            <span>정부과제 협약 감리 실증 규격 및 결함 조치 계획서 (Audit Pack)</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            전담기관 및 감리위원이 요구하는 표본 무결성 검증과 발견된 하자/개선사항에 대한 공식 조치 로드맵입니다.
+          </p>
+        </div>
+        <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
+          감리 적합 판정 (유효율 {{ report.audit_pack.sample_validity_rate }})
+        </span>
+      </div>
+
+      <div class="mb-4 p-3 bg-emerald-50/70 border border-emerald-200 rounded-xl flex items-center gap-3 text-xs text-emerald-900">
+        <i class="fa-solid fa-circle-check text-emerald-600 text-base shrink-0"></i>
+        <div>
+          <strong>감리 판정 의견:</strong> {{ report.audit_pack.compliance_status }}
+        </div>
+      </div>
+
+      <!-- 결함 조치 계획서 테이블 -->
+      <h5 class="text-xs font-bold text-slate-800 mb-2 flex items-center gap-1.5">
+        <i class="fa-solid fa-wrench text-slate-600"></i>
+        <span>사용자 발견 결함 및 요구사항별 조치 계획서</span>
+      </h5>
+      <div class="overflow-x-auto mb-4">
+        <table class="w-full text-xs text-left">
+          <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200">
+            <tr>
+              <th class="p-2.5">결함 / 요구 카테고리</th>
+              <th class="p-2.5 text-center">발생 빈도</th>
+              <th class="p-2.5">조치 계획 및 보완 방안</th>
+              <th class="p-2.5 text-center">담당 부서</th>
+              <th class="p-2.5 text-center">완료 목표</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            {% for plan in report.audit_pack.remediation_plan %}
+            <tr class="hover:bg-slate-50/50">
+              <td class="p-2.5 font-bold text-slate-800">{{ plan.category }}</td>
+              <td class="p-2.5 text-center text-slate-600 kh-tabular">{{ plan.frequency }}</td>
+              <td class="p-2.5 text-slate-700">{{ plan.action_item }}</td>
+              <td class="p-2.5 text-center text-slate-600">{{ plan.responsible_unit }}</td>
+              <td class="p-2.5 text-center font-semibold text-purple-700">{{ plan.schedule }}</td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="p-3 text-center text-slate-400">등록된 조치 계획이 없습니다.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- [모드 3 전용 블록]: 기업 실무 제품 개선 & 스프린트 백로그 패키지 -->
+  <div id="section-roadmap" class="report-section space-y-4">
+    <div class="krds-card border-l-4 border-l-blue-600">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
+        <div>
+          <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-rocket text-blue-600"></i>
+            <span>기업 실무 제품 고도화 우선순위 매트릭스 (Sprint Backlog)</span>
+          </h3>
+          <p class="text-xs text-slate-500 mt-0.5">
+            실사용자의 체류 이탈 원인 및 불만족 데이터를 P0(블로커)~P2 우선순위 과제로 구조화한 개발 로드맵입니다.
+          </p>
+        </div>
+        <span class="text-xs font-bold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+          개발 스프린트 제안
+        </span>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {% for b in report.roadmap_pack.priority_backlog %}
+        <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/60 space-y-2 hover:border-blue-300 transition-colors">
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-bold px-2 py-0.5 rounded {% if 'P0' in b.priority %}bg-rose-100 text-rose-800 border border-rose-200{% elif 'P1' in b.priority %}bg-amber-100 text-amber-800 border border-amber-200{% else %}bg-blue-100 text-blue-800 border border-blue-200{% endif %}">
+              {{ b.priority }}
+            </span>
+            <span class="text-xs text-slate-500 kh-tabular">{{ b.affected_users }}</span>
+          </div>
+          <h5 class="font-bold text-slate-900 text-xs">{{ b.task }}</h5>
+          <p class="text-xs text-slate-600 leading-relaxed">
+            카테고리: <strong>{{ b.category }}</strong> &middot; 실사용자 피드백 기반 자동 생성된 개발 우선 과제입니다.
+          </p>
+        </div>
+        {% else %}
+        <div class="col-span-3 text-center py-4 text-xs text-slate-400">등록된 백로그 과제가 없습니다.</div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+
+  <!-- [공통]: 전수 피드백 감사 목록 테이블 (인쇄/감리 시 필수) -->
+  <div id="section-feedbacks" class="report-section krds-card reveal">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
       <div>
         <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-          <i class="fa-solid fa-triangle-exclamation text-amber-600"></i>
-          <span>사용자 발견 핵심 블로커 &amp; 심사 대응 후속 실행 계획</span>
+          <i class="fa-solid fa-list-check text-purple-600"></i>
+          <span>실사용 테스터 전수 피드백 상세 기록 (Audit Ledger)</span>
         </h3>
-        <p class="text-xs text-slate-500 mt-0.5">
-          실사용 평가에서 발견된 문제점을 가감 없이 공개하고, 사업비 집행을 통한 개선 방안을 객관적으로 제시합니다.
-        </p>
+        <p class="text-xs text-slate-500 mt-0.5">체류시간 충족 테스터의 실제 응답 원본 로그입니다. (총 {{ report.feedbacks|length }}건)</p>
       </div>
-      <span class="kh-badge amber text-xs">약점 극복 전략</span>
+      <button onclick="downloadFeedbackCSV()" class="kh-btn-cta ghost text-xs print:hidden">
+        <i class="fa-solid fa-download mr-1"></i>CSV 다운로드
+      </button>
     </div>
 
     <div class="overflow-x-auto">
-      <table class="w-full text-xs text-left">
+      <table class="w-full text-xs text-left" id="feedbackTable">
         <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200">
           <tr>
-            <th class="p-3">블로커 카테고리</th>
-            <th class="p-3 text-center">건수 및 비율</th>
-            <th class="p-3">심사위원 대응용 실전 개선 가이드 (과제 추진 계획 매핑)</th>
+            <th class="p-2.5">테스터 식별</th>
+            <th class="p-2.5 text-center">체류시간</th>
+            <th class="p-2.5 text-center">NPS</th>
+            <th class="p-2.5 text-center">UI</th>
+            <th class="p-2.5 text-center">기능</th>
+            <th class="p-2.5 text-center">지불의향</th>
+            <th class="p-2.5">정성 피드백 원문</th>
+            <th class="p-2.5 text-center">일시</th>
           </tr>
         </thead>
         <tbody class="divide-y divide-slate-100">
-          {% for b in report.top_blockers %}
+          {% for fb in report.feedbacks %}
           <tr class="hover:bg-slate-50/50">
-            <td class="p-3 font-bold text-slate-800 flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full bg-purple-500"></span>
-              {{ b.category }}
+            <td class="p-2.5 font-bold text-slate-800 whitespace-nowrap">{{ fb.tester_alias }}</td>
+            <td class="p-2.5 text-center text-slate-600 font-mono kh-tabular whitespace-nowrap">{{ fb.dwell_seconds }}초</td>
+            <td class="p-2.5 text-center whitespace-nowrap">
+              <span class="font-bold {% if fb.nps_recommend_score >= 9 %}text-emerald-600{% elif fb.nps_recommend_score >= 7 %}text-amber-600{% else %}text-rose-600{% endif %}">
+                {{ fb.nps_recommend_score }}점
+              </span>
             </td>
-            <td class="p-3 text-center text-slate-600 kh-tabular">
-              {{ b.count }}건 ({{ b.ratio }}%)
-            </td>
-            <td class="p-3 text-slate-700 font-medium">
-              {{ b.action_item }}
-            </td>
+            <td class="p-2.5 text-center text-slate-700 kh-tabular whitespace-nowrap">{{ fb.ux_score }}</td>
+            <td class="p-2.5 text-center text-slate-700 kh-tabular whitespace-nowrap">{{ fb.functionality_score }}</td>
+            <td class="p-2.5 text-center text-slate-700 kh-tabular whitespace-nowrap">{{ fb.willingness_to_pay }}</td>
+            <td class="p-2.5 text-slate-700 leading-relaxed min-w-[240px]">{{ fb.qualitative_feedback }}</td>
+            <td class="p-2.5 text-center text-slate-400 font-mono text-xs whitespace-nowrap">{{ fb.created_at }}</td>
           </tr>
           {% else %}
           <tr>
-            <td colspan="3" class="p-4 text-center text-slate-400">등록된 블로커 피드백이 없습니다.</td>
+            <td colspan="8" class="p-4 text-center text-slate-400">등록된 실사용 피드백이 없습니다.</td>
           </tr>
           {% endfor %}
         </tbody>
@@ -162,62 +354,19 @@
     </div>
   </div>
 
-  <!-- 대표 정성 피드백 리뷰 -->
-  <div class="krds-card reveal">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 mb-4 border-b border-slate-100 gap-2">
-      <div>
-        <h3 class="font-bold text-slate-900 text-sm flex items-center gap-2">
-          <i class="fa-solid fa-comments text-blue-600"></i>
-          <span>대표 정성 평가 의견 (심사위원 참고용)</span>
-        </h3>
-        <p class="text-xs text-slate-500 mt-0.5">실제 프로토타입을 체험한 동료 창업자 테스터들의 가감 없는 정성 리뷰입니다.</p>
-      </div>
-      <span class="text-xs text-slate-400">총 {{ report.feedbacks|length }}건 중 대표 의견</span>
-    </div>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      {% for fb in report.feedbacks[:6] %}
-      <div class="p-3.5 rounded-xl border border-slate-200/80 bg-slate-50/50 space-y-2">
-        <div class="flex justify-between items-center text-xs">
-          <div class="flex items-center gap-2">
-            <strong class="text-slate-800 font-semibold">{{ fb.tester_alias }}</strong>
-            <span class="text-slate-400 font-mono text-xs">체류 {{ fb.dwell_seconds }}초</span>
-          </div>
-          <span class="text-xs font-bold text-purple-700 bg-purple-50 px-2 py-0.5 rounded border border-purple-200">
-            NPS {{ fb.nps_recommend_score }}점
-          </span>
-        </div>
-        <p class="text-xs text-slate-700 leading-relaxed bg-white p-2.5 rounded-lg border border-slate-100">
-          &ldquo;{{ fb.qualitative_feedback }}&rdquo;
-        </p>
-        <div class="flex items-center gap-3 text-xs text-slate-500 pt-1">
-          <span>UI: <strong>{{ fb.ux_score }}점</strong></span>
-          <span>기능: <strong>{{ fb.functionality_score }}점</strong></span>
-          <span>지불의향: <strong>{{ fb.willingness_to_pay }}점</strong></span>
-          <span class="ml-auto text-slate-400 font-mono text-xs">{{ fb.created_at }}</span>
-        </div>
-      </div>
-      {% else %}
-      <div class="col-span-2 text-center py-6 text-xs text-slate-400">
-        등록된 정성 피드백이 없습니다.
-      </div>
-      {% endfor %}
-    </div>
-  </div>
-
-  <!-- 공인 인증 및 SHA-256 무결성 날인 -->
+  <!-- 설문 데이터 신뢰성 및 SHA-256 무결성 날인 -->
   <div class="p-6 rounded-2xl bg-gradient-to-r from-slate-900 via-purple-950 to-slate-900 text-white shadow-xl space-y-3">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-purple-800/60 pb-3">
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 rounded-full bg-emerald-400 animate-pulse"></span>
-        <h4 class="font-bold text-sm tracking-wide">공식 데이터 무결성 검증 날인 (Audit Seal)</h4>
+        <h4 class="font-bold text-sm tracking-wide">설문 데이터 무결성 검증 날인 (Audit Seal)</h4>
       </div>
       <span class="text-xs text-purple-200 bg-purple-900/60 border border-purple-700 px-3 py-1 rounded-full">
-        2026 모두의 창업 / 예비창업 과제 공인 규격
+        사업계획서 시장 검증(Traction) &amp; 감리 공식 증빙
       </span>
     </div>
     <p class="text-xs text-purple-200 leading-relaxed">
-      본 검증 보고서의 모든 데이터(체류 시간, 평점 지표, 사용자 정성 피드백)는 SSHAI-CWA 네이티브 텔레메트리 엔진에서 60초 체류 기준 검증을 통과한 원본 데이터이며, 아래 고유 SHA-256 전자 지문으로 위변조 방지 처리되었습니다.
+      본 설문 보고서의 모든 데이터(실사용 테스트 시간, 5대 평가 지표, 실사용자 정성 피드백 전수)는 검증 기준을 통과한 원본 응답이며, 아래 고유 SHA-256 전자 지문으로 위변조 방지 처리되었습니다.
     </p>
     <div class="p-3 bg-black/40 rounded-xl border border-purple-800/80 font-mono text-xs text-purple-300 break-all flex items-center justify-between gap-2">
       <div>
@@ -227,4 +376,169 @@
     </div>
   </div>
 </div>
+
+<script>
+  // 피드백 데이터 (클라이언트 사이드 다운로드 및 가공용)
+  const reportMeta = {
+    campaignId: {{ campaign.id|tojson }},
+    title: {{ (campaign.title or campaign.item_name or campaign.item_id)|tojson }},
+    headline: {{ report.pitch_pack.headline|tojson }},
+    overallSat: {{ report.overall_satisfaction_score|tojson }},
+    npsScore: {{ report.nps_score|tojson }},
+    wtpRatio: {{ report.pitch_pack.wtp_ratio|tojson }},
+    totalTesters: {{ report.total_testers|tojson }},
+    auditHash: {{ report.audit_hash|tojson }},
+    feedbacks: {{ report.feedbacks|tojson }}
+  };
+
+  // 모드 전환 제어 함수
+  function switchReportMode(mode) {
+    const modes = ['all', 'pitch', 'audit', 'roadmap'];
+    const labelMap = {
+      all: '전체 종합 보고서',
+      pitch: '모드 1: 과제 발표·선정용 (Traction)',
+      audit: '모드 2: 협약 감리·결과보고용 (Milestone)',
+      roadmap: '모드 3: 실무 제품 개선 로드맵 (Sprint)'
+    };
+
+    document.getElementById('currentModeLabel').innerText = labelMap[mode] || '전체 종합 보고서';
+
+    // 탭 버튼 스타일 갱신
+    modes.forEach(m => {
+      const btn = document.getElementById('tabBtn-' + m);
+      if (!btn) return;
+      if (m === mode) {
+        btn.className = 'report-tab-btn active px-3.5 py-2 rounded-xl text-xs font-bold transition-all border bg-purple-700 text-white border-purple-700 shadow-sm';
+      } else {
+        btn.className = 'report-tab-btn px-3.5 py-2 rounded-xl text-xs font-bold transition-all border bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100';
+      }
+    });
+
+    // 섹션 표시/숨김 제어
+    const secPitch = document.getElementById('section-pitch');
+    const secKpis = document.getElementById('section-kpis');
+    const secRadar = document.getElementById('section-radar');
+    const secAudit = document.getElementById('section-audit');
+    const secRoadmap = document.getElementById('section-roadmap');
+    const secFeedbacks = document.getElementById('section-feedbacks');
+
+    if (mode === 'all') {
+      secPitch.style.display = 'block';
+      secKpis.style.display = 'grid';
+      secRadar.style.display = 'block';
+      secAudit.style.display = 'block';
+      secRoadmap.style.display = 'block';
+      secFeedbacks.style.display = 'block';
+    } else if (mode === 'pitch') {
+      secPitch.style.display = 'block';
+      secKpis.style.display = 'grid';
+      secRadar.style.display = 'block';
+      secAudit.style.display = 'none';
+      secRoadmap.style.display = 'none';
+      secFeedbacks.style.display = 'none';
+    } else if (mode === 'audit') {
+      secPitch.style.display = 'none';
+      secKpis.style.display = 'grid';
+      secRadar.style.display = 'none';
+      secAudit.style.display = 'block';
+      secRoadmap.style.display = 'none';
+      secFeedbacks.style.display = 'block';
+    } else if (mode === 'roadmap') {
+      secPitch.style.display = 'none';
+      secKpis.style.display = 'none';
+      secRadar.style.display = 'block';
+      secAudit.style.display = 'none';
+      secRoadmap.style.display = 'block';
+      secFeedbacks.style.display = 'block';
+    }
+  }
+
+  // 발표용 1-Slide 요약 텍스트 클립보드 복사
+  function copyPitchSummary() {
+    const summaryText = `[과제 발표용 시장 반응(Traction) 실증 요약]
+■ 아이템: ${reportMeta.title} (캠페인: ${reportMeta.campaignId})
+■ 핵심 실증: ${reportMeta.headline}
+■ 정량 지표:
+  - 종합 만족도: ${reportMeta.overallSat}점 (100점 만점)
+  - 유료 지불 용의율: ${reportMeta.wtpRatio}%
+  - 순추천 지수(NPS): ${reportMeta.npsScore > 0 ? '+' : ''}${reportMeta.npsScore}
+  - 총 참여 실사용 테스터: ${reportMeta.totalTesters}명
+■ 무결성 SHA-256 날인: ${reportMeta.auditHash}`;
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(summaryText).then(() => {
+        alert('발표용 트랙션 요약이 클립보드에 복사되었습니다!\n사업계획서나 발표 슬라이드에 붙여넣어 활용하세요.');
+      }).catch(() => fallbackCopy(summaryText));
+    } else {
+      fallbackCopy(summaryText);
+    }
+  }
+
+  function fallbackCopy(text) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    document.body.appendChild(ta);
+    ta.select();
+    try {
+      document.execCommand('copy');
+      alert('발표용 트랙션 요약이 클립보드에 복사되었습니다.');
+    } catch (e) {
+      alert('클립보드 복사 실패: 수동으로 복사해주세요.');
+    }
+    document.body.removeChild(ta);
+  }
+
+  // 전수 데이터 CSV 생성 및 다운로드
+  function downloadFeedbackCSV() {
+    if (!reportMeta.feedbacks || reportMeta.feedbacks.length === 0) {
+      alert('다운로드할 피드백 데이터가 없습니다.');
+      return;
+    }
+
+    const headers = ['테스터_식별자', '체류시간(초)', 'NPS추천점수(10점)', 'UI만족도(5점)', '기능만족도(5점)', '지불용의도(5점)', '블로커_유형', '정성_피드백', '제출일시'];
+    const rows = reportMeta.feedbacks.map(f => [
+      `"${f.tester_alias || f.tester_id || ''}"`,
+      f.dwell_seconds || 0,
+      f.nps_recommend_score || 0,
+      f.ux_score || 0,
+      f.functionality_score || 0,
+      f.willingness_to_pay || 0,
+      `"${(f.blocker_category || 'NONE').replace(/"/g, '""')}"`,
+      `"${(f.qualitative_feedback || '').replace(/"/g, '""')}"`,
+      `"${f.created_at || ''}"`
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `feedback_audit_${reportMeta.campaignId}_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  }
+</script>
+
+<style>
+  @media print {
+    body {
+      background: white !important;
+      color: black !important;
+    }
+    .print\\:hidden, header, nav, footer, .kh-page-hero button, .kh-page-hero a {
+      display: none !important;
+    }
+    .report-section {
+      display: block !important;
+      page-break-inside: avoid;
+    }
+    .krds-card {
+      border: 1px solid #cbd5e1 !important;
+      box-shadow: none !important;
+      margin-bottom: 1.5rem !important;
+    }
+  }
+</style>
 {% endblock %}

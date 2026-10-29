@@ -50,9 +50,10 @@
 | **REQ-048** | 잔여 할루시네이션 발본색원 전수 정제 및 기획 체계 단일 정본(SSOT) 재정리 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-046 | 초안 작성/선정 확률/새 계획서 0건 발본색원, 요건 분석 가이드 SSOT 일원화, pytest 251pass, QA 140/140 | 2026-10-28 |
 | **REQ-047** | 바이브코딩 프로토타입 검증 엔진 및 7:3 피드백 리워드 경제 네이티브 구현 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-048 | SSHAI-BOOM 외부연동 아닌 자체 내장 구현, 7:3 리워드 정산, Page Visibility 60초 체류시간, 3단계 피드백, 심사위원 보고서 뷰 | 2026-10-28 |
 | **REQ-049** | 해외 선진국 및 거점 도시(GK) 특화 지원사업 디렉토리 & 포털 연동 | GCWA/QCWA/QQAQC | ✅ **DONE** | HIGH | REQ-048 | 글로벌 카탈로그 `global_grant_directory.py`·`GLOBAL_GRANTS_CATALOG` 5개국/거점(영국 DBT GEP·프랑스 Cité/Station F·호주 Austrade/Landing Pad·UAE Hub71·대한민국 KSC) 35개 포털(yaml+43), `/api/portals/global-grants`+`/summary` & `/portals` 글로벌 패널·KPI, `tests/test_global_grants_portal.py` 5pass, pytest 267pass, QA 140/140 APPROVED | 2026-10-28 |
+| **REQ-050** | 동료 창업자 피드백 라운지 독립 메뉴 서비스화, 무료/유료 듀얼 트랙, 소셜 계정 연계 리워드 지급 및 3대 목적별 결과 보고서 체계화 | GCWA/QCWA/QQAQC | ✅ **DONE** | CRITICAL | REQ-047,048,049 | `/feedback-lounge` 독립 메뉴, 무료/유료 듀얼 트랙 등록, 소셜 계정 연계 1인 1검증 중복 차단, 3대 목적별 보고서 체계화(발표용/감리용/로드맵), CSV 다운로드, A4 인쇄, pytest 285pass, QA 140/140 만점 | 2026-10-29 |
 
 ## 상태 산(피보나치 추정)
-- DONE 41 · IN PROGRESS 0 · DRAFT 대기 1 (REQ-002) · BACKLOG 0
+- DONE 42 · IN PROGRESS 0 · DRAFT 대기 1 (REQ-002) · BACKLOG 0
 
 ## 의사결정(DEC) 현황 — STATUS §4 연동
 

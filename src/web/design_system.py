@@ -64,8 +64,8 @@ ROLE_PORTALS: Dict[str, Dict[str, Any]] = {
         "cta_href": "/vault?role=subscriber",
         "nav_items": [
             {"href": "/intro", "label": "서비스 소개", "icon": "fa-sparkles", "page": "intro"},
+            {"href": "/feedback-lounge", "label": "피드백 라운지", "icon": "fa-comments", "page": "feedback_lounge"},
             {"href": "/intro#story-5acts", "label": "성장 스토리", "icon": "fa-film", "page": "story"},
-            {"href": "/intro#prototype-lounge", "label": "프로토타입 라운지", "icon": "fa-play", "page": "prototypes"},
             {"href": "/intro#growth-partners", "label": "전문 파트너", "icon": "fa-handshake", "page": "partners"},
             {"href": "/pricing", "label": "요금제 안내", "icon": "fa-gem", "page": "pricing"},
         ],
@@ -85,6 +85,7 @@ ROLE_PORTALS: Dict[str, Dict[str, Any]] = {
         "nav_items": [
             {"href": "/dashboard/biz", "label": "맞춤 대시보드", "icon": "fa-chart-pie", "page": "dashboard_biz"},
             {"href": "/items", "label": "사업 아이템", "icon": "fa-id-card", "page": "items"},
+            {"href": "/feedback-lounge", "label": "피드백 라운지", "icon": "fa-comments", "page": "feedback_lounge"},
             {"href": "/vault", "label": "기업 금고", "icon": "fa-vault", "page": "vault"},
             {"href": "/announcements", "label": "맞춤 공고", "icon": "fa-bullhorn", "page": "announcements"},
             {"href": "/proposals/tailor", "label": "공고 요건 분석", "icon": "fa-clipboard-check", "page": "tailor"},

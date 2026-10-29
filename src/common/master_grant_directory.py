@@ -656,8 +656,67 @@ MASTER_GRANT_CATALOG: List[MasterGrantProgram] = [
 class MasterGrantService:
     """통합공고 총람 마스터 데이터 검색, 필터링 및 타임라인 로드맵 서비스."""
 
-    def __init__(self, catalog: Optional[List[MasterGrantProgram]] = None) -> None:
-        self._catalog = catalog or MASTER_GRANT_CATALOG
+    def __init__(
+        self,
+        catalog: Optional[List[MasterGrantProgram]] = None,
+        db_path: Optional[str] = None,
+    ) -> None:
+        self._catalog = list(catalog if catalog is not None else MASTER_GRANT_CATALOG)
+        self._load_dynamic_programs(db_path)
+
+    def _load_dynamic_programs(self, db_path: Optional[str] = None) -> None:
+        """SQLite dynamic_master_grants 테이블의 동적 추가/수정 과제 로드 및 카탈로그 병합."""
+        import sqlite3
+        from pathlib import Path
+
+        if db_path is None:
+            candidate = Path(__file__).resolve().parent.parent.parent / "storage" / "grant_master.db"
+            if candidate.exists():
+                db_path = str(candidate)
+            else:
+                return
+
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cur = conn.cursor()
+                cur.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='dynamic_master_grants'")
+                if not cur.fetchone():
+                    return
+                cur.execute("""
+                    SELECT program_id, program_name, category, supervising_ministry,
+                           operating_agency, region_scope, target_stage, target_qualifications,
+                           expected_period, expected_month, support_scale, support_details,
+                           inquiry_contact, source_portal
+                    FROM dynamic_master_grants
+                """)
+                rows = cur.fetchall()
+                for r in rows:
+                    prog = MasterGrantProgram(
+                        program_id=r[0],
+                        program_name=r[1],
+                        category=r[2] or "사업화",
+                        supervising_ministry=r[3] or "",
+                        operating_agency=r[4] or "",
+                        region_scope=r[5] or "전국",
+                        target_stage=r[6] or "전단계",
+                        target_qualifications=r[7] or "",
+                        expected_period=r[8] or "연중 수시",
+                        expected_month=int(r[9] or 0),
+                        support_scale=r[10] or "",
+                        support_details=r[11] or "",
+                        inquiry_contact=r[12] or "",
+                        source_portal=r[13] or "notebooklm_sync",
+                    )
+                    merged = False
+                    for idx, ex in enumerate(self._catalog):
+                        if ex.program_id == prog.program_id:
+                            self._catalog[idx] = prog
+                            merged = True
+                            break
+                    if not merged:
+                        self._catalog.append(prog)
+        except Exception:
+            pass
 
     def get_all_programs(
         self,

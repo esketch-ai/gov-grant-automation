@@ -210,9 +210,9 @@
           <input type="text" id="new_recipients" placeholder="예: user@company.com" class="w-full border rounded p-2 bg-white">
         </div>
         <div>
-          <label class="block font-semibold mb-1">AI 바이브코딩 프로토타입 URL (선택)</label>
-          <input type="url" id="new_prototype_url" placeholder="https://my-prototype.vibecoding.app" class="w-full border rounded p-2 bg-white text-xs">
-          <span class="text-slate-400 text-xs mt-0.5 block">2026 모두의 창업 심사위원 제출용 실사용 검증 링크</span>
+          <label class="block font-semibold mb-1">기획안 / 웹 / 앱 프로토타입 URL (선택)</label>
+          <input type="url" id="new_prototype_url" placeholder="https://my-service.com 또는 기획서/Figma 링크" class="w-full border rounded p-2 bg-white text-xs">
+          <span class="text-slate-400 text-xs mt-0.5 block">사업계획서 시장 반응(Traction) 설문 보고서 생성을 위한 검증 링크</span>
         </div>
       </div>
 
@@ -332,8 +332,8 @@
           <input type="text" id="edit_recipients" class="w-full border rounded p-2 bg-white">
         </div>
         <div>
-          <label class="block font-semibold mb-1">AI 바이브코딩 프로토타입 URL</label>
-          <input type="url" id="edit_prototype_url" placeholder="https://my-prototype.vibecoding.app" class="w-full border rounded p-2 bg-white text-xs">
+          <label class="block font-semibold mb-1">기획안 / 웹 / 앱 프로토타입 URL</label>
+          <input type="url" id="edit_prototype_url" placeholder="https://my-service.com 또는 기획서/Figma 링크" class="w-full border rounded p-2 bg-white text-xs">
         </div>
       </div>
 
@@ -415,7 +415,7 @@
   <div class="bg-white rounded-xl shadow-xl max-w-lg w-full p-6 text-xs text-slate-700 my-8">
     <div class="flex justify-between items-center pb-3 border-b border-slate-100">
       <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-        <i class="fa-solid fa-vial-circle-check text-purple-600"></i> 바이브코딩 고객 검증 캠페인 개설
+        <i class="fa-solid fa-comments text-purple-600"></i> 실사용자 피드백 &amp; 설문 검증 캠페인 개설
       </h3>
       <button onclick="closeModal('campaignModal')" class="text-slate-400 hover:text-slate-600 text-lg leading-none">&times;</button>
     </div>
@@ -427,34 +427,34 @@
         <input type="text" id="camp_item_name" readonly class="w-full border rounded p-2 bg-slate-100 text-slate-700 font-bold">
       </div>
       <div>
-        <label class="block font-semibold mb-1">AI 바이브코딩 프로토타입 URL</label>
-        <input type="url" id="camp_prototype_url" required placeholder="https://my-prototype.vibecoding.app" class="w-full border rounded p-2 bg-white">
+        <label class="block font-semibold mb-1">기획안 / 웹 / 앱 프로토타입 URL</label>
+        <input type="url" id="camp_prototype_url" required placeholder="https://my-service.com 또는 기획서/Figma 링크" class="w-full border rounded p-2 bg-white">
       </div>
       <div>
-        <label class="block font-semibold mb-1">검증 예산 및 선착순 테스터 모수</label>
+        <label class="block font-semibold mb-1">피드백 수집 규모 및 테스터 모수</label>
         <select id="camp_budget_select" onchange="updateCampaignSplit()" class="w-full border rounded p-2 bg-white">
-          <option value="100000" selected>100,000원 (선착순 50명 실사용 모집)</option>
-          <option value="200000">200,000원 (선착순 100명 대규모 검증)</option>
-          <option value="60000">60,000원 (선착순 30명 빠른 검증)</option>
+          <option value="100000" selected>100,000원 (실사용 테스터 50명 피드백)</option>
+          <option value="200000">200,000원 (대규모 100명 피드백)</option>
+          <option value="60000">60,000원 (빠른 30명 피드백)</option>
         </select>
       </div>
 
       <div class="p-3.5 rounded-xl bg-purple-50/70 border border-purple-200 text-xs space-y-1.5 text-purple-950">
         <div class="font-bold flex items-center gap-1 text-purple-800">
-          <i class="fa-solid fa-scale-balanced"></i> 7:3 피드백 리워드 정산 체계
+          <i class="fa-solid fa-users-viewfinder"></i> 참여 테스터 리워드 정산 체계
         </div>
         <p id="camp_split_desc" class="text-slate-600 leading-relaxed">
-          선착순 50명 모집 시 테스터 수당 70,000원 (건당 1,400원 지급) + 플랫폼 운영 수수료 30,000원 (건당 600원)
+          선착순 50명의 실제 사용자 및 동료 창업자에게 테스트와 피드백을 요청하고 참여 리워드를 지급합니다.
         </p>
         <p class="text-slate-500">
-          * 60초 이상 실사용 체류 및 15자 이상 구체 피드백 검증 완료 시에만 수당이 정산됩니다.
+          * 성실한 피드백을 위한 최소 사용 테스트 시간 충족 및 구체적 의견(15자 이상) 작성 완료 시 리워드가 정산됩니다.
         </p>
       </div>
 
       <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
         <button type="button" onclick="closeModal('campaignModal')" class="px-3 py-1.5 rounded border text-slate-600 hover:bg-slate-50">취소</button>
         <button type="submit" class="px-4 py-1.5 rounded bg-purple-600 text-white font-semibold hover:bg-purple-700 shadow">
-          <i class="fa-solid fa-bolt mr-1"></i>검증 캠페인 즉시 개설
+          <i class="fa-solid fa-paper-plane mr-1"></i>피드백 캠페인 개설
         </button>
       </div>
     </form>
@@ -734,11 +734,7 @@
   function updateCampaignSplit() {
     const budget = parseInt(document.getElementById('camp_budget_select').value, 10) || 100000;
     const count = Math.floor(budget / 2000);
-    const testerTot = Math.round(budget * 0.7);
-    const platTot = budget - testerTot;
-    const perTester = Math.round(testerTot / count);
-    const perPlat = Math.round(platTot / count);
-    const desc = `선착순 ${count}명 모집 시 테스터 수당 ${testerTot.toLocaleString()}원 (건당 ${perTester.toLocaleString()}원 지급) + 플랫폼 운영 수수료 ${platTot.toLocaleString()}원 (건당 ${perPlat.toLocaleString()}원)`;
+    const desc = `총 ${budget.toLocaleString()}원 예산으로 선착순 ${count}명의 동료 창업자 및 사용자에게 심층 테스트와 피드백을 요청합니다. (완료 테스터 리워드 지급 및 결과 보고서 포함)`;
     document.getElementById('camp_split_desc').textContent = desc;
   }
 

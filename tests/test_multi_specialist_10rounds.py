@@ -107,9 +107,9 @@ def test_round1_product_strategy_and_req_spec_alignment(client):
 def test_round2_visual_design_pixel_perfect_and_tokens(client):
     """REQ-042/REQ-047 Round 2: 전체 웹 화면 .kh-page-hero 100% 탑재, 정적 인라인 0건, 160px/350px CSS 검증."""
     template_files = sorted(glob.glob("src/web/templates/*.html"))
-    # base.html 제외한 순수 페이지 템플릿 (기존 15개 + REQ-047 prototype_report.html 1개)
+    # base.html 제외한 순수 페이지 템플릿 (기존 15개 + REQ-047 prototype_report.html 1개 + feedback_lounge.html 1개)
     page_templates = [f for f in template_files if not f.endswith("base.html")]
-    assert len(page_templates) in (15, 16), f"15~16개의 페이지 템플릿이 존재해야 합니다. (현재: {len(page_templates)})"
+    assert len(page_templates) in (15, 16, 17), f"15~17개의 페이지 템플릿이 존재해야 합니다. (현재: {len(page_templates)})"
 
     # 1. 15개 전체 페이지에 .kh-page-hero 탑재 확인
     for t_path in page_templates:

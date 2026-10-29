@@ -41,6 +41,44 @@
     </div>
   </section>
 
+  <!-- Google NotebookLM 국내외 과제 지속 수집/동기화 관제 패널 -->
+  <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-xl p-4 sm:p-5 border border-indigo-500/30 text-white shadow-md mb-6">
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+      <div class="space-y-1.5 max-w-3xl">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+            <i class="fa-solid fa-brain text-cyan-400"></i> Google NotebookLM 연동 파이프라인
+          </span>
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-xs font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30" id="nbStatusPill">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> 4시간 주기 자동 스캔 가동 중
+          </span>
+          <a href="{{ notebook_sync_status.notebook_url if notebook_sync_status else 'https://notebook.google.com/notebook/cab8404e-d364-463e-a5a7-edfd8b3042ab' }}" target="_blank" rel="noopener noreferrer"
+             class="text-xs text-slate-300 hover:text-cyan-300 transition flex items-center gap-1 underline underline-offset-2">
+            <i class="fa-solid fa-arrow-up-right-from-square"></i> 원본 노트북 바로가기
+          </a>
+        </div>
+        <div class="text-xs text-slate-300 leading-relaxed">
+          Google NotebookLM에서 수집·정리되는 국내외 과제 리스트를 주기적으로 가져와 포털 연동 디렉토리에 <strong class="text-cyan-200">지속 추가(Add)</strong> 및 <strong class="text-amber-200">수정 업데이트(Update)</strong>합니다.
+        </div>
+        <div class="text-xs text-slate-400 flex items-center gap-4 flex-wrap pt-1" id="nbStatsBar">
+          <span><i class="fa-solid fa-clock-rotate-left mr-1 text-slate-400"></i>최근 동기화: <strong class="text-slate-200" id="nbLastSyncTime">{% if notebook_sync_status and notebook_sync_status.latest_sync %}{{ notebook_sync_status.latest_sync.synced_at[:16] }}{% else %}초기 대기 중{% endif %}</strong></span>
+          <span><i class="fa-solid fa-circle-plus mr-1 text-emerald-400"></i>신규 추가: <strong class="text-emerald-300" id="nbAddedCount">{% if notebook_sync_status and notebook_sync_status.latest_sync %}{{ notebook_sync_status.latest_sync.added_count }}{% else %}0{% endif %}</strong>건</span>
+          <span><i class="fa-solid fa-pen-to-square mr-1 text-amber-400"></i>수정 갱신: <strong class="text-amber-300" id="nbUpdatedCount">{% if notebook_sync_status and notebook_sync_status.latest_sync %}{{ notebook_sync_status.latest_sync.updated_count }}{% else %}0{% endif %}</strong>건</span>
+          <span><i class="fa-solid fa-database mr-1 text-indigo-400"></i>관리 총람 과제: <strong class="text-indigo-300" id="nbTotalCount">{{ (notebook_sync_status.in_memory_global_grants_count + notebook_sync_status.in_memory_master_grants_count) if notebook_sync_status else (global_programs|length + master_programs|length) }}</strong>건</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2 shrink-0 flex-wrap">
+        <button onclick="refreshNotebookLMStatus()" class="px-3 py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center gap-1.5 shadow-sm">
+          <i class="fa-solid fa-rotate text-cyan-400" id="nbRefreshIcon"></i> 동기화 상태 점검
+        </button>
+        <button onclick="openNotebookLMImportModal()" class="px-3.5 py-2 rounded-lg text-xs font-bold bg-cyan-600 hover:bg-cyan-500 text-white transition flex items-center gap-1.5 shadow-md">
+          <i class="fa-solid fa-file-import"></i> 과제 데이터 직접 가져오기/동기화
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- 메인 모드 선택 탭 (1. 실시간 포털 관제 vs 2. 통합공고 종합 정리함 vs 3. 지자체 지원센터 vs 4. 글로벌 유치 포털) -->
   <div class="flex border-b border-slate-200 bg-slate-100/80 p-1.5 rounded-xl gap-1 flex-wrap sm:flex-nowrap">
     <button onclick="switchMainTab('PORTALS')" id="tabBtn_portals"
@@ -614,12 +652,13 @@
       <div class="bg-gradient-to-br from-indigo-900 to-slate-900 text-white rounded-xl p-4 border border-indigo-700/40 shadow-sm flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-base">🇬🇧 영국 런던</span>
+            <span class="text-base">🇬🇧 영국 런던 <span class="text-indigo-300/70 text-[12px]">UK · London</span></span>
             <span class="bg-indigo-500/30 text-indigo-200 text-xs px-2 py-0.5 rounded font-mono font-bold">DBT GEP</span>
           </div>
-          <h4 class="font-bold text-sm text-white mt-2">AI·딥테크·SaaS</h4>
+          <h4 class="font-bold text-sm text-white mt-2">AI·딥테크·SaaS <span class="text-indigo-300/70 text-[12px]">/ De-Tech · SaaS</span></h4>
           <p class="text-indigo-200/80 text-xs mt-1 leading-relaxed">
             24인 딜메이커 1:1 전담, 최소투자금 없는 혁신가 비자 연계, 3년 후 영주권(ILR) 취득.
+            <span class="block text-indigo-200/50 text-[12px] mt-0.5">24-person dealmaker 1:1, no-minimum-amount Innovator visa, 3-yr ILR pathway.</span>
           </p>
         </div>
         <div class="mt-3 pt-2 border-t border-indigo-700/40 text-xs text-indigo-300 flex items-center justify-between font-mono">
@@ -632,12 +671,13 @@
       <div class="bg-gradient-to-br from-blue-900 to-slate-900 text-white rounded-xl p-4 border border-blue-700/40 shadow-sm flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-base">🇫🇷 프랑스 파리</span>
+            <span class="text-base">🇫🇷 프랑스 파리 <span class="text-blue-300/70 text-[12px]">France · Paris</span></span>
             <span class="bg-blue-500/30 text-blue-200 text-xs px-2 py-0.5 rounded font-mono font-bold">Cité / Station F</span>
           </div>
-          <h4 class="font-bold text-sm text-white mt-2">창의예술 &amp; 디지털테크</h4>
+          <h4 class="font-bold text-sm text-white mt-2">창의예술 &amp; 디지털테크 <span class="text-blue-300/70 text-[12px]">/ Creative Arts · Digital</span></h4>
           <p class="text-blue-200/80 text-xs mt-1 leading-relaxed">
             40m² 전용 작업실/주거 6개월 체재비·항공료 전액 지원, Station F 라 프렌치 텍 입주.
+            <span class="block text-blue-200/50 text-[12px] mt-0.5">40 m² studio·housing, 6-mo living + airfare fully covered, La French Tech (Station F).</span>
           </p>
         </div>
         <div class="mt-3 pt-2 border-t border-blue-700/40 text-xs text-blue-300 flex items-center justify-between font-mono">
@@ -650,12 +690,13 @@
       <div class="bg-gradient-to-br from-emerald-900 to-slate-900 text-white rounded-xl p-4 border border-emerald-700/40 shadow-sm flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-base">🇦🇺 호주 퍼스/시드니</span>
+            <span class="text-base">🇦🇺 호주 퍼스/시드니 <span class="text-emerald-300/70 text-[12px]">Australia · Perth/Sydney</span></span>
             <span class="bg-emerald-500/30 text-emerald-200 text-xs px-2 py-0.5 rounded font-mono font-bold">DFAT / Austrade</span>
           </div>
-          <h4 class="font-bold text-sm text-white mt-2">호스피탈리티·F&B·CleanTech</h4>
+          <h4 class="font-bold text-sm text-white mt-2">호스피탈리티·F&B·CleanTech <span class="text-emerald-300/70 text-[12px]">/ Hospitality · F&B</span></h4>
           <p class="text-emerald-200/80 text-xs mt-1 leading-relaxed">
             한-호 랜딩패드 주간 왕복 항공·숙박 지원, HORECA 및 대형 유통체인 바이어 1:1 직연계.
+            <span class="block text-emerald-200/50 text-[12px] mt-0.5">Korea-Australia landing pad: airfare + lodging subsidised, 1:1 HORECA·retail buyer links.</span>
           </p>
         </div>
         <div class="mt-3 pt-2 border-t border-emerald-700/40 text-xs text-emerald-300 flex items-center justify-between font-mono">
@@ -668,12 +709,13 @@
       <div class="bg-gradient-to-br from-amber-900 to-slate-900 text-white rounded-xl p-4 border border-amber-700/40 shadow-sm flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-base">🇦🇪 UAE 아부다비</span>
+            <span class="text-base">🇦🇪 UAE 아부다비 <span class="text-amber-300/70 text-[12px]">UAE · Abu Dhabi</span></span>
             <span class="bg-amber-500/30 text-amber-200 text-xs px-2 py-0.5 rounded font-mono font-bold">ADGM Hub71</span>
           </div>
-          <h4 class="font-bold text-sm text-white mt-2">AI·핀테크·헬스·기후</h4>
+          <h4 class="font-bold text-sm text-white mt-2">AI·핀테크·헬스·기후 <span class="text-amber-300/70 text-[12px]">/ Fintech · Health</span></h4>
           <p class="text-amber-200/80 text-xs mt-1 leading-relaxed">
             최대 750,000 AED(한화 약 2.8억, 현금+현물), WeWork 사무실, 고급 주거, 10년 골든비자.
+            <span class="block text-amber-200/50 text-[12px] mt-0.5">Up to 750,000 AED (~KRW 280 M), WeWork office, premium housing, 10-yr Golden Visa.</span>
           </p>
         </div>
         <div class="mt-3 pt-2 border-t border-amber-700/40 text-xs text-amber-300 flex items-center justify-between font-mono">
@@ -686,12 +728,13 @@
       <div class="bg-gradient-to-br from-purple-900 to-slate-900 text-white rounded-xl p-4 border border-purple-700/40 shadow-sm flex flex-col justify-between">
         <div>
           <div class="flex items-center justify-between">
-            <span class="text-base">🇰🇷 대한민국 (KSC)</span>
-            <span class="bg-purple-500/30 text-purple-200 text-xs px-2 py-0.5 rounded font-mono font-bold">중기부 창진원</span>
+            <span class="text-base">🇰🇷 대한민국 <span class="text-purple-300/70 text-[12px]">KSC · Global Hub</span></span>
+            <span class="bg-purple-500/30 text-purple-200 text-xs px-2 py-0.5 rounded font-mono font-bold">중기부 KSC</span>
           </div>
-          <h4 class="font-bold text-sm text-white mt-2">7대 거점 글로벌 스케일업</h4>
+          <h4 class="font-bold text-sm text-white mt-2">7대 거점 글로벌 스케일업 <span class="text-purple-300/70 text-[12px]">/ 7-Hub Scale-up</span></h4>
           <p class="text-purple-200/80 text-xs mt-1 leading-relaxed">
             기업당 6천만 원 해외 진출 자금 지원, 실리콘밸리·파리·싱가포르 공유오피스 무상 배정.
+            <span class="block text-purple-200/50 text-[12px] mt-0.5">KRW 60 M per company, free co-working in SV·Paris·Singapore (14-wk AC).</span>
           </p>
         </div>
         <div class="mt-3 pt-2 border-t border-purple-700/40 text-xs text-purple-300 flex items-center justify-between font-mono">
@@ -791,10 +834,10 @@
         <div>
           <h3 class="text-base font-bold text-slate-900 flex items-center gap-2">
             <i class="fa-solid fa-passport text-amber-500"></i>
-            <span>국가별·분야별 해외 유치 특화 지원사업 총람 (총 {{ global_programs|length }}선)</span>
+            <span>국가별·분야별 해외 유치 특화 지원사업 총람 / Global Recruitment Program Directory <span class="text-slate-400 font-normal">({{ global_programs|length }} programs)</span></span>
           </h3>
-          <p class="text-xs text-slate-500 mt-0.5">
-            비자 특혜, 파격 현금/현물 지원, 40m² 레지던시, 1:1 딜메이커 등 주요 혜택 및 신청 요건을 비교·탐색합니다.
+          <p class="text-xs text-slate-500 mt-0.5 leading-relaxed">
+            비자 특혜, 파격 현금/현물 지원, 40m² 레지던시, 1:1 딜메이커 등 주요 혜택 및 신청 요건을 비교·탐색합니다.&nbsp;&nbsp;<span class="text-slate-400">Visa perks, cash/in-kind support, 40&nbsp;m² residencies, and 1:1 dealmaker links — sorted by country &amp; sector.</span>
           </p>
         </div>
 
@@ -802,29 +845,29 @@
         <div class="flex flex-wrap items-center gap-2.5">
           <!-- 국가 선택 버튼 그룹 -->
           <div class="flex bg-slate-100 p-1 rounded-lg gap-1 text-xs font-medium">
-            <button onclick="setGlobalCountryFilter('전체')" class="gcountry-btn px-2.5 py-1 rounded bg-slate-900 text-white font-bold transition" data-country="전체">전체</button>
-            <button onclick="setGlobalCountryFilter('영국')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="영국">🇬🇧 영국</button>
-            <button onclick="setGlobalCountryFilter('프랑스')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="프랑스">🇫🇷 프랑스</button>
-            <button onclick="setGlobalCountryFilter('호주')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="호주">🇦🇺 호주</button>
+            <button onclick="setGlobalCountryFilter('전체')" class="gcountry-btn px-2.5 py-1 rounded bg-slate-900 text-white font-bold transition" data-country="전체">전체 / All</button>
+            <button onclick="setGlobalCountryFilter('영국')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="영국">🇬🇧 UK</button>
+            <button onclick="setGlobalCountryFilter('프랑스')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="프랑스">🇫🇷 France</button>
+            <button onclick="setGlobalCountryFilter('호주')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="호주">🇦🇺 Australia</button>
             <button onclick="setGlobalCountryFilter('UAE')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="UAE">🇦🇪 UAE</button>
-            <button onclick="setGlobalCountryFilter('대한민국')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="대한민국">🇰🇷 KSC</button>
+            <button onclick="setGlobalCountryFilter('대한민국')" class="gcountry-btn px-2.5 py-1 rounded text-slate-700 hover:text-slate-900 transition" data-country="대한민국">🇰🇷 KR (KSC)</button>
           </div>
 
           <!-- 분야 셀렉트 -->
           <select id="globalFieldSelect" onchange="filterGlobalCards()"
                   class="bg-slate-50 border border-slate-300 text-slate-800 text-xs rounded-lg px-2.5 py-1.5 focus:ring-1 focus:ring-purple-500 font-medium">
-            <option value="전체">모든 특화 분야</option>
-            <option value="AI">AI / 딥테크 / SaaS</option>
-            <option value="시각예술">시각예술 / 문화·디지털</option>
-            <option value="호스피탈리티">호스피탈리티 / F&B</option>
-            <option value="핀테크">핀테크 / 헬스 / 기후테크</option>
-            <option value="바이오">바이오 / 친환경 / 로봇</option>
+            <option value="전체">All Sectors / 모든 분야</option>
+            <option value="AI">AI / De-Tech / SaaS</option>
+            <option value="시각예술">Visual Arts / Culture·Digital</option>
+            <option value="호스피탈리티">Hospitality / F&B</option>
+            <option value="핀테크">Fintech / Health / Climate-Tech</option>
+            <option value="바이오">Bio / Clean / Robotics</option>
           </select>
 
           <!-- 비자 특혜 체크박스 -->
           <label class="flex items-center gap-1.5 text-xs text-slate-700 cursor-pointer bg-slate-50 px-2.5 py-1.5 rounded-lg border border-slate-200">
             <input type="checkbox" id="globalVisaOnly" onchange="filterGlobalCards()" class="rounded text-purple-600 focus:ring-purple-500">
-            <span>비자·영주권 혜택 필수</span>
+            <span>비자·영주권 혜택 필수 / Visa · Residence benefit</span>
           </label>
 
           <!-- 키워드 검색창 -->
@@ -1123,6 +1166,86 @@ CREATE TABLE global_grants (
       <button onclick="closeAuthGuideModal()" class="bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold px-4 py-2 rounded-lg transition">
         확인 완료
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Google NotebookLM 과제 데이터 직접 가져오기 및 동기화 모달 -->
+<div id="notebooklmImportModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+  <div class="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] flex flex-col overflow-hidden border border-slate-200">
+    <div class="px-6 py-4 bg-slate-900 text-white flex justify-between items-center">
+      <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-cyan-500/20 text-cyan-400 flex items-center justify-center border border-cyan-500/30">
+          <i class="fa-solid fa-brain text-sm"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
+            Google NotebookLM 국내외 과제 실시간 지속 동기화
+          </h3>
+          <p class="text-xs text-slate-400">
+            노트북 ID: <code class="text-cyan-300">cab8404e-d364-463e-a5a7-edfd8b3042ab</code>
+          </p>
+        </div>
+      </div>
+      <button onclick="closeNotebookLMImportModal()" class="text-slate-400 hover:text-white transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <div class="p-6 overflow-y-auto space-y-4 text-xs text-slate-700 flex-1">
+      <div class="p-3.5 bg-cyan-50/70 rounded-xl border border-cyan-200 space-y-1.5 leading-relaxed text-cyan-950">
+        <div class="font-bold flex items-center gap-1.5 text-cyan-900">
+          <i class="fa-solid fa-circle-info text-cyan-600"></i> 자동 차분 분석 및 동기화 원리
+        </div>
+        <div>
+          노트북에 새로 정리된 과제 목록(JSON 배열, Markdown 표, 또는 텍스트)을 입력하면,
+          <strong>고유 ID(<code>program_id</code>)</strong> 또는 <strong>사업명</strong>을 기준으로 차분을 분석합니다.
+        </div>
+        <ul class="list-disc list-inside space-y-0.5 text-slate-600 pl-1">
+          <li><strong>새로운 과제</strong>: 포털 및 SQLite 마스터 DB에 <span class="font-bold text-emerald-700">신규 추가(ADD)</span></li>
+          <li><strong>기존 등록 과제</strong>: 변경된 지원 혜택, 신청 자격, 비자 등을 <span class="font-bold text-amber-700">즉시 수정 갱신(UPDATE)</span></li>
+          <li><strong>감사 로그</strong>: SHA-256 무결성 해시가 생성되어 동기화 이력에 영구 보관됩니다.</li>
+        </ul>
+      </div>
+
+      <!-- 빠른 샘플 불러오기 버튼들 -->
+      <div class="flex items-center justify-between flex-wrap gap-2">
+        <span class="font-bold text-slate-700">데이터 입력 (JSON 또는 Markdown)</span>
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <button type="button" onclick="loadNotebookLMSample('uk_update')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-medium transition text-xs">
+            <i class="fa-solid fa-pen-to-square text-amber-600 mr-1"></i>영국 GEP 수정 갱신 샘플
+          </button>
+          <button type="button" onclick="loadNotebookLMSample('new_singapore')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-medium transition text-xs">
+            <i class="fa-solid fa-circle-plus text-emerald-600 mr-1"></i>신규 싱가포르 과제 추가 샘플
+          </button>
+          <button type="button" onclick="loadNotebookLMSample('markdown_table')" class="px-2.5 py-1 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-300 font-medium transition text-xs">
+            <i class="fa-solid fa-table text-indigo-600 mr-1"></i>Markdown 표 샘플
+          </button>
+        </div>
+      </div>
+
+      <textarea id="notebooklmRawInput" rows="10"
+                class="w-full font-mono text-xs p-3.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-500 focus:outline-none bg-slate-50 text-slate-900 leading-relaxed"
+                placeholder="Google NotebookLM에서 복사한 JSON 리스트 또는 Markdown 과제 목록을 여기에 붙여넣으세요."></textarea>
+
+      <!-- 동기화 결과 피드백 카드 -->
+      <div id="notebooklmResultCard" class="hidden p-4 rounded-xl border">
+        <div id="notebooklmResultContent"></div>
+      </div>
+    </div>
+
+    <div class="px-6 py-3 bg-slate-100 flex items-center justify-between border-t border-slate-200">
+      <div class="text-slate-500 text-xs">
+        <i class="fa-solid fa-shield-halved text-emerald-600 mr-1"></i>SHA-256 검증 및 무결성 체인 보장
+      </div>
+      <div class="flex items-center gap-2">
+        <button type="button" onclick="closeNotebookLMImportModal()" class="px-4 py-2 bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold rounded-lg border border-slate-300 transition">
+          닫기
+        </button>
+        <button type="button" id="submitNotebookLMImportBtn" onclick="submitNotebookLMImport()" class="px-5 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold rounded-lg shadow-sm transition flex items-center gap-1.5">
+          <i class="fa-solid fa-cloud-arrow-up"></i> 포털에 즉시 반영 (Sync & Merge)
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -1436,6 +1559,172 @@ CREATE TABLE global_grants (
 
       card.style.display = (matchCountry && matchField && matchVisa && matchQuery) ? '' : 'none';
     });
+  }
+
+  // --------------------------------------------------------------------------
+  // Google NotebookLM 지속 동기화 연동 스크립트
+  // --------------------------------------------------------------------------
+  async function refreshNotebookLMStatus() {
+    const icon = document.getElementById('nbRefreshIcon');
+    if (icon) icon.classList.add('fa-spin');
+    try {
+      const resp = await fetch('/api/portals/notebooklm/status');
+      const data = await resp.json();
+      if (data.status === 'success' && data.sync_status) {
+        const s = data.sync_status;
+        const total = (s.in_memory_global_grants_count || 0) + (s.in_memory_master_grants_count || 0);
+        const nbTotal = document.getElementById('nbTotalCount');
+        if (nbTotal) nbTotal.innerText = total;
+
+        if (s.latest_sync) {
+          const syncTime = document.getElementById('nbLastSyncTime');
+          const addCount = document.getElementById('nbAddedCount');
+          const updCount = document.getElementById('nbUpdatedCount');
+          if (syncTime) syncTime.innerText = s.latest_sync.synced_at.slice(0, 16);
+          if (addCount) addCount.innerText = s.latest_sync.added_count;
+          if (updCount) updCount.innerText = s.latest_sync.updated_count;
+        }
+      }
+    } catch (e) {
+      console.warn('NotebookLM 상태 갱신 실패:', e);
+    } finally {
+      if (icon) icon.classList.remove('fa-spin');
+    }
+  }
+
+  function openNotebookLMImportModal() {
+    document.getElementById('notebooklmImportModal').classList.remove('hidden');
+    document.getElementById('notebooklmResultCard').classList.add('hidden');
+  }
+
+  function closeNotebookLMImportModal() {
+    document.getElementById('notebooklmImportModal').classList.add('hidden');
+  }
+
+  const SAMPLE_UK_UPDATE = JSON.stringify([
+    {
+      "program_id": "UK-DBT-GEP-2026",
+      "country": "영국",
+      "country_code": "GB",
+      "city_hub": "런던",
+      "program_name": "영국 글로벌 기업가 프로그램 (GEP 2026 개정판)",
+      "program_name_en": "Global Entrepreneur Programme (GEP 2026 Revised)",
+      "supervising_entity": "영국 기업통상부 (Department for Business and Trade, DBT)",
+      "operating_entity": "영국 DBT 글로벌 딜메이커 (Dealmaker) 네트워크 (24인 전담팀)",
+      "specialized_fields": ["AI", "딥테크", "SaaS", "빅데이터", "클라우드", "양자컴퓨팅"],
+      "support_type": "비자/멘토링",
+      "financial_benefit": "현지 VC/엔젤 투자 연계, R&D 세제 혜택(R&D Tax Relief) 2026 최신 개정안 컨설팅 지원",
+      "visa_benefit": "영국 내무부(Home Office) 혁신가 창업자 비자 공식 보증 부여. 3년 만에 영주권(ILR) 신청 가능",
+      "space_facility_benefit": "영국 내 글로벌 본사(HQ) 및 R&D 전략 거점 설립, 국가 R&D 테스트베드 인프라 제공",
+      "mentoring_network": "글로벌 연쇄 창업가 24인 1:1 밀착 전담 코칭 및 파트너 매칭",
+      "target_qualifications": "글로벌 HQ 및 R&D 센터를 설립하고자 하는 혁신 기술 보유 딥테크/AI 스타트업",
+      "selection_scale": "수시 심사 및 딜메이커 추천 기반 선발",
+      "source_portal": "uk_dbt_gep",
+      "detail_url": "https://www.great.gov.uk/international/content/invest/how-we-help-you-invest-in-the-uk/global-entrepreneur-programme/",
+      "inquiry_contact": "주한영국대사관 기업통상부 (DBT Korea) / GEP Direct",
+      "case_studies": ["삼쩜삼", "한국축산데이터", "에이모", "핀텔"]
+    }
+  ], null, 2);
+
+  const SAMPLE_NEW_SINGAPORE = JSON.stringify([
+    {
+      "program_id": "SG-ESG-STARTUP-2026",
+      "country": "싱가포르",
+      "country_code": "SG",
+      "city_hub": "싱가포르",
+      "program_name": "싱가포르 EnterpriseSG 스타트업 글로벌 랜딩 프로그램",
+      "program_name_en": "Singapore EnterpriseSG Global Landing Programme",
+      "supervising_entity": "싱가포르 기업청 (Enterprise Singapore, ESG)",
+      "operating_entity": "SGInnovate / ACE (Action Community for Entrepreneurship)",
+      "specialized_fields": ["AI", "핀테크", "바이오헬스", "동남아 진출"],
+      "support_type": "현금+현물패키지",
+      "financial_benefit": "Startup SG Founder 그랜트 최대 50,000 SGD 사업화 자금 지원 및 현지 AC 매칭",
+      "visa_benefit": "싱가포르 노동부(MOM) 공식 EntrePass 창업비자 발급 보증",
+      "space_facility_benefit": "싱가포르 원노스(One-North) 테크 클러스터 코워킹 스페이스 6개월 무상 배정",
+      "mentoring_network": "동남아시아 톱티어 VC 네트워크 및 현지 대기업(SI) PoC 연계",
+      "target_qualifications": "동남아 시장 진출 및 싱가포르 법인 설립을 희망하는 5년 이내 혁신 스타트업",
+      "selection_scale": "연 2회 각 15개사 선발",
+      "source_portal": "sg_esg_global",
+      "detail_url": "https://www.enterprisesg.gov.sg/",
+      "inquiry_contact": "싱가포르 기업청 한국사무소 (EnterpriseSG Korea)",
+      "case_studies": ["동남아 진출 에듀테크 스타트업", "싱가포르 결제 인프라 핀테크사"]
+    }
+  ], null, 2);
+
+  const SAMPLE_MARKDOWN_TABLE = "| 국가 | 과제명 | 주관기관 | 특화분야 | 지원혜택 | 비자특혜 |\n| :--- | :--- | :--- | :--- | :--- | :--- |\n| 독일 | 독일 베를린 EXIST 스타트업 글로벌 트랙 | 독일 연방경제기후보호부(BMWK) | 딥테크, AI, 로보틱스 | 창업 장학금 월 3,000유로(최대 1년) 및 시제품 제작비 25,000유로 지원 | 독일 프리랜서/창업비자(Aufenthaltserlaubnis) 지원 |\n";
+
+  function loadNotebookLMSample(sampleType) {
+    const input = document.getElementById('notebooklmRawInput');
+    if (!input) return;
+    if (sampleType === 'uk_update') {
+      input.value = SAMPLE_UK_UPDATE;
+    } else if (sampleType === 'new_singapore') {
+      input.value = SAMPLE_NEW_SINGAPORE;
+    } else if (sampleType === 'markdown_table') {
+      input.value = SAMPLE_MARKDOWN_TABLE;
+    }
+  }
+
+  async function submitNotebookLMImport() {
+    const input = document.getElementById('notebooklmRawInput');
+    const btn = document.getElementById('submitNotebookLMImportBtn');
+    const resultCard = document.getElementById('notebooklmResultCard');
+    const resultContent = document.getElementById('notebooklmResultContent');
+
+    const raw = (input.value || '').trim();
+    if (!raw) {
+      alert('반영할 JSON 또는 Markdown 과제 데이터를 입력해 주세요.');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1"></i> 동기화 및 차분 분석 중...';
+
+    try {
+      const resp = await fetch('/api/portals/notebooklm/import', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ raw_content: raw }),
+      });
+      const data = await resp.json();
+
+      resultCard.classList.remove('hidden');
+      if (resp.ok && data.status === 'success') {
+        const res = data.result || {};
+        resultCard.className = 'p-4 rounded-xl border bg-emerald-50 border-emerald-300 text-emerald-950 space-y-2';
+        resultContent.innerHTML =
+          '<div class="font-bold flex items-center gap-1.5 text-emerald-900 text-sm">' +
+          '<i class="fa-solid fa-circle-check text-emerald-600"></i> ' + (data.message || '동기화 완료') +
+          '</div>' +
+          '<div class="text-xs text-slate-700 grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1">' +
+          '<div class="bg-white p-2 rounded border border-emerald-200">신규 추가: <strong class="text-emerald-700">' + (res.added_count || 0) + '</strong>건</div>' +
+          '<div class="bg-white p-2 rounded border border-amber-200">수정 갱신: <strong class="text-amber-700">' + (res.updated_count || 0) + '</strong>건</div>' +
+          '<div class="bg-white p-2 rounded border border-slate-200">총 처리: <strong class="text-slate-800">' + (res.total_count || 0) + '</strong>건</div>' +
+          '<div class="bg-white p-2 rounded border border-indigo-200 truncate" title="' + (res.sync_hash || '') + '">해시: <code class="text-indigo-700">' + (res.sync_hash ? res.sync_hash.slice(0, 8) : '') + '...</code></div>' +
+          '</div>' +
+          '<p class="text-xs text-slate-600 pt-1">' +
+          '* 변경된 내용은 포털 및 마스터 DB에 영구 저장되었으며 런타임에 즉시 반영되었습니다. 3초 후 화면이 자동 새로고침됩니다.' +
+          '</p>';
+        refreshNotebookLMStatus();
+        setTimeout(() => { window.location.reload(); }, 2500);
+      } else {
+        resultCard.className = 'p-4 rounded-xl border bg-rose-50 border-rose-300 text-rose-950 space-y-1';
+        resultContent.innerHTML =
+          '<div class="font-bold flex items-center gap-1.5 text-rose-900 text-sm">' +
+          '<i class="fa-solid fa-triangle-exclamation text-rose-600"></i> 동기화 반영 실패' +
+          '</div>' +
+          '<div class="text-xs text-rose-800">' + (data.message || '데이터 구조를 확인해 주세요.') + '</div>';
+      }
+    } catch (e) {
+      resultCard.classList.remove('hidden');
+      resultCard.className = 'p-4 rounded-xl border bg-rose-50 border-rose-300 text-rose-950 space-y-1';
+      resultContent.innerHTML =
+        '<div class="font-bold text-rose-900 text-sm">통신 오류가 발생했습니다.</div>' +
+        '<div class="text-xs text-rose-800">' + e.message + '</div>';
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-cloud-arrow-up mr-1"></i> 포털에 즉시 반영 (Sync & Merge)';
+    }
   }
 
   async function runManualPipeline() {

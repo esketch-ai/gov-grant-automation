@@ -1,0 +1,149 @@
+{
+  "timestamp": "2026-10-29T14:58:47.302387",
+  "duration_seconds": 2.879622,
+  "all_passed": true,
+  "total_score": 100.0,
+  "max_score": 100.0,
+  "raw_total_score": 140.0,
+  "raw_max_score": 140.0,
+  "agents_count": 7,
+  "status": "APPROVED (Deploy-Ready)",
+  "results": [
+    {
+      "agent_id": "Agent-YearAudit",
+      "agent_name": "연도 무결성 감사 에이전트 (2026 전용)",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "2026년도 전용 필터링 무결성 및 과거 공고 유입 0건 검증 완료",
+      "details": [
+        "PASS: config target_year is strictly set to 2026",
+        "PASS: 100% past announcement drop rate achieved (kept 3/7)",
+        "PASS: DB storage scan verified (0 past leaks out of 5 records)"
+      ],
+      "metrics": {
+        "past_announcement_leak_count": 0,
+        "tested_stress_count": 7,
+        "db_scanned_records": 5
+      }
+    },
+    {
+      "agent_id": "Agent-WebQA",
+      "agent_name": "웹 관리자 E2E 검수 에이전트",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "웹 관리자 전 엔드포인트 및 파이프라인 트리거 E2E 정상",
+      "details": [
+        "PASS: GET / returned 200 OK with expected content",
+        "PASS: GET /dashboard returned 200 OK with expected content",
+        "PASS: GET /announcements returned 200 OK with expected content",
+        "PASS: GET /items returned 200 OK with expected content",
+        "PASS: GET /matches returned 200 OK with expected content",
+        "PASS: GET /audit returned 200 OK with expected content",
+        "PASS: GET /portals returned 200 OK with expected content",
+        "PASS: GET /api/portals/status returned 200 OK with expected content",
+        "PASS: GET /api/scheduler/status returned 200 OK with expected content",
+        "PASS: GET /api/status returned 200 OK with expected content",
+        "PASS: GET /api/calendar/2026.ics returned 200 OK with expected content",
+        "PASS: GET /api/announcements/dday-summary returned 200 OK with expected content",
+        "PASS: POST /api/pipeline/run successfully triggered pipeline with status=success"
+      ],
+      "metrics": {
+        "tested_endpoints": 13
+      }
+    },
+    {
+      "agent_id": "Agent-MatcherPrecision",
+      "agent_name": "R&D 자격 판정 정밀도 검수 에이전트",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "R&D 자격 판정 정밀도 및 False Positive 0건 검증 완료",
+      "details": [
+        "PASS: Ineligible business strictly disqualified (eligible=False, score=25)",
+        "PASS: Qualified candidate passed with high score (score=92, inquiries=1)",
+        "PASS: System error safely degraded to is_eligible=False and score=0"
+      ],
+      "metrics": {
+        "ineligible_score": 25,
+        "valid_score": 92,
+        "degraded_score": 0
+      }
+    },
+    {
+      "agent_id": "Agent-SecurityGate",
+      "agent_name": "보안 및 비밀 누출 감사 에이전트",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "시크릿 평문 누출 0건, XSS 방어 및 로컬 격리 검증 완료",
+      "details": [
+        "PASS: 0 plaintext secrets detected across 131 source files",
+        "PASS: XSS injection payload safely escaped in HTML response",
+        "PASS: Web admin is strictly bound to safe local address (127.0.0.1)"
+      ],
+      "metrics": {
+        "scanned_files": 131,
+        "leaks_found": 0
+      }
+    },
+    {
+      "agent_id": "Agent-Resilience",
+      "agent_name": "내구성 및 폴백 복원력 감사 에이전트",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "장애 및 비정상 입력 상황에서 0 Crash 및 Safe Degrade 검증 완료",
+      "details": [
+        "PASS: AttachmentAndRfpParser survived 6 malformed inputs with 0 crashes",
+        "PASS: GrantDatabase schema initialization is 100% idempotent and robust",
+        "PASS: GrantEmailNotifier gracefully handled empty matches (no-op isolation)"
+      ],
+      "metrics": {
+        "fault_injection_tests": 3,
+        "crashes": 0
+      }
+    },
+    {
+      "agent_id": "Agent-DataIntegrity",
+      "agent_name": "데이터 무결성 및 연도 거버넌스 감사 에이전트",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "DB 스키마, 2026 연도 거버넌스, 참조 무결성, 발송 중복제약 전수 통과",
+      "details": [
+        "PASS: 4대 핵심 테이블 스키마 존재 확인: ['site_selectors', 'rfp_chunks', 'dispatch_history', 'announcements']",
+        "PASS: announcements.target_year 거버넌스 컬럼 확인",
+        "PASS: DB 내 2025년 이하 과거 공고 0건(완전 격리) 검증 완료",
+        "PASS: announcements - rfp_chunks 간 고아 레코드 0건(참조 무결성 유지)",
+        "PASS: dispatch_history 복합 유일 제약(UNIQUE) 무결성 검증 완료"
+      ],
+      "metrics": {
+        "verified_tables": 4,
+        "has_target_year_col": 1,
+        "past_year_db_records": 0,
+        "orphaned_rfp_count": 0,
+        "duplicate_dispatches": 0
+      }
+    },
+    {
+      "agent_id": "Agent-LiveGroundTruth",
+      "agent_name": "외부 포털 실데이터 진본성(Ground-Truth) 및 딥링크 정합성 검수 에이전트",
+      "passed": true,
+      "score": 20.0,
+      "max_score": 20.0,
+      "summary": "실제 외부 웹 검증: 5건 공고의 라이브 직링크 및 페이지 연도 정합성 검증 완료",
+      "details": [
+        "✅ 전체 5건 공고 모두 상세 식별자 포함 딥링크 규격 준수",
+        "✅ 외부 포털 라이브 핑 대조 완료 (2025년도 등 과거 과제 연결 0건, 실시간 진본성 검증 통과)"
+      ],
+      "metrics": {
+        "syntax_score": 10.0,
+        "live_score": 10.0,
+        "checked_count": 5,
+        "mismatches": 0
+      }
+    }
+  ]
+}

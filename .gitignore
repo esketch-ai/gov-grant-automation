@@ -21,8 +21,9 @@ logs/**
 storage/app.log
 storage/app.log.*
 storage/*.log
-storage/audit_report.*
+storage/audit_report.md
 storage/qqaqc_*_report.*
+!storage/audit_report.json
 
 # Local agent tooling (machine-specific symlink, not committed)
 .agents/

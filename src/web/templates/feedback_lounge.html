@@ -53,43 +53,71 @@
 
   <!-- 3. 필터 및 탭 컨트롤 바 -->
   <div class="krds-card p-4 space-y-4">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-3 border-b border-slate-100">
-      <!-- 트랙 선택 탭 -->
-      <div class="flex items-center gap-2">
-        <a href="/feedback-lounge?type=ALL{% if selected_category and selected_category != 'ALL' %}&category={{ selected_category }}{% endif %}" 
-           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition {% if selected_type == 'ALL' or not selected_type %}bg-purple-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-          전체 프로젝트
-        </a>
-        <a href="/feedback-lounge?type=PAID{% if selected_category and selected_category != 'ALL' %}&category={{ selected_category }}{% endif %}" 
-           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {% if selected_type == 'PAID' %}bg-purple-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-          <i class="fa-solid fa-gem text-amber-300"></i> 유료 보증 검증
-        </a>
-        <a href="/feedback-lounge?type=FREE{% if selected_category and selected_category != 'ALL' %}&category={{ selected_category }}{% endif %}" 
-           class="px-3 py-1.5 rounded-lg text-xs font-semibold transition flex items-center gap-1.5 {% if selected_type == 'FREE' %}bg-purple-600 text-white shadow-sm{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
-          <i class="fa-solid fa-seedling text-emerald-500"></i> 무료 커뮤니티 품앗이
-        </a>
+    <!-- 검색창 및 카운트 -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+      <div class="relative flex-1 min-w-[260px]">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+        <input 
+          type="text" 
+          id="loungeSearchInput" 
+          oninput="handleLoungeSearch(this.value)" 
+          placeholder="프로젝트명, 설명, 카테고리 실시간 검색 (예: AI, F&B, 탄소, 정산, 바이브코딩...)"
+          class="w-full pl-9 pr-8 py-2 rounded-xl border border-slate-200 bg-slate-50 focus:bg-white focus:border-purple-500 focus:ring-2 focus:ring-purple-200 text-xs text-slate-800 transition placeholder:text-slate-400"
+        >
+        <button type="button" id="clearSearchBtn" onclick="clearLoungeSearch()" class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-xs">
+          <i class="fa-solid fa-circle-xmark"></i>
+        </button>
       </div>
 
-      <!-- 카테고리 셀렉터 -->
-      <div class="flex items-center gap-2 text-xs">
-        <span class="text-slate-500 font-medium">분야:</span>
-        <select onchange="location.href='/feedback-lounge?type={{ selected_type }}&category=' + this.value" class="border border-slate-200 rounded-lg p-1.5 bg-white text-slate-700 text-xs">
-          <option value="ALL" {% if selected_category == 'ALL' or not selected_category %}selected{% endif %}>전체 분야</option>
-          <option value="AI/딥테크" {% if selected_category == 'AI/딥테크' %}selected{% endif %}>AI / 딥테크</option>
-          <option value="SaaS/플랫폼" {% if selected_category == 'SaaS/플랫폼' %}selected{% endif %}>SaaS / 플랫폼</option>
-          <option value="로컬/F&B" {% if selected_category == '로컬/F&B' %}selected{% endif %}>로컬 / F&B</option>
-          <option value="기후/에너지" {% if selected_category == '기후/에너지' %}selected{% endif %}>기후 / 에너지</option>
-          <option value="바이오/헬스" {% if selected_category == '바이오/헬스' %}selected{% endif %}>바이오 / 헬스</option>
-          <option value="문화/콘텐츠" {% if selected_category == '문화/콘텐츠' %}selected{% endif %}>문화 / 콘텐츠</option>
-          <option value="핀테크/금융" {% if selected_category == '핀테크/금융' %}selected{% endif %}>핀테크 / 금융</option>
-        </select>
+      <div class="flex items-center gap-2 shrink-0">
+        <span id="filteredCountBadge" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 kh-tabular">
+          전체 {{ campaigns|length }}개 프로젝트
+        </span>
+        <button type="button" onclick="openRegistrationModal()" class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-sm flex items-center gap-1.5">
+          <i class="fa-solid fa-plus text-xs"></i>내 프로젝트 등록
+        </button>
       </div>
     </div>
 
-    <!-- 4. 캠페인 카드 그리드 -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <!-- 트랙 및 카테고리 퀵 칩 -->
+    <div class="space-y-2.5">
+      <!-- 1) 트랙 선택 탭 -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <span class="text-xs font-bold text-slate-600 mr-1">방식:</span>
+        <button type="button" onclick="filterByTrack('ALL')" id="trackChip-ALL" class="track-chip active px-3 py-1 rounded-lg text-xs font-semibold transition bg-purple-600 text-white shadow-sm">
+          전체 트랙
+        </button>
+        <button type="button" onclick="filterByTrack('PAID')" id="trackChip-PAID" class="track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5">
+          <i class="fa-solid fa-gem text-amber-500"></i>유료 보증 검증
+        </button>
+        <button type="button" onclick="filterByTrack('FREE')" id="trackChip-FREE" class="track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5">
+          <i class="fa-solid fa-seedling text-emerald-600"></i>무료 커뮤니티 품앗이
+        </button>
+      </div>
+
+      <!-- 2) 8대 분야 퀵 칩 -->
+      <div class="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs scrollbar-none">
+        <span class="text-xs font-bold text-slate-600 mr-1 shrink-0">분야:</span>
+        <button type="button" onclick="filterByCategory('ALL')" class="category-chip active px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-purple-100 text-purple-800 border border-purple-300" data-category="ALL">전체 분야</button>
+        <button type="button" onclick="filterByCategory('AI/딥테크')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="AI/딥테크">🤖 AI·딥테크</button>
+        <button type="button" onclick="filterByCategory('SaaS/플랫폼')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="SaaS/플랫폼">💻 SaaS·플랫폼</button>
+        <button type="button" onclick="filterByCategory('로컬/F&B')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="로컬/F&B">☕ 로컬·F&B</button>
+        <button type="button" onclick="filterByCategory('기후/에너지')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="기후/에너지">🌿 기후·에너지</button>
+        <button type="button" onclick="filterByCategory('바이오/헬스')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="바이오/헬스">🏥 바이오·헬스</button>
+        <button type="button" onclick="filterByCategory('문화/콘텐츠')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="문화/콘텐츠">🎨 문화·콘텐츠</button>
+        <button type="button" onclick="filterByCategory('핀테크/금융')" class="category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200" data-category="핀테크/금융">💳 핀테크·금융</button>
+      </div>
+    </div>
+
+    <!-- 4. 캠페인 카드 그리드 (클라이언트 사이드 실시간 필터 및 페이징) -->
+    <div id="campaignCardGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {% for c in campaigns %}
-      <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-purple-300 hover:shadow-md transition flex flex-col justify-between space-y-3">
+      <div class="campaign-card p-4 rounded-xl border border-slate-200 bg-white hover:border-purple-400 hover:shadow-lg transition-all duration-200 flex flex-col justify-between space-y-3"
+           data-id="{{ c.id }}"
+           data-track="{{ c.request_type }}"
+           data-category="{{ c.category or '일반' }}"
+           data-title="{{ (c.title or c.item_id)|lower }}"
+           data-desc="{{ (c.description or '')|lower }}">
         <div class="space-y-2">
           <div class="flex justify-between items-start gap-2">
             <div class="flex items-center gap-1.5 flex-wrap">
@@ -102,7 +130,10 @@
                 <i class="fa-solid fa-gem text-purple-600"></i>유료 보증 검증
               </span>
               {% endif %}
-              <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded">{{ c.category or '일반' }}</span>
+              <span class="text-xs text-slate-500 bg-slate-100 px-2 py-0.5 rounded font-medium">{{ c.category or '일반' }}</span>
+              <span id="testedBadge-{{ c.id }}" class="hidden text-xs font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-300 items-center gap-1">
+                <i class="fa-solid fa-check-double text-emerald-600 text-xs"></i>참여완료
+              </span>
             </div>
 
             {% if c.tester_reward and c.tester_reward > 0 %}
@@ -130,30 +161,40 @@
 
           <div class="space-y-1 pt-1">
             <div class="flex justify-between text-xs text-slate-600">
-              <span>참여 진척</span>
-              <span class="font-bold kh-tabular">{{ c.completed_testers }} / {{ c.target_testers }}명 ({{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%)</span>
+              <span class="text-slate-500 font-medium">검증 달성률</span>
+              <span class="font-bold kh-tabular text-purple-900">{{ c.completed_testers }} / {{ c.target_testers }}명 ({{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%)</span>
             </div>
             <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
-              <div class="bg-purple-600 h-1.5 rounded-full" style="width: {{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%"></div>
+              <div class="bg-gradient-to-r from-purple-600 to-cyan-500 h-1.5 rounded-full transition-all duration-300" style="width: {{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}%"></div>
             </div>
           </div>
         </div>
 
         <div class="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
-          <a href="/prototype/report/{{ c.id }}" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1">
-            <i class="fa-solid fa-chart-pie"></i> 설문 보고서
+          <a href="/prototype/report/{{ c.id }}" class="text-xs text-purple-700 hover:text-purple-900 font-semibold flex items-center gap-1 group">
+            <i class="fa-solid fa-chart-pie text-purple-600"></i>
+            <span class="group-hover:underline">설문 보고서</span>
           </a>
           <button type="button" onclick="openTesterModal('{{ c.id }}', '{{ c.title or c.item_id }}', '{{ c.prototype_url }}', {{ c.tester_reward or 0 }})" 
-                  class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow-sm">
-            <i class="fa-solid fa-play mr-1"></i>직접 체험 &amp; 의견 남기기
+                  class="krds-btn primary text-xs py-1.5 px-3 bg-purple-600 hover:bg-purple-700 text-white shadow-sm flex items-center gap-1">
+            <i class="fa-solid fa-play text-xs"></i>직접 체험 &amp; 의견 남기기
           </button>
         </div>
       </div>
-      {% else %}
-      <div class="col-span-3 text-center py-12 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-        선택하신 조건에 해당하는 동료 창업자 피드백 캠페인이 없습니다.
-      </div>
       {% endfor %}
+    </div>
+
+    <!-- 검색 결과 없음 안내 -->
+    <div id="noSearchResults" class="hidden text-center py-12 text-xs text-slate-500 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+      <i class="fa-solid fa-circle-exclamation text-slate-400 text-2xl mb-2 block"></i>
+      선택하신 조건 및 검색어에 해당하는 동료 창업자 피드백 캠페인이 없습니다.
+    </div>
+
+    <!-- 점진적 로딩 더보기 버튼 -->
+    <div id="loadMoreContainer" class="pt-4 text-center border-t border-slate-100">
+      <button type="button" id="btnLoadMoreLounge" onclick="loadMoreLoungeCards()" class="krds-btn ghost text-xs py-2.5 px-6 border border-purple-300 text-purple-700 bg-purple-50/50 hover:bg-purple-100 rounded-xl font-bold shadow-sm transition">
+        <i class="fa-solid fa-arrows-rotate mr-1.5"></i>더 많은 프로젝트 불러오기 (<span id="loadMoreNextCount">+18개</span>) · <span id="loadMoreRemainingCount">남은 250개</span>
+      </button>
     </div>
   </div>
 </div>
@@ -289,6 +330,7 @@
 </div>
 
 <!-- ====================================================================== -->
+<!-- ====================================================================== -->
 <!-- 6. 프로토타입 실사용 체험 및 피드백 모달 (테스터 모달) -->
 <!-- ====================================================================== -->
 <div id="testerModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
@@ -307,11 +349,27 @@
         <button type="button" onclick="closeTesterModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
       </div>
 
-      <div class="my-4 p-4 rounded-xl bg-purple-50/70 border border-purple-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <!-- 3단계 진행 가이드 탭 -->
+      <div class="grid grid-cols-3 gap-2 my-3 text-center text-xs">
+        <div id="stepGuide1" class="p-2 rounded-lg bg-purple-50 border border-purple-200 text-purple-900 font-bold flex items-center justify-center gap-1.5 transition">
+          <span class="w-4 h-4 rounded-full bg-purple-600 text-white flex items-center justify-center text-xs">1</span>
+          <span>새 창 열기 &amp; 탐색</span>
+        </div>
+        <div id="stepGuide2" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 font-medium flex items-center justify-center gap-1.5 transition">
+          <span class="w-4 h-4 rounded-full bg-slate-300 text-white flex items-center justify-center text-xs">2</span>
+          <span>30초 체크포인트</span>
+        </div>
+        <div id="stepGuide3" class="p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 font-medium flex items-center justify-center gap-1.5 transition">
+          <span class="w-4 h-4 rounded-full bg-slate-300 text-white flex items-center justify-center text-xs">3</span>
+          <span>진성 피드백 작성</span>
+        </div>
+      </div>
+
+      <div class="my-3 p-4 rounded-xl bg-purple-50/70 border border-purple-200 flex flex-col sm:flex-row items-center justify-between gap-4">
         <div class="space-y-1 text-center sm:text-left">
           <span class="text-xs text-purple-900 font-bold block">1단계: 실제 서비스 체험하기</span>
           <p class="text-xs text-slate-600 max-w-md">
-            새 창에서 열리는 기획안/프로토타입을 충분히 테스트해 보세요. 최소 사용 테스트 시간을 충족하면 아래 피드백 작성이 활성화됩니다.
+            새 창에서 열리는 기획안/프로토타입을 충분히 테스트해 보세요. 최소 사용 테스트 시간(60초)을 충족하면 아래 피드백 작성이 활성화됩니다.
           </p>
         </div>
         <button type="button" id="btnLaunchApp" onclick="launchPrototypeWindow()" class="krds-btn primary text-xs py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white shrink-0 shadow">
@@ -319,15 +377,24 @@
         </button>
       </div>
 
-      <div class="flex items-center justify-between p-3 rounded-lg bg-slate-100 border border-slate-200 text-xs mb-4">
-        <div class="flex items-center gap-2">
-          <span class="w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse" id="dwellStatusDot"></span>
-          <span class="font-bold text-slate-700" id="dwellStatusText">테스트 시작 전</span>
+      <!-- 활동 감지 펄스 게이지 및 타이머 바 -->
+      <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200 space-y-2 mb-4">
+        <div class="flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <span class="relative flex h-3 w-3">
+              <span id="dwellPulseRing" class="hidden animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+              <span id="dwellStatusDot" class="relative inline-flex rounded-full h-3 w-3 bg-amber-400"></span>
+            </span>
+            <span class="font-bold text-slate-800" id="dwellStatusText">테스트 시작 전</span>
+          </div>
+          <div class="font-mono text-xs flex items-center gap-1.5">
+            <span class="text-slate-500">실사용 체류: </span>
+            <span class="font-extrabold text-purple-700 kh-tabular text-sm" id="activeSecondsDisplay">0초</span>
+            <span class="text-slate-400"> / 최소 60초</span>
+          </div>
         </div>
-        <div class="font-mono text-xs">
-          <span class="text-slate-500">실사용 체류: </span>
-          <span class="font-bold text-purple-700 kh-tabular" id="activeSecondsDisplay">0초</span>
-          <span class="text-slate-400"> (최소 60초 필요)</span>
+        <div class="w-full bg-slate-200 rounded-full h-2 overflow-hidden">
+          <div id="dwellProgressBar" class="h-2 rounded-full bg-gradient-to-r from-purple-600 via-indigo-500 to-emerald-500 transition-all duration-300 w-0"></div>
         </div>
       </div>
 
@@ -434,12 +501,185 @@
     </div>
   </div>
 </div>
+
+<!-- 플로팅 토스트 컴포넌트 -->
+<div id="loungeToast" class="hidden fixed bottom-6 right-6 z-[999] max-w-sm p-4 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-3 transition-all transform translate-y-2 opacity-0"></div>
 {% endblock %}
 
 {% block scripts %}
 <script>
   let currentTrack = 'FREE';
 
+  // [Phase 1] 실시간 검색 및 필터 상태
+  let currentSearchQuery = '';
+  let currentTrackFilter = 'ALL';
+  let currentCategoryFilter = 'ALL';
+  let visibleLimit = 18;
+  const PAGE_CHUNK = 18;
+
+  // [Phase 2] 토스트 알림 컴포넌트 함수
+  let toastTimer = null;
+  function showLoungeToast(msg, type = 'warning') {
+    const toast = document.getElementById('loungeToast');
+    if (!toast) return;
+    if (toastTimer) clearTimeout(toastTimer);
+
+    const bg = type === 'warning' ? 'bg-amber-900/95 text-white border border-amber-500 shadow-amber-900/40' :
+               type === 'success' ? 'bg-emerald-900/95 text-white border border-emerald-500 shadow-emerald-900/40' :
+               'bg-slate-900/95 text-white border border-slate-700 shadow-slate-900/40';
+    const icon = type === 'warning' ? 'fa-triangle-exclamation text-amber-300' :
+                 type === 'success' ? 'fa-circle-check text-emerald-300' :
+                 'fa-circle-info text-cyan-300';
+
+    toast.className = `fixed bottom-6 right-6 z-[999] max-w-sm p-4 rounded-xl shadow-2xl text-xs font-medium flex items-center gap-3 transition-all duration-300 ${bg}`;
+    toast.innerHTML = `<i class="fa-solid ${icon} text-base shrink-0"></i><span class="leading-relaxed">${msg}</span>`;
+    toast.classList.remove('hidden', 'translate-y-2', 'opacity-0');
+
+    toastTimer = setTimeout(() => {
+      toast.classList.add('opacity-0', 'translate-y-2');
+      setTimeout(() => toast.classList.add('hidden'), 300);
+    }, 4500);
+  }
+
+  // [Phase 1] 8대 카테고리 퀵 칩 및 트랙 필터링 로직
+  function handleLoungeSearch(val) {
+    currentSearchQuery = (val || '').trim().toLowerCase();
+    const clearBtn = document.getElementById('clearSearchBtn');
+    if (clearBtn) {
+      if (currentSearchQuery.length > 0) {
+        clearBtn.classList.remove('hidden');
+      } else {
+        clearBtn.classList.add('hidden');
+      }
+    }
+    visibleLimit = PAGE_CHUNK;
+    applyLoungeFilters();
+  }
+
+  function clearLoungeSearch() {
+    const input = document.getElementById('loungeSearchInput');
+    if (input) input.value = '';
+    handleLoungeSearch('');
+  }
+
+  function filterByTrack(track) {
+    currentTrackFilter = track;
+    ['ALL', 'PAID', 'FREE'].forEach(t => {
+      const btn = document.getElementById('trackChip-' + t);
+      if (btn) {
+        if (t === track) {
+          btn.className = 'track-chip active px-3 py-1 rounded-lg text-xs font-semibold transition bg-purple-600 text-white shadow-sm';
+        } else {
+          btn.className = 'track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5';
+        }
+      }
+    });
+    visibleLimit = PAGE_CHUNK;
+    applyLoungeFilters();
+  }
+
+  function filterByCategory(category) {
+    currentCategoryFilter = category;
+    document.querySelectorAll('.category-chip').forEach(btn => {
+      const cat = btn.getAttribute('data-category');
+      if (cat === category) {
+        btn.className = 'category-chip active px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-purple-100 text-purple-800 border border-purple-300';
+      } else {
+        btn.className = 'category-chip px-2.5 py-1 rounded-full font-medium transition shrink-0 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200';
+      }
+    });
+    visibleLimit = PAGE_CHUNK;
+    applyLoungeFilters();
+  }
+
+  function loadMoreLoungeCards() {
+    visibleLimit += PAGE_CHUNK;
+    applyLoungeFilters();
+  }
+
+  function applyLoungeFilters() {
+    const cards = document.querySelectorAll('.campaign-card');
+    let matchedCount = 0;
+    const totalCount = cards.length;
+
+    cards.forEach(card => {
+      const track = card.getAttribute('data-track') || '';
+      const category = card.getAttribute('data-category') || '';
+      const title = card.getAttribute('data-title') || '';
+      const desc = card.getAttribute('data-desc') || '';
+
+      const matchTrack = (currentTrackFilter === 'ALL' || track === currentTrackFilter);
+      const matchCategory = (currentCategoryFilter === 'ALL' || category === currentCategoryFilter);
+      const matchSearch = (!currentSearchQuery || title.includes(currentSearchQuery) || desc.includes(currentSearchQuery) || category.toLowerCase().includes(currentSearchQuery));
+
+      if (matchTrack && matchCategory && matchSearch) {
+        matchedCount++;
+        if (matchedCount <= visibleLimit) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    // 뱃지 및 카운트 갱신
+    const badge = document.getElementById('filteredCountBadge');
+    if (badge) {
+      if (currentSearchQuery || currentTrackFilter !== 'ALL' || currentCategoryFilter !== 'ALL') {
+        badge.textContent = `검색 결과 ${matchedCount}개 / 전체 ${totalCount}개`;
+      } else {
+        badge.textContent = `전체 ${totalCount}개 프로젝트`;
+      }
+    }
+
+    // 결과 없음 안내
+    const noResults = document.getElementById('noSearchResults');
+    if (noResults) {
+      if (matchedCount === 0) {
+        noResults.classList.remove('hidden');
+      } else {
+        noResults.classList.add('hidden');
+      }
+    }
+
+    // 더보기 버튼 컨트롤
+    const loadMoreContainer = document.getElementById('loadMoreContainer');
+    if (loadMoreContainer) {
+      if (matchedCount > visibleLimit) {
+        loadMoreContainer.classList.remove('hidden');
+        const remaining = matchedCount - visibleLimit;
+        const nextBatch = Math.min(PAGE_CHUNK, remaining);
+        const nextSpan = document.getElementById('loadMoreNextCount');
+        const remSpan = document.getElementById('loadMoreRemainingCount');
+        if (nextSpan) nextSpan.textContent = `+${nextBatch}개`;
+        if (remSpan) remSpan.textContent = `남은 ${remaining}개`;
+      } else {
+        loadMoreContainer.classList.add('hidden');
+      }
+    }
+  }
+
+  function markCompletedFeedbacks() {
+    document.querySelectorAll('.campaign-card').forEach(card => {
+      const campId = card.getAttribute('data-id');
+      if (!campId) return;
+      const isDone = localStorage.getItem('sshai_tested_' + campId);
+      const badge = document.getElementById('testedBadge-' + campId);
+      if (badge) {
+        if (isDone === 'true') {
+          badge.classList.remove('hidden');
+          badge.classList.add('flex');
+        } else {
+          badge.classList.add('hidden');
+          badge.classList.remove('flex');
+        }
+      }
+    });
+  }
+
+  // [신규 프로젝트 등록 위저드]
   function selectTrack(track) {
     currentTrack = track;
     const freeLabel = document.getElementById('track-free-label');
@@ -509,9 +749,9 @@
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (res.ok && data.status === 'success') {
-        alert(isPaid ? '유료 보증 검증 캠페인이 성공적으로 등록되었습니다!' : '무료 커뮤니티 품앗이 캠페인이 성공적으로 등록되었습니다!');
-        location.reload();
+      if ((res.ok && data.status === 'success') || data.ok) {
+        showLoungeToast(isPaid ? '유료 보증 검증 캠페인이 성공적으로 등록되었습니다!' : '무료 커뮤니티 품앗이 캠페인이 성공적으로 등록되었습니다!', 'success');
+        setTimeout(() => location.reload(), 1200);
       } else {
         alert('등록 실패: ' + (data.message || '오류가 발생했습니다.'));
       }
@@ -520,13 +760,14 @@
     }
   }
 
-  // 테스터 모달 로직
+  // [Phase 2] 테스터 모달 로직 & 꼼수 방지 하트비트 타이머
   let activeSessionId = null;
   let activeCampaignId = null;
   let protoWindow = null;
   let dwellTimer = null;
   let activeSeconds = 0;
   let checkpointPassed = false;
+  let earlyCloseAlertGiven = false;
   const MIN_DWELL = 60;
 
   function openTesterModal(campId, campTitle, protoUrl, reward) {
@@ -534,6 +775,7 @@
     activeSessionId = null;
     activeSeconds = 0;
     checkpointPassed = false;
+    earlyCloseAlertGiven = false;
     if (dwellTimer) clearInterval(dwellTimer);
 
     document.getElementById('fb_campaign_id').value = campId;
@@ -563,12 +805,27 @@
   function resetTesterUI() {
     activeSeconds = 0;
     checkpointPassed = false;
+    earlyCloseAlertGiven = false;
     document.getElementById('activeSecondsDisplay').textContent = '0초';
-    document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-pulse';
+    document.getElementById('dwellProgressBar').style.width = '0%';
+    
+    const pulseRing = document.getElementById('dwellPulseRing');
+    if (pulseRing) pulseRing.classList.add('hidden');
+
+    document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-amber-400 animate-pulse';
     document.getElementById('dwellStatusText').textContent = '새 창 테스트 시작 대기 중';
+    
     const launchBtn = document.getElementById('btnLaunchApp');
     launchBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i>새 창으로 열기 &amp; 테스트 시작';
     launchBtn.className = 'krds-btn primary text-xs py-2 px-4 bg-purple-600 hover:bg-purple-700 text-white shrink-0 shadow';
+
+    // 가이드 스텝 리셋
+    const s1 = document.getElementById('stepGuide1');
+    const s2 = document.getElementById('stepGuide2');
+    const s3 = document.getElementById('stepGuide3');
+    if (s1) s1.className = 'p-2 rounded-lg bg-purple-50 border border-purple-200 text-purple-900 font-bold flex items-center justify-center gap-1.5 transition';
+    if (s2) s2.className = 'p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 font-medium flex items-center justify-center gap-1.5 transition';
+    if (s3) s3.className = 'p-2 rounded-lg bg-slate-50 border border-slate-200 text-slate-500 font-medium flex items-center justify-center gap-1.5 transition';
 
     const btn = document.getElementById('btnSubmitFeedback');
     btn.disabled = true;
@@ -579,8 +836,17 @@
   function confirmCheckpoint(actionTag) {
     checkpointPassed = true;
     document.getElementById('checkpointBox').classList.add('hidden');
-    document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
+    
+    const pulseRing = document.getElementById('dwellPulseRing');
+    if (pulseRing) pulseRing.classList.remove('hidden');
+
+    document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500 animate-ping';
     document.getElementById('dwellStatusText').textContent = `[${actionTag}] 확인 완료 · 잔여 시간 측정 재개`;
+    
+    const s2 = document.getElementById('stepGuide2');
+    if (s2) s2.className = 'p-2 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-900 font-bold flex items-center justify-center gap-1.5 transition';
+
+    showLoungeToast(`[${actionTag}] 진성 이용 확인 완료! 남은 테스트를 이어갑니다.`, 'success');
   }
 
   async function launchPrototypeWindow() {
@@ -605,44 +871,69 @@
     }
 
     protoWindow = window.open(url, '_blank');
+    earlyCloseAlertGiven = false;
+
     const launchBtn = document.getElementById('btnLaunchApp');
     launchBtn.innerHTML = '<i class="fa-solid fa-arrow-up-right-from-square mr-1.5"></i>테스트 창 열림 (체험 진행 중)';
     launchBtn.className = 'krds-btn ghost text-xs py-2 px-4 border border-purple-300 text-purple-700 shrink-0';
 
-    document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
-    document.getElementById('dwellStatusText').textContent = '실사용 테스트 진행 중...';
+    const pulseRing = document.getElementById('dwellPulseRing');
+    if (pulseRing) pulseRing.classList.remove('hidden');
+
+    document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500 animate-ping';
+    document.getElementById('dwellStatusText').textContent = '실사용 테스트 진행 중... (심장박동 감지)';
 
     if (dwellTimer) clearInterval(dwellTimer);
     dwellTimer = setInterval(async () => {
       // [보안 가드 1] 창 닫힘 실시간 감지 (새 창 열고 바로 닫는 꼼수 원천 차단)
       if (!protoWindow || protoWindow.closed) {
-        document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse';
+        if (pulseRing) pulseRing.classList.add('hidden');
+        document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-rose-500 animate-pulse';
         document.getElementById('dwellStatusText').textContent = '⚠️ 테스트 창이 닫혀 시간이 멈췄습니다';
         launchBtn.innerHTML = '<i class="fa-solid fa-rotate-right mr-1.5"></i>테스트 창 다시 열기 (이어하기)';
         launchBtn.className = 'krds-btn warning text-xs py-2 px-4 bg-amber-500 hover:bg-amber-600 text-white shrink-0 shadow animate-bounce';
+        
+        // 30초 미만 조기 종료 시 안내 토스트 1회 트리거
+        if (activeSeconds < 30 && !earlyCloseAlertGiven) {
+          earlyCloseAlertGiven = true;
+          showLoungeToast('⚠️ 테스트 창이 조기 종료되었습니다. 최소 30초 이상 체험 및 체크포인트를 통과해야 타이머가 유지됩니다.', 'warning');
+        }
         return; // 누적 중단
       }
 
       // [보안 가드 2] 30초 체크포인트 챌린지 (창 띄워놓고 딴짓/방치 꼼수 차단)
       if (activeSeconds >= 30 && !checkpointPassed) {
         document.getElementById('checkpointBox').classList.remove('hidden');
-        document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-amber-500 animate-bounce';
+        if (pulseRing) pulseRing.classList.add('hidden');
+        document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-amber-500 animate-bounce';
         document.getElementById('dwellStatusText').textContent = '💡 30초 중간 인터랙션 확인 필요 (위 체크박스 선택)';
+        
+        const s2 = document.getElementById('stepGuide2');
+        if (s2) s2.className = 'p-2 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 font-bold flex items-center justify-center gap-1.5 transition animate-pulse';
         return; // 체크포인트 통과할 때까지 시간 누적 일시정지
       }
 
       activeSeconds += 1;
       document.getElementById('activeSecondsDisplay').textContent = `${activeSeconds}초`;
-      document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping';
-      document.getElementById('dwellStatusText').textContent = '실사용 테스트 진행 중...';
+
+      // 프로그레스 바 연동
+      const pct = Math.min(100, Math.round((activeSeconds / MIN_DWELL) * 100));
+      document.getElementById('dwellProgressBar').style.width = pct + '%';
+
+      if (pulseRing) pulseRing.classList.remove('hidden');
+      document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500 animate-ping';
+      document.getElementById('dwellStatusText').textContent = '실사용 테스트 진행 중... (심장박동 감지)';
 
       if (activeSeconds >= MIN_DWELL) {
         const btn = document.getElementById('btnSubmitFeedback');
         btn.disabled = false;
         btn.className = 'px-4 py-1.5 rounded bg-purple-600 text-white font-bold hover:bg-purple-700 shadow';
         btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-1"></i>피드백 제출 및 완료';
-        document.getElementById('dwellStatusDot').className = 'w-2.5 h-2.5 rounded-full bg-emerald-500';
+        document.getElementById('dwellStatusDot').className = 'relative inline-flex rounded-full h-3 w-3 bg-emerald-500';
         document.getElementById('dwellStatusText').textContent = '최소 테스트 시간 충족 (제출 가능)';
+
+        const s3 = document.getElementById('stepGuide3');
+        if (s3) s3.className = 'p-2 rounded-lg bg-purple-50 border border-purple-300 text-purple-900 font-bold flex items-center justify-center gap-1.5 transition';
       }
 
       if (activeSeconds % 5 === 0 && activeSessionId) {
@@ -669,8 +960,8 @@
     }
 
     const qText = document.getElementById('feedback_text').value.trim();
-    if (qText.length < 20) {
-      alert('성실한 피드백을 위해 구체적인 사용 의견을 최소 20자 이상 작성해 주세요.');
+    if (qText.length < 15) {
+      alert('성실한 피드백을 위해 구체적인 사용 의견을 최소 15자 이상 작성해 주세요.');
       return;
     }
 
@@ -680,8 +971,9 @@
       return;
     }
 
+    const campId = document.getElementById('fb_campaign_id').value;
     const payload = {
-      campaign_id: document.getElementById('fb_campaign_id').value,
+      campaign_id: campId,
       session_id: document.getElementById('fb_session_id').value || activeSessionId,
       tester_id: 'tester_default',
       ux_score: parseInt(document.getElementById('score_ux').value, 10),
@@ -699,10 +991,16 @@
         body: JSON.stringify(payload)
       });
       const data = await res.json();
-      if (res.ok && data.status === 'success') {
-        alert(data.message || '피드백이 성공적으로 등록되었습니다!');
+      if ((res.ok && data.status === 'success') || data.ok) {
+        // 참여 완료 로컬 영속화 및 뱃지 즉시 표기
+        try {
+          localStorage.setItem('sshai_tested_' + campId, 'true');
+        } catch(e) {}
+        markCompletedFeedbacks();
+        
+        showLoungeToast(data.message || '피드백이 성공적으로 등록되었습니다! 리워드가 정산되었습니다.', 'success');
         closeTesterModal();
-        location.reload();
+        setTimeout(() => location.reload(), 1500);
       } else {
         alert('피드백 제출 실패: ' + (data.message || '오류가 발생했습니다.'));
       }
@@ -710,5 +1008,11 @@
       alert('통신 오류: ' + err);
     }
   }
+
+  // 페이지 로드 시 초기 필터 및 완료 뱃지 렌더링
+  document.addEventListener('DOMContentLoaded', () => {
+    applyLoungeFilters();
+    markCompletedFeedbacks();
+  });
 </script>
 {% endblock %}

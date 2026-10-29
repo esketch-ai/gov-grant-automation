@@ -475,3 +475,53 @@ class TestPrototypeWebAPIs:
             json={"campaign_id": camp_id, "tester_id": diff_tester},
         )
         assert s_diff.status_code == 200
+
+    def test_feedback_lounge_phase1_smart_search_and_pagination_ui(self, client):
+        """Phase 1: 피드백 라운지 실시간 키워드 검색, 카테고리 퀵 칩, 점진적 로딩(+18개) UI 검증."""
+        res = client.get("/feedback-lounge")
+        assert res.status_code == 200
+        # 실시간 검색창 및 칩
+        assert "loungeSearchInput" in res.text
+        assert "handleLoungeSearch" in res.text
+        assert "clearLoungeSearch" in res.text
+        assert "filteredCountBadge" in res.text
+        assert "category-chip" in res.text
+        assert "AI·딥테크" in res.text or "AI/딥테크" in res.text
+        # 점진적 로딩(+18) 및 완료 뱃지
+        assert "loadMoreContainer" in res.text
+        assert "btnLoadMoreLounge" in res.text
+        assert "loadMoreLoungeCards" in res.text
+        assert "testedBadge-" in res.text
+
+    def test_feedback_lounge_phase2_pulse_indicator_and_toast_ui(self, client):
+        """Phase 2: 체험 모달 3단계 가이드, 실시간 펄스 인디케이터, 활동 프로그레스 바, 토스트 알림 검증."""
+        res = client.get("/feedback-lounge")
+        assert res.status_code == 200
+        assert "stepGuide1" in res.text
+        assert "stepGuide2" in res.text
+        assert "stepGuide3" in res.text
+        assert "dwellPulseRing" in res.text
+        assert "dwellProgressBar" in res.text
+        assert "loungeToast" in res.text
+        assert "showLoungeToast" in res.text
+
+    def test_biz_dashboard_phase3_25_point_preflight_modal_and_print(self, client):
+        """Phase 3: 사업자 대시보드 25대 법정 결격사유 사전 자격 진단 명세서 모달 및 인쇄/PDF 검증."""
+        res = client.get("/dashboard/biz")
+        assert res.status_code == 200
+        # 25대 신호등 트리거 버튼
+        assert "openPreflightModal" in res.text
+        assert "25대 지원 결격 사유 0건" in res.text
+        # 모달 및 전수 25개 항목
+        assert "preflightModal" in res.text
+        assert "2026 정부지원사업 25대 법정 결격사유 사전 자격 진단 명세서" in res.text
+        assert "SSA Gov-Preflight Engine" in res.text
+        assert "국세 기본법 제29조" in res.text
+        assert "지방세 징수법 제30조" in res.text
+        assert "4대 사회보험료" in res.text
+        assert "전국은행연합회 신용정보관리규약" in res.text
+        assert "국가연구개발혁신법 제32조" in res.text
+        assert "3책 5공 규정" in res.text
+        assert "중소기업기본법 제2조" in res.text
+        assert "printPreflightReport" in res.text
+        assert "@media print" in res.text

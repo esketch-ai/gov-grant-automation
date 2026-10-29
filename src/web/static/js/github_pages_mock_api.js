@@ -27,6 +27,15 @@
     // URL에서 쿼리스트링 분리
     const [path, queryString] = url.split('?');
 
+    // 0. 신규 캠페인 등록 (GitHub Pages 데모)
+    if (path.includes('/api/prototype/campaigns')) {
+      return new Response(JSON.stringify({
+        status: 'success',
+        ok: true,
+        message: '모두의 창업비서(SSA) 신규 피드백 검증 캠페인이 등록되었습니다! (GitHub Pages 데모)'
+      }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+    }
+
     // 1. 프로토타입 세션 시작
     if (path.includes('/api/prototype/sessions/start')) {
       const sessionId = 'gh_sess_' + Math.random().toString(36).substring(2, 9);

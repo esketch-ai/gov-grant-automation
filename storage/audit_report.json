@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-10-29T23:36:54.375458",
-  "duration_seconds": 2.835038,
+  "timestamp": "2026-10-30T00:18:44.316169",
+  "duration_seconds": 2.796053,
   "all_passed": true,
   "total_score": 100.0,
   "max_score": 100.0,
@@ -113,7 +113,7 @@
       "max_score": 20.0,
       "summary": "DB 스키마, 2026 연도 거버넌스, 참조 무결성, 발송 중복제약 전수 통과",
       "details": [
-        "PASS: 4대 핵심 테이블 스키마 존재 확인: ['dispatch_history', 'rfp_chunks', 'announcements', 'site_selectors']",
+        "PASS: 4대 핵심 테이블 스키마 존재 확인: ['site_selectors', 'dispatch_history', 'announcements', 'rfp_chunks']",
         "PASS: announcements.target_year 거버넌스 컬럼 확인",
         "PASS: DB 내 2025년 이하 과거 공고 0건(완전 격리) 검증 완료",
         "PASS: announcements - rfp_chunks 간 고아 레코드 0건(참조 무결성 유지)",

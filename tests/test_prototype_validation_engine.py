@@ -525,3 +525,41 @@ class TestPrototypeWebAPIs:
         assert "중소기업기본법 제2조" in res.text
         assert "printPreflightReport" in res.text
         assert "@media print" in res.text
+
+    def test_feedback_lounge_plan2_advanced_sorting_and_roi_calculator(self, client):
+        """방안 2: 피드백 라운지 정렬 드롭다운, 토글 칩, 우수 테스터 리더보드, ROI 시뮬레이터 검증."""
+        res = client.get("/feedback-lounge")
+        assert res.status_code == 200
+        # 정렬 및 토글
+        assert "loungeSortSelect" in res.text
+        assert "btnToggleOnlyPaid" in res.text
+        assert "btnToggleOnlyAvailable" in res.text
+        assert "handleSortChange" in res.text
+        # 이달의 우수 테스터 명예의 전당
+        assert "우수 테스터 명예의 전당" in res.text
+        assert "성실 최우수" in res.text
+        # ROI 계산기 모달
+        assert "roiCalculatorModal" in res.text
+        assert "openRoiCalculatorModal" in res.text
+        assert "calcTestersSlider" in res.text
+        assert "calcRewardSelect" in res.text
+        assert "calcTotalBudgetDisplay" in res.text
+
+    def test_platform_plan3_3d_emblem_and_competency_gauge_visuals(self, client):
+        """방안 3: 전면 비주얼 리팩토링 - 3D 엠블럼 연동, 4대 수주 역량 다이얼 및 K-Horizon 2027 뎁스 검증."""
+        # 인트로 3D 엠블럼 및 신뢰 뱃지
+        res_intro = client.get("/intro")
+        assert res_intro.status_code == 200
+        assert "ssa_brand_emblem_3d" in res_intro.text
+        assert "25대 결격사유 ALL PASS" in res_intro.text
+        assert "SHA-256 공인 인증필" in res_intro.text
+
+        # 사업자 대시보드 3D 엠블럼 및 4대 역량 시각화
+        res_biz = client.get("/dashboard/biz")
+        assert res_biz.status_code == 200
+        assert "ssa_brand_emblem_3d" in res_biz.text
+        assert "2026 정부지원사업 수주 적합도 종합 진단" in res_biz.text
+        assert "종합 수주 지수" in res_biz.text
+        assert "기술 혁신성" in res_biz.text
+        assert "시장성 &amp; 실사용 검증" in res_biz.text or "시장성 & 실사용 검증" in res_biz.text
+        assert "Company Vault 2026 Engine" in res_biz.text

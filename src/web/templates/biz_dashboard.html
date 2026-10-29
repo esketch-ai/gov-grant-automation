@@ -17,8 +17,9 @@
           </span>
           <span class="text-xs text-emerald-300/80 hidden sm:inline">&bull; 2026 정부지원사업 실시간 맞춤 수주</span>
         </div>
-        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-          사업자 맞춤 수주 워크스페이스
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+          <img src="/static/img/ssa_brand_emblem_3d_v2.png" alt="SSA Emblem" class="w-8 h-8 rounded-lg object-contain drop-shadow inline-block">
+          <span>사업자 맞춤 수주 워크스페이스</span>
         </h1>
         <p class="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-2xl">
           기업 업종 및 기술 스펙에 최적화된 2026 정부지원사업 공고 분석, 공고 요건 정밀 분석 및 자격 진단, 5대 전문 파트너 자문을 지원합니다.
@@ -79,6 +80,95 @@
         <div><strong>주요 주관기관:</strong> <span id="bm-agencies">IITP, TIPA, NIPA</span></div>
         <div><strong>평균 지원규모:</strong> <span id="bm-grant-scale">2억 ~ 10억 원</span></div>
         <div><strong>핵심 가점사항:</strong> <span id="bm-bonus-point">특허 1건 이상, 연구전담인력 보유</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2026 정부지원사업 수주 적합도 종합 진단 (4대 핵심 역량 시각화) -->
+  <div class="krds-card p-5 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-xl border border-indigo-800/40 reveal">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="kh-badge cyan"><i class="fa-solid fa-chart-line mr-1"></i>정밀 역량 진단</span>
+          <span class="kh-badge emerald"><i class="fa-solid fa-trophy mr-1"></i>S등급 종합 수주 최우수</span>
+          <span class="text-xs text-indigo-300 font-mono">Company Vault 2026 Engine</span>
+        </div>
+        <h3 class="text-base sm:text-lg font-bold text-white tracking-tight flex items-center gap-2">
+          2026 정부지원사업 수주 적합도 종합 진단 지표
+        </h3>
+        <p class="text-xs text-indigo-200">
+          기술보증기금·중진공·연구개발특구 4대 공통 평가 지표를 실시간 기업 금고 데이터와 1:1 대조 분석한 지수입니다.
+        </p>
+      </div>
+
+      <!-- 종합 적합도 점수 다이얼 -->
+      <div class="flex items-center gap-3 shrink-0 p-3 bg-white/10 rounded-xl border border-white/15 backdrop-blur-sm">
+        <div class="text-right">
+          <span class="text-xs text-indigo-300 block font-medium">종합 수주 지수</span>
+          <span class="text-2xl font-black text-white kh-tabular">92.5<span class="text-xs font-normal text-emerald-300 ml-1">/ 100점</span></span>
+        </div>
+        <div class="w-12 h-12 rounded-full border-4 border-emerald-400 bg-emerald-950/60 flex items-center justify-center text-emerald-300 font-extrabold text-sm shadow-inner shadow-emerald-500/30">
+          S
+        </div>
+      </div>
+    </div>
+
+    <!-- 4대 축 게이지 바 -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 pt-4">
+      <!-- 축 1: 기술 혁신성 -->
+      <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-indigo-200 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-microchip text-cyan-400"></i>기술 혁신성
+          </span>
+          <span class="font-extrabold text-cyan-300 kh-tabular">92점</span>
+        </div>
+        <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-cyan-500 to-blue-500 h-1.5 rounded-full" style="width: {{ 92 }}%"></div>
+        </div>
+        <p class="text-xs text-slate-400">특허 2건 보유 · AI AX 모델</p>
+      </div>
+
+      <!-- 축 2: 시장성 및 검증도 -->
+      <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-indigo-200 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-users-viewfinder text-purple-400"></i>시장성 &amp; 실사용 검증
+          </span>
+          <span class="font-extrabold text-purple-300 kh-tabular">88점</span>
+        </div>
+        <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-purple-500 to-pink-500 h-1.5 rounded-full" style="width: {{ 88 }}%"></div>
+        </div>
+        <p class="text-xs text-slate-400">라운지 테스터 30명 완료</p>
+      </div>
+
+      <!-- 축 3: 25대 법적 결격사유 -->
+      <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-indigo-200 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved text-emerald-400"></i>법적 결격사유 점검
+          </span>
+          <span class="font-extrabold text-emerald-300 kh-tabular">100점</span>
+        </div>
+        <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full" style="width: {{ 100 }}%"></div>
+        </div>
+        <p class="text-xs text-slate-400">25대 법정 기준 ALL PASS</p>
+      </div>
+
+      <!-- 축 4: 정책 부합도 -->
+      <div class="p-3 rounded-xl bg-white/5 border border-white/10 space-y-2">
+        <div class="flex justify-between items-center text-xs">
+          <span class="text-indigo-200 font-semibold flex items-center gap-1.5">
+            <i class="fa-solid fa-building-flag text-amber-400"></i>2026 정책 부합도
+          </span>
+          <span class="font-extrabold text-amber-300 kh-tabular">90점</span>
+        </div>
+        <div class="w-full bg-white/10 rounded-full h-1.5 overflow-hidden">
+          <div class="bg-gradient-to-r from-amber-500 to-orange-400 h-1.5 rounded-full" style="width: {{ 90 }}%"></div>
+        </div>
+        <p class="text-xs text-slate-400">국가 10대 전략 AX 트랙</p>
       </div>
     </div>
   </div>

@@ -6,9 +6,28 @@
 <div class="space-y-10">
   <!-- 메인 히어로 섹션 -->
   <section id="hero-intro" class="kh-hero-obsidian kh-page-hero reveal kh-scroll-target">
-    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
-      <span class="kh-badge cyan">모두의 창업비서 (SSA)<span class="sr-only">Startup Secretary for All</span></span>
-      <span class="text-xs text-cyan-300">중앙부처·공공기관 실시간 공고 분석 · 25대 결격사유 1초 사전 검증</span>
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 mb-5 p-4 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-md shadow-xl">
+      <div class="flex items-center gap-3.5">
+        <div class="relative shrink-0">
+          <div class="absolute -inset-1 rounded-full bg-gradient-to-r from-purple-600 to-cyan-500 opacity-60 blur-md animate-pulse"></div>
+          <img src="/static/img/ssa_brand_emblem_3d_v2.png" alt="SSA Brand Emblem" class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-contain drop-shadow-[0_0_15px_rgba(168,85,247,0.5)]">
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="kh-badge cyan font-bold">모두의 창업비서 (SSA)</span>
+            <span class="text-xs font-semibold text-purple-300">Startup Secretary for All</span>
+          </div>
+          <p class="text-xs text-slate-300 mt-0.5">중기부·과기정통부 R&amp;D/사업화 공고 분석 · 25대 법정 결격사유 0.05초 사전 검증 인텔리전스</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap text-xs">
+        <span class="px-2.5 py-1 rounded-lg bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1 font-semibold">
+          <i class="fa-solid fa-circle-check text-emerald-400"></i>25대 결격사유 ALL PASS
+        </span>
+        <span class="px-2.5 py-1 rounded-lg bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 font-semibold">
+          <i class="fa-solid fa-shield-halved text-cyan-400"></i>SHA-256 공인 인증필
+        </span>
+      </div>
     </div>
 
     <!-- 시연 비디오 -->

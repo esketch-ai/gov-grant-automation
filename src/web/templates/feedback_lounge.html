@@ -30,6 +30,9 @@
       </div>
 
       <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+        <button type="button" onclick="openRoiCalculatorModal()" class="kh-btn-cta ghost text-xs py-2.5 px-4 bg-white/10 hover:bg-white/20 text-white border border-white/20 backdrop-blur-sm shadow-md flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-calculator text-cyan-300"></i>검증 견적 &amp; 기대효과
+        </button>
         <button type="button" onclick="openRegistrationModal()" class="kh-btn-cta primary text-xs py-2.5 px-4 bg-purple-600 hover:bg-purple-700 text-white shadow-lg">
           <i class="fa-solid fa-plus mr-1.5"></i>내 기획·앱 피드백 요청하기
         </button>
@@ -49,6 +52,84 @@
     {{ kh.kh_kpi_card('kpi-lounge-projects', stats.total_projects|string + '개', '누적 등록 프로젝트', '무료 품앗이 및 유료 보증 캠페인', '창업 아이템', 'violet') }}
     {{ kh.kh_kpi_card('kpi-lounge-testers', stats.total_testers|string + '명', '누적 참여 테스터', '최소 테스트 시간 검증 통과 인원', '진성 사용자 피드백', 'emerald') }}
     {{ kh.kh_kpi_card('kpi-lounge-rewards', stats.total_rewards_paid|string + '원', '누적 정산 리워드', '성실 피드백 참여 창업자 지급액', '상호 상생 리워드', 'cyan') }}
+  </div>
+
+  <!-- 2-1. 이달의 우수 테스터 명예의 전당 (Top 5 성실 검증자) -->
+  <div class="krds-card p-4 bg-gradient-to-r from-purple-900/5 via-indigo-900/5 to-slate-900/5 border border-purple-200/80 rounded-2xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-purple-100">
+      <div class="flex items-center gap-2.5">
+        <span class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-bold shadow-sm shrink-0">
+          <i class="fa-solid fa-trophy"></i>
+        </span>
+        <div>
+          <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
+            2026년 10월 우수 테스터 명예의 전당
+            <span class="text-xs px-1.5 py-0.5 rounded-full bg-purple-100 text-purple-800 font-semibold">실시간 성실 검증 랭킹</span>
+          </h3>
+          <p class="text-xs text-slate-500">60초 이상 진성 체험과 15자 이상 구체 피드백을 작성한 창업자 테스터 랭킹입니다.</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="px-3 py-1.5 rounded-xl bg-purple-50 border border-purple-200 text-xs font-semibold text-purple-800 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-check text-purple-600"></i>
+          <span>내 품앗이 랭킹: <strong class="text-purple-950 font-bold">상위 8%</strong> (누적 12건 · 24,000원 적립)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 sm:grid-cols-5 gap-2.5 pt-3">
+      <!-- 1위 -->
+      <div class="p-2.5 rounded-xl bg-white border-2 border-amber-300 shadow-sm flex flex-col justify-between space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-extrabold px-1.5 py-0.5 rounded bg-amber-400 text-amber-950 flex items-center gap-1">
+            <i class="fa-solid fa-crown text-xs"></i>1위
+          </span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">96,000원</span>
+        </div>
+        <p class="text-xs font-bold text-slate-900 truncate">성상헌 (에스케치)</p>
+        <p class="text-xs text-slate-500">검증 48건 완료 · 성실 최우수</p>
+      </div>
+
+      <!-- 2위 -->
+      <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-slate-200 text-slate-700">2위</span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">70,000원</span>
+        </div>
+        <p class="text-xs font-bold text-slate-900 truncate">김도현 (딥테크Lab)</p>
+        <p class="text-xs text-slate-500">검증 35건 완료 · 우수 리뷰어</p>
+      </div>
+
+      <!-- 3위 -->
+      <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-800">3위</span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">58,000원</span>
+        </div>
+        <p class="text-xs font-bold text-slate-900 truncate">이지원 (로컬플랫폼)</p>
+        <p class="text-xs text-slate-500">검증 29건 완료 · 정밀 분석</p>
+      </div>
+
+      <!-- 4위 -->
+      <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">4위</span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">48,000원</span>
+        </div>
+        <p class="text-xs font-bold text-slate-900 truncate">박민우 (B2B SaaS)</p>
+        <p class="text-xs text-slate-500">검증 24건 완료</p>
+      </div>
+
+      <!-- 5위 -->
+      <div class="p-2.5 rounded-xl bg-white border border-slate-200 shadow-sm flex flex-col justify-between space-y-1">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-slate-100 text-slate-600">5위</span>
+          <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">38,000원</span>
+        </div>
+        <p class="text-xs font-bold text-slate-900 truncate">최윤정 (임팩트ESG)</p>
+        <p class="text-xs text-slate-500">검증 19건 완료</p>
+      </div>
+    </div>
   </div>
 
   <!-- 3. 필터 및 탭 컨트롤 바 -->
@@ -79,20 +160,41 @@
       </div>
     </div>
 
-    <!-- 트랙 및 카테고리 퀵 칩 -->
-    <div class="space-y-2.5">
-      <!-- 1) 트랙 선택 탭 -->
-      <div class="flex items-center gap-2 flex-wrap">
-        <span class="text-xs font-bold text-slate-600 mr-1">방식:</span>
-        <button type="button" onclick="filterByTrack('ALL')" id="trackChip-ALL" class="track-chip active px-3 py-1 rounded-lg text-xs font-semibold transition bg-purple-600 text-white shadow-sm">
-          전체 트랙
-        </button>
-        <button type="button" onclick="filterByTrack('PAID')" id="trackChip-PAID" class="track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5">
-          <i class="fa-solid fa-gem text-amber-500"></i>유료 보증 검증
-        </button>
-        <button type="button" onclick="filterByTrack('FREE')" id="trackChip-FREE" class="track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5">
-          <i class="fa-solid fa-seedling text-emerald-600"></i>무료 커뮤니티 품앗이
-        </button>
+    <!-- 트랙 및 카테고리 퀵 칩 & 정렬/조건 필터 바 -->
+    <div class="space-y-3">
+      <!-- 1) 트랙 선택 탭 및 정렬 드롭다운 & 토글 -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="text-xs font-bold text-slate-600 mr-1">방식:</span>
+          <button type="button" onclick="filterByTrack('ALL')" id="trackChip-ALL" class="track-chip active px-3 py-1 rounded-lg text-xs font-semibold transition bg-purple-600 text-white shadow-sm">
+            전체 트랙
+          </button>
+          <button type="button" onclick="filterByTrack('PAID')" id="trackChip-PAID" class="track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-gem text-amber-500"></i>유료 보증 검증
+          </button>
+          <button type="button" onclick="filterByTrack('FREE')" id="trackChip-FREE" class="track-chip px-3 py-1 rounded-lg text-xs font-semibold transition bg-slate-100 text-slate-600 hover:bg-slate-200 flex items-center gap-1.5">
+            <i class="fa-solid fa-seedling text-emerald-600"></i>무료 커뮤니티 품앗이
+          </button>
+        </div>
+
+        <!-- 정렬 및 토글 칩 -->
+        <div class="flex items-center gap-2 flex-wrap text-xs">
+          <button type="button" id="btnToggleOnlyPaid" onclick="toggleOnlyPaidFilter()" class="px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition font-medium flex items-center gap-1">
+            <i class="fa-solid fa-gem text-purple-600"></i><span>보증 리워드만</span>
+          </button>
+          <button type="button" id="btnToggleOnlyAvailable" onclick="toggleOnlyAvailableFilter()" class="px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition font-medium flex items-center gap-1">
+            <i class="fa-solid fa-bolt text-amber-500"></i><span>진행 중만</span>
+          </button>
+          <div class="flex items-center gap-1.5 pl-2 border-l border-slate-200">
+            <span class="text-slate-500 font-medium">정렬:</span>
+            <select id="loungeSortSelect" onchange="handleSortChange(this.value)" class="border border-slate-200 rounded-lg py-1 px-2 bg-white text-slate-700 text-xs focus:ring-1 focus:ring-purple-400">
+              <option value="latest" selected>최신 등록순</option>
+              <option value="popular">검증 달성률순</option>
+              <option value="reward">보증 리워드순</option>
+              <option value="closing">마감 임박순</option>
+            </select>
+          </div>
+        </div>
       </div>
 
       <!-- 2) 8대 분야 퀵 칩 -->
@@ -117,7 +219,13 @@
            data-track="{{ c.request_type }}"
            data-category="{{ c.category or '일반' }}"
            data-title="{{ (c.title or c.item_id)|lower }}"
-           data-desc="{{ (c.description or '')|lower }}">
+           data-desc="{{ (c.description or '')|lower }}"
+           data-reward="{{ c.tester_reward or 0 }}"
+           data-rate="{{ [((c.completed_testers / c.target_testers) * 100)|round|int, 100]|min }}"
+           data-completed="{{ c.completed_testers }}"
+           data-target="{{ c.target_testers }}"
+           data-remaining="{{ c.target_testers - c.completed_testers }}"
+           data-index="{{ loop.index }}">
         <div class="space-y-2">
           <div class="flex justify-between items-start gap-2">
             <div class="flex items-center gap-1.5 flex-wrap">
@@ -502,6 +610,87 @@
   </div>
 </div>
 
+<!-- ====================================================================== -->
+<!-- 7. 창업자 전용 검증 견적 & 기대효과 시뮬레이터 모달 (#roiCalculatorModal) -->
+<!-- ====================================================================== -->
+<div id="roiCalculatorModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
+  <div class="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 text-xs text-slate-700 my-8 max-h-[90vh] overflow-y-auto space-y-5 border border-slate-200">
+    <div class="flex justify-between items-center pb-3 border-b border-slate-100">
+      <div class="space-y-1">
+        <div class="flex items-center gap-2">
+          <span class="kh-badge violet"><i class="fa-solid fa-calculator mr-1"></i>검증 ROI 시뮬레이터</span>
+          <h3 class="text-sm font-bold text-slate-900">프로토타입 검증 견적 &amp; 기대효과</h3>
+        </div>
+        <p class="text-xs text-slate-500">원하는 테스터 모수와 리워드를 설정하여 예상 소요 비용과 사업계획서 증빙 효과를 계산합니다.</p>
+      </div>
+      <button type="button" onclick="closeRoiCalculatorModal()" class="text-slate-400 hover:text-slate-600 text-xl leading-none">&times;</button>
+    </div>
+
+    <!-- 슬라이더 컨트롤 -->
+    <div class="space-y-4">
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="font-bold text-slate-800">1. 목표 검증 테스터 수</label>
+          <span class="font-bold text-purple-700 text-sm kh-tabular" id="calcTestersDisplay">30명</span>
+        </div>
+        <input type="range" id="calcTestersSlider" min="10" max="100" step="10" value="30" oninput="updateRoiCalc()" class="w-full accent-purple-600 cursor-pointer">
+        <div class="flex justify-between text-slate-400 text-xs mt-1">
+          <span>10명 (최소 검증)</span>
+          <span>50명 (표준 검증)</span>
+          <span>100명 (대규모 검증)</span>
+        </div>
+      </div>
+
+      <div>
+        <div class="flex justify-between items-center mb-1.5">
+          <label class="font-bold text-slate-800">2. 테스터 건당 리워드</label>
+          <span class="font-bold text-emerald-700 text-sm kh-tabular" id="calcRewardDisplay">2,000원</span>
+        </div>
+        <select id="calcRewardSelect" onchange="updateRoiCalc()" class="w-full border rounded-lg p-2.5 bg-white text-xs font-semibold">
+          <option value="0">0원 - 무료 커뮤니티 품앗이 (상호 피드백 교환)</option>
+          <option value="1000">1,000원 - 가벼운 체험 및 단문 피드백</option>
+          <option value="2000" selected>2,000원 - 표준 보증 검증 (60초+15자 심층 피드백, 권장)</option>
+          <option value="3000">3,000원 - 전문 도메인 피드백 우대</option>
+          <option value="5000">5,000원 - VIP 심층 전문가 피드백</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 실시간 산출 결과 카드 -->
+    <div class="p-4 rounded-xl bg-purple-50/70 border border-purple-200 space-y-3">
+      <div class="flex justify-between items-center border-b border-purple-200/60 pb-2">
+        <span class="font-bold text-slate-700">예상 총 소요 비용:</span>
+        <span class="font-extrabold text-base text-purple-900 kh-tabular" id="calcTotalBudgetDisplay">60,000원</span>
+      </div>
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div class="space-y-0.5">
+          <span class="text-slate-500 block">예상 완료 소요일:</span>
+          <span class="font-bold text-slate-800" id="calcEtaDisplay">약 24 ~ 48시간 내</span>
+        </div>
+        <div class="space-y-0.5">
+          <span class="text-slate-500 block">정부과제 적합도:</span>
+          <span class="font-bold text-emerald-700">시장성 증빙 100% 충족</span>
+        </div>
+      </div>
+      <div class="p-2.5 rounded-lg bg-white border border-purple-200/70 text-slate-600 text-xs leading-relaxed space-y-1">
+        <div class="font-bold text-purple-950 flex items-center gap-1">
+          <i class="fa-solid fa-file-shield text-purple-600"></i>발급 보고서 혜택:
+        </div>
+        <p>• <strong>SHA-256 공인 날인</strong> 설문 결과 통계 보고서 즉시 발급</p>
+        <p>• 초기창업패키지, 디딤돌 R&amp;D 등 정부과제 사업계획서 <strong>[시장 검증 및 고객 반응]</strong> 증빙 자료 영구 소장</p>
+      </div>
+    </div>
+
+    <!-- 하단 액션 버튼 -->
+    <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+      <button type="button" onclick="closeRoiCalculatorModal()" class="px-3 py-2 rounded-lg border text-slate-600 hover:bg-slate-50">닫기</button>
+      <button type="button" onclick="applyRoiToRegistration()" class="px-5 py-2 rounded-lg bg-purple-600 hover:bg-purple-700 text-white font-bold shadow-md flex items-center gap-1.5">
+        <i class="fa-solid fa-paper-plane"></i>이 견적으로 즉시 요청 등록하기
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- 플로팅 토스트 컴포넌트 -->
 <div id="loungeToast" class="hidden fixed bottom-6 right-6 z-[999] max-w-sm p-4 rounded-xl shadow-2xl text-xs font-semibold flex items-center gap-3 transition-all transform translate-y-2 opacity-0"></div>
 {% endblock %}
@@ -510,12 +699,98 @@
 <script>
   let currentTrack = 'FREE';
 
-  // [Phase 1] 실시간 검색 및 필터 상태
+  // [Phase 1 & 방안 2] 실시간 검색, 필터 및 정렬 상태
   let currentSearchQuery = '';
   let currentTrackFilter = 'ALL';
   let currentCategoryFilter = 'ALL';
+  let currentSortOption = 'latest';
+  let onlyPaidFilter = false;
+  let onlyAvailableFilter = false;
   let visibleLimit = 18;
   const PAGE_CHUNK = 18;
+
+  // [방안 2] 정렬 및 토글 필터 함수
+  function handleSortChange(val) {
+    currentSortOption = val;
+    applyLoungeFilters();
+  }
+
+  function toggleOnlyPaidFilter() {
+    onlyPaidFilter = !onlyPaidFilter;
+    const btn = document.getElementById('btnToggleOnlyPaid');
+    if (btn) {
+      if (onlyPaidFilter) {
+        btn.className = 'px-2.5 py-1 rounded-lg border border-purple-500 bg-purple-100 text-purple-900 transition font-bold flex items-center gap-1 shadow-sm';
+      } else {
+        btn.className = 'px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition font-medium flex items-center gap-1';
+      }
+    }
+    visibleLimit = PAGE_CHUNK;
+    applyLoungeFilters();
+  }
+
+  function toggleOnlyAvailableFilter() {
+    onlyAvailableFilter = !onlyAvailableFilter;
+    const btn = document.getElementById('btnToggleOnlyAvailable');
+    if (btn) {
+      if (onlyAvailableFilter) {
+        btn.className = 'px-2.5 py-1 rounded-lg border border-amber-500 bg-amber-100 text-amber-900 transition font-bold flex items-center gap-1 shadow-sm';
+      } else {
+        btn.className = 'px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100 transition font-medium flex items-center gap-1';
+      }
+    }
+    visibleLimit = PAGE_CHUNK;
+    applyLoungeFilters();
+  }
+
+  // [방안 2] 검증 ROI 시뮬레이터 로직
+  function openRoiCalculatorModal() {
+    updateRoiCalc();
+    document.getElementById('roiCalculatorModal').classList.remove('hidden');
+  }
+
+  function closeRoiCalculatorModal() {
+    document.getElementById('roiCalculatorModal').classList.add('hidden');
+  }
+
+  function updateRoiCalc() {
+    const testers = parseInt(document.getElementById('calcTestersSlider').value, 10);
+    const reward = parseInt(document.getElementById('calcRewardSelect').value, 10);
+    
+    document.getElementById('calcTestersDisplay').textContent = `${testers}명`;
+    document.getElementById('calcRewardDisplay').textContent = reward === 0 ? '0원 (품앗이)' : `${reward.toLocaleString()}원`;
+
+    const total = testers * reward;
+    document.getElementById('calcTotalBudgetDisplay').textContent = total === 0 ? '0원 (무료 상호 품앗이)' : `${total.toLocaleString()}원`;
+    
+    const etaSpan = document.getElementById('calcEtaDisplay');
+    if (testers <= 30) {
+      etaSpan.textContent = '약 12 ~ 24시간 내 완료 예상';
+    } else if (testers <= 60) {
+      etaSpan.textContent = '약 24 ~ 48시간 내 완료 예상';
+    } else {
+      etaSpan.textContent = '약 48 ~ 72시간 내 완료 예상';
+    }
+  }
+
+  function applyRoiToRegistration() {
+    const testers = parseInt(document.getElementById('calcTestersSlider').value, 10);
+    const reward = parseInt(document.getElementById('calcRewardSelect').value, 10);
+    closeRoiCalculatorModal();
+    
+    if (reward > 0) {
+      selectTrack('PAID');
+    } else {
+      selectTrack('FREE');
+    }
+    openRegistrationModal();
+    
+    const goalInput = document.getElementById('reg_goal');
+    if (goalInput && !goalInput.value) {
+      goalInput.value = `시장 검증 테스터 ${testers}명 피드백 확보 (사업계획서 첨부용)`;
+    }
+    showLoungeToast(`[시뮬레이터 반영] ${testers}명 ${reward > 0 ? '유료 보증' : '무료 품앗이'} 설정으로 위저드가 열렸습니다.`, 'success');
+  }
 
   // [Phase 2] 토스트 알림 컴포넌트 함수
   let toastTimer = null;
@@ -598,8 +873,10 @@
   }
 
   function applyLoungeFilters() {
-    const cards = document.querySelectorAll('.campaign-card');
-    let matchedCount = 0;
+    const grid = document.getElementById('campaignCardGrid');
+    if (!grid) return;
+    const cards = Array.from(grid.querySelectorAll('.campaign-card'));
+    let matchedCards = [];
     const totalCount = cards.length;
 
     cards.forEach(card => {
@@ -607,27 +884,60 @@
       const category = card.getAttribute('data-category') || '';
       const title = card.getAttribute('data-title') || '';
       const desc = card.getAttribute('data-desc') || '';
+      const reward = parseInt(card.getAttribute('data-reward') || '0', 10);
+      const remaining = parseInt(card.getAttribute('data-remaining') || '0', 10);
 
       const matchTrack = (currentTrackFilter === 'ALL' || track === currentTrackFilter);
       const matchCategory = (currentCategoryFilter === 'ALL' || category === currentCategoryFilter);
       const matchSearch = (!currentSearchQuery || title.includes(currentSearchQuery) || desc.includes(currentSearchQuery) || category.toLowerCase().includes(currentSearchQuery));
+      const matchOnlyPaid = (!onlyPaidFilter || reward > 0);
+      const matchOnlyAvail = (!onlyAvailableFilter || remaining > 0);
 
-      if (matchTrack && matchCategory && matchSearch) {
-        matchedCount++;
-        if (matchedCount <= visibleLimit) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
+      if (matchTrack && matchCategory && matchSearch && matchOnlyPaid && matchOnlyAvail) {
+        matchedCards.push(card);
       } else {
         card.classList.add('hidden');
       }
     });
 
+    // [방안 2] 정렬 적용 (인기순/리워드순/마감임박순/최신순)
+    matchedCards.sort((a, b) => {
+      if (currentSortOption === 'popular') {
+        const rateA = parseInt(a.getAttribute('data-rate') || '0', 10);
+        const rateB = parseInt(b.getAttribute('data-rate') || '0', 10);
+        return rateB - rateA;
+      } else if (currentSortOption === 'reward') {
+        const rewA = parseInt(a.getAttribute('data-reward') || '0', 10);
+        const rewB = parseInt(b.getAttribute('data-reward') || '0', 10);
+        return rewB - rewA;
+      } else if (currentSortOption === 'closing') {
+        const remA = parseInt(a.getAttribute('data-remaining') || '999', 10);
+        const remB = parseInt(b.getAttribute('data-remaining') || '999', 10);
+        return remA - remB;
+      } else {
+        // latest (기본: 원본 등록 순)
+        const idxA = parseInt(a.getAttribute('data-index') || '0', 10);
+        const idxB = parseInt(b.getAttribute('data-index') || '0', 10);
+        return idxA - idxB;
+      }
+    });
+
+    // 정렬된 순서대로 DOM 재배치 및 페이징 가시성 지정
+    matchedCards.forEach((card, idx) => {
+      grid.appendChild(card);
+      if (idx < visibleLimit) {
+        card.classList.remove('hidden');
+      } else {
+        card.classList.add('hidden');
+      }
+    });
+
+    const matchedCount = matchedCards.length;
+
     // 뱃지 및 카운트 갱신
     const badge = document.getElementById('filteredCountBadge');
     if (badge) {
-      if (currentSearchQuery || currentTrackFilter !== 'ALL' || currentCategoryFilter !== 'ALL') {
+      if (currentSearchQuery || currentTrackFilter !== 'ALL' || currentCategoryFilter !== 'ALL' || onlyPaidFilter || onlyAvailableFilter || currentSortOption !== 'latest') {
         badge.textContent = `검색 결과 ${matchedCount}개 / 전체 ${totalCount}개`;
       } else {
         badge.textContent = `전체 ${totalCount}개 프로젝트`;

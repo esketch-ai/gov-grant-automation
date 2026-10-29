@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120" fill="none">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A" />
+      <stop offset="100%" stop-color="#080E1D" />
+    </linearGradient>
+
+    <!-- Border Glow Gradient -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.8" />
+      <stop offset="50%" stop-color="#256EF4" stop-opacity="0.5" />
+      <stop offset="100%" stop-color="#7C3AED" stop-opacity="0.7" />
+    </linearGradient>
+
+    <!-- Ribbon 1 (Left S-Curve: Deep Tech Cobalt to Cyan) -->
+    <linearGradient id="ribbon1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38BDF8" />
+      <stop offset="50%" stop-color="#256EF4" />
+      <stop offset="100%" stop-color="#1D4ED8" />
+    </linearGradient>
+
+    <!-- Ribbon 2 (Right S-Curve: Electric Cyan to Emerald) -->
+    <linearGradient id="ribbon2" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#06B6D4" />
+      <stop offset="70%" stop-color="#0EA5E9" />
+      <stop offset="100%" stop-color="#2563EB" />
+    </linearGradient>
+
+    <!-- Center Apex & AI Star (Golden Light of Trust) -->
+    <linearGradient id="starGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" />
+      <stop offset="40%" stop-color="#67E8F9" />
+      <stop offset="100%" stop-color="#38BDF8" />
+    </linearGradient>
+
+    <!-- Inner Glow Filter -->
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- 1) Base Squircle Container -->
+  <rect x="6" y="6" width="108" height="108" rx="28" fill="url(#bgGrad)" stroke="url(#borderGrad)" stroke-width="2.5" />
+
+  <!-- 2) Subtle Ambient Backlight Glow -->
+  <circle cx="60" cy="60" r="38" fill="#256EF4" opacity="0.16" filter="url(#glow)" />
+  <circle cx="60" cy="50" r="22" fill="#06B6D4" opacity="0.22" filter="url(#glow)" />
+
+  <!-- 3) The Monogram Ribbon Wings (Intertwined S - S - A Architecture) -->
+  <!-- Left Wing (S Curve 1) -->
+  <path d="M38 78 C32 68, 32 54, 42 46 C50 40, 62 42, 60 52 C58 60, 48 64, 46 72 C44 80, 52 86, 62 86 C74 86, 82 78, 84 68" 
+        stroke="url(#ribbon1)" stroke-width="7.5" stroke-linecap="round" fill="none" />
+
+  <!-- Right Wing (Ascending Apex A Curve) -->
+  <path d="M82 42 C88 52, 88 66, 78 74 C70 80, 58 78, 60 68 C62 60, 72 56, 74 48 C76 40, 68 34, 58 34 C46 34, 38 42, 36 52" 
+        stroke="url(#ribbon2)" stroke-width="7.5" stroke-linecap="round" fill="none" />
+
+  <!-- Dynamic Ascension Apex (The A-Crossbar and Upward Flight) -->
+  <path d="M44 60 L76 60" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity="0.85" />
+  <path d="M60 26 L60 40" stroke="#38BDF8" stroke-width="3" stroke-linecap="round" opacity="0.9" />
+
+  <!-- 4) AI Secretary Compass Star (Beacon of Insight at Top-Right) -->
+  <g transform="translate(76, 26)">
+    <path d="M0 -8 Q0 0 8 0 Q0 0 0 8 Q0 0 -8 0 Q0 0 0 -8 Z" fill="url(#starGrad)" filter="url(#glow)" />
+    <circle cx="0" cy="0" r="2" fill="#FFFFFF" />
+  </g>
+</svg>

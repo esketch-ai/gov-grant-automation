@@ -147,16 +147,17 @@ body {
 }
 
 .kh-brand-box {
-  width: 160px;
-  min-width: 160px;
-  max-width: 160px;
+  /* KRDS Base Token: width: 160px; */
+  width: 215px;
+  min-width: 215px;
+  max-width: 215px;
   flex-shrink: 0;
 }
 
 .kh-brand-link {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.55rem;
   text-decoration: none;
 }
 
@@ -165,8 +166,8 @@ body {
   height: 36px;
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0 0.55rem;
+  gap: 0.25rem;
+  padding: 0 0.38rem;
   border-radius: 8px;
   font-size: 13.5px;
   font-weight: 500;
@@ -178,14 +179,15 @@ body {
 }
 .kh-nav-item:hover {
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 .kh-nav-item.active {
   color: #38BDF8;
   font-weight: 600;
-  background: rgba(37, 110, 244, 0.15);
-  border-color: rgba(56, 189, 248, 0.35);
-  box-shadow: 0 0 12px rgba(56, 189, 248, 0.12);
+  background: rgba(37, 110, 244, 0.18);
+  border-color: rgba(56, 189, 248, 0.4);
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.15);
 }
 
 /* 350px Fixed Right Control Box (Switcher 216px + Gap 10px + CTA 124px) */

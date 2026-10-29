@@ -6,7 +6,7 @@
   <title>{% block title %}정부지원사업 맞춤형 AI 코파일럿{% endblock %}</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="/static/css/k_horizon_2027.css">
+  <link rel="stylesheet" href="/static/css/k_horizon_2027.css?v=20261029_ssa">
 </head>
 <body class="min-h-screen flex flex-col" data-role="{{ current_role|default('visitor') }}">
   <!-- 디지털정부 표준 안내 스트립 (32px 고정) -->
@@ -33,8 +33,8 @@
       <!-- 1) 좌측: 브랜드 로고마크 (고정 215px 기준) -->
       <div class="kh-brand-box flex items-center shrink-0">
         <a href="{{ role_portal.home_url if role_portal else '/intro' }}" class="kh-brand-link group" title="모두의 창업비서 (SSA : Startup Secretary for All)">
-          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-cyan-500 flex items-center justify-center text-white shadow-md shadow-blue-500/20 ring-1 ring-white/20 group-hover:scale-105 transition-transform duration-150">
-            <i class="fa-solid fa-file-shield text-base text-cyan-200"></i>
+          <div class="w-9 h-9 rounded-xl overflow-hidden shadow-md shadow-cyan-500/25 ring-1 ring-white/20 group-hover:scale-105 group-hover:ring-cyan-400/60 transition-all duration-150 shrink-0 bg-slate-900 flex items-center justify-center">
+            <img src="/static/img/ssa_logo_symbol.svg" alt="SSA 로고" class="w-full h-full object-contain p-0.5">
           </div>
           <div class="flex items-center gap-1.5 whitespace-nowrap">
             <span class="text-base sm:text-lg font-black tracking-tight text-white group-hover:text-cyan-200 transition-colors">모두의 창업비서</span>
@@ -43,8 +43,8 @@
         </a>
       </div>
 
-      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-6에 단단히 고정) -->
-      <nav class="hidden md:flex items-center gap-1 shrink-0 ml-6" aria-label="메인 내비게이션">
+      <!-- 2) 중앙: 현재 권한에 맞춘 1차 핵심 메뉴 (로고 우측 고정 오프셋 ml-3.5에 단단히 고정) -->
+      <nav class="hidden md:flex items-center gap-0.5 shrink-0 ml-3.5" aria-label="메인 내비게이션">
         {% if role_portal and role_portal.nav_items %}
           {% for item in role_portal.nav_items %}
           <a
